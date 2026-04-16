@@ -78,7 +78,8 @@ while running:
     # removes instances that needs to be deleted from the instances list.
 
     for instance in all_instances:
-        instance.render(camera_x, camera_y)
+        instance.render(camera_x, camera_y) 
+    # TODO: add priority for instance rendering (ex: player always renders over all other instances)
     # renders all instances after running.
 
     pygame.display.flip()
