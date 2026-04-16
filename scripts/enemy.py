@@ -1,23 +1,19 @@
+from scripts.instance import Instance
 import pygame
 
 pygame.init()
 
-class Enemy:
+class Enemy(Instance):
 
-    def __init__(self, window, x, y, speed = 3):
-        self._window = window
-        self.x = x
-        self.y = y
+    def __init__(self, window, x, y, width, height, speed: int):
+        super().__init__("Enemy", window, x, y, width, height)
         self.speed = speed
 
-        self.type = "Enemy"
         self._x_target = 0
         self._y_target = 0
 
     def update(self, instance_list):
-        self._instance_list = instance_list
-        for instance in self._instance_list:
-
+        for instance in instance_list:
             if instance.type == "Player":
                 self._x_target = instance.x
                 self._y_target = instance.y
@@ -32,4 +28,4 @@ class Enemy:
             self.y += self._dy / self._target_distance * self.speed
 
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, (255, 0, 0), (self.x - camera_x, self.y - camera_y), 15)
+        pygame.draw.circle(self._window, (255, 0, 0), (self.x - camera_x, self.y - camera_y), self.width)
