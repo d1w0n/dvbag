@@ -1,14 +1,15 @@
 import pygame
+import random
 import sys
-import os
 
 from scripts.player import Player
 from scripts.enemy import Enemy
 from scripts.projectile import Projectile
-# imports necessary modules and classes.
+from scripts.render_sort import render_sort
+# import modules and scripts.
 
 pygame.init()
-# initializes all imported pygame modules.
+# initialize all imported pygame modules.
 
 width, height = 800, 600
 window = pygame.display.set_mode([width, height])
@@ -19,21 +20,29 @@ clock = pygame.time.Clock()
 tickrate = 60
 camera_x = -width / 2
 camera_y = -height / 2
+camera_x_shake = 0
+camera_y_shake = 0
+_camera_x_shake = 0
+_camera_y_shake = 0
+room_width = width * 2
+room_height = height * 2
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
-all_instances = [Player(window, width / 2, height / 2, 15, 15, 5), 
-                 Enemy(window, (width / 3) * 2, height / 2, 15, 15, 3)]
-all_instances_remove = []
+all_instances = [Player(window, width / 2, height / 2, 15, 15, room_width, room_height, 5), 
+                 Enemy(window, (width / 3) * 2, height / 2, 15, 15, room_width, room_height, 3)]
+remove_instances = []
+add_instances = []
+# initialize instance lists.
 
 while running:
+# main loop.
 
-    if pygame.key.get_pressed()[pygame.K_DELETE]:
+    if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    # checks for quit events and if the delete key is pressed to end the program.
+    # checks for quit events and if the escape key is pressed to end the program.
 
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
@@ -41,22 +50,29 @@ while running:
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # gets the current position of the mouse cursor.
 
+    for instance in add_instances:
+        all_instances.append(instance)
+    add_instances = []
+    # adds queued instances to the instance list, then clears the add instances list.
+
     for instance in all_instances:
         instance.update(all_instances) 
-        # updates each instance.
+    # updates each instance before doing anything.
 
         if instance.type == "Player" and pygame.mouse.get_pressed()[0]:
-            all_instances.append(Projectile(window, instance.x, instance.y, 5, 5, (mouse_x + camera_x, mouse_y + camera_y), 7, 25))
+            add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
+            camera_x_shake += 5
+            camera_y_shake += 5
         # if mouse is down, create a projectile instance at player position going towards mouse position.
 
     for instance in all_instances:
         instance.tick() 
-        # performs instances next action after updating.
+    # performs instances next action after updating.
 
-        if instance.delete:
-            all_instances_remove.append(all_instances.index(instance))
+        if instance.remove:
+            remove_instances.append(all_instances.index(instance))
             continue
-        # if an instance needs to be deleted, its index will be appended to the remove instance list and skips next actions.
+        # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
 
         if instance.type == "Player":
             camera_x = instance.x - width / 2
@@ -64,28 +80,29 @@ while running:
         # centers camera position to players position.
     
     _removals = 0
-    for index in all_instances_remove:
-        try: 
-            all_instances.pop(index - _removals)
-            _removals += 1
+    for index in remove_instances:
+        all_instances.pop(index - _removals)
+        _removals += 1
+    remove_instances = []
+    # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
 
-        except IndexError:
-            print("FATAL ERROR: IndexError when attempting to remove an instance.")
-            break
-        # fail-safe mechanism in case index is out of range (happens way too often. x_x)
+    _camera_x_shake = random.randint(-round(camera_x_shake), round(camera_x_shake))
+    _camera_y_shake = random.randint(-round(camera_y_shake), round(camera_y_shake))
+    # manage random camera shake integers by assigning it to a variable so all instances are offsetted equally.
 
-    all_instances_remove = []
-    # removes instances that needs to be deleted from the instances list.
-
-    for instance in all_instances:
-        instance.render(camera_x, camera_y) 
-    # TODO: add priority for instance rendering (ex: player always renders over all other instances)
-    # renders all instances after running.
+    for instance in render_sort(all_instances):
+        instance.render(camera_x + _camera_x_shake, camera_y + _camera_y_shake) 
+    # renders all instances with camera variables after running.
+    
+    camera_x_shake *= 0.8
+    camera_y_shake *= 0.8
+    # camera shake decay.
 
     pygame.display.flip()
     # updates the display after rendering all instances.
 
     clock.tick(tickrate)
+    # updates main loop at set tickrate.
 
 print("\nProgram Successfully Ended\n")
 

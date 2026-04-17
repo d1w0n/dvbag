@@ -5,8 +5,8 @@ pygame.init()
 
 class Player(Instance):
 
-    def __init__(self, window, x, y, width, height, speed: int):
-        super().__init__("Player", window, x, y, width, height)
+    def __init__(self, window, x, y, width, height, room_width, room_height, speed: int):
+        super().__init__("Player", window, x, y, width, height, room_width, room_height)
         self.speed = speed
 
         self._dx = 0
@@ -38,8 +38,11 @@ class Player(Instance):
         if self._target_distance > 0:
             self.x_velocity = self._dx / self._target_distance * self.speed
             self.y_velocity = self._dy / self._target_distance * self.speed
-            self.x += self.x_velocity
-            self.y += self.y_velocity
+        else:
+            self.x_velocity = 0
+            self.y_velocity = 0
+        self.x += self.x_velocity
+        self.y += self.y_velocity
         
     def render(self, camera_x, camera_y):
         pygame.draw.circle(self._window, (0, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
