@@ -4,7 +4,7 @@ import sys
 
 from scripts.player import Player
 from scripts.enemy import Enemy
-from scripts.projectile import Projectile
+from scripts.projectile import Projectile, Beam
 from scripts.render_sort import render_sort
 # import modules and scripts.
 
@@ -59,11 +59,15 @@ while running:
         instance.update(all_instances) 
     # updates each instance before doing anything.
 
-        if instance.type == "Player" and pygame.mouse.get_pressed()[0]:
-            add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
-            camera_x_shake += 5
-            camera_y_shake += 5
-        # if mouse is down, create a projectile instance at player position going towards mouse position.
+        if instance.type == "Player":
+            if pygame.mouse.get_pressed()[0]:
+                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
+                camera_x_shake += 5
+                camera_y_shake += 5
+            # if mouse is down, create a projectile instance at player position going towards mouse position.
+            
+            if pygame.mouse.get_pressed()[2]:
+                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
 
     for instance in all_instances:
         instance.tick() 
