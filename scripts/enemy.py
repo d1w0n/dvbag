@@ -43,5 +43,4 @@ class Enemy(Instance):
             self.y += self.velocity_y
 
     def render(self, camera_x, camera_y):
-        print(self._color)
         pygame.draw.circle(self._window, (self._color[0], round(self._color[1]), round(self._color[2])), (self.x - camera_x, self.y - camera_y), self.width)
