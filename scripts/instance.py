@@ -26,3 +26,10 @@ class Instance(ABC):
     @abstractmethod
     def render(self, camera_x: float, camera_y: float):
         pass
+
+    def get_magnitude(self, dx, dy):
+        return (dx ** 2 + dy ** 2) ** 0.5
+    
+    def get_collision(self, other: "Instance"):
+        _distance = self.get_magnitude(self.x - other.x, self.y - other.y)
+        return _distance <= self.width + other.width or _distance <= self.height + other.height

@@ -28,8 +28,8 @@ room_width = width * 2
 room_height = height * 2
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
-all_instances = [Player(window, width / 2, height / 2, 15, 15, room_width, room_height, 5), 
-                 Enemy(window, (width / 3) * 2, height / 2, 15, 15, room_width, room_height, 3)]
+all_instances = [Player(window, width / 2, height / 2, 15, 15, room_width, room_height, 100, 5), 
+                 Enemy(window, (width / 3) * 2, height / 2, 15, 15, room_width, room_height, 100, 3)]
 remove_instances = []
 add_instances = []
 # initialize instance lists.
@@ -44,7 +44,7 @@ while running:
             running = False
     # checks for quit events and if the escape key is pressed to end the program.
 
-    window.fill((255, 255, 255))
+    window.fill((200, 200, 200))
     # fills the window with white color to clear previous frames.
 
     mouse_x, mouse_y = pygame.mouse.get_pos()

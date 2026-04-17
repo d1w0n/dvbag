@@ -5,20 +5,30 @@ pygame.init()
 
 class Enemy(Instance):
 
-    def __init__(self, window, x, y, width, height, room_width, room_height, speed: int):
+    def __init__(self, window, x, y, width, height, room_width, room_height, health: int, speed: int):
         super().__init__("Enemy", window, x, y, width, height, room_width, room_height)
+        self.health = health
         self.speed = speed
 
         self._x_target = 0
         self._y_target = 0
         self.velocity_x = 0
         self.velocity_y = 0
+        self._color = (255, 0, 0)
 
     def update(self, instance_list):
+        self._color = (255, self._color[1] * 0.9, self._color[2] * 0.9)
         for instance in instance_list:
             if instance.type == "Player":
                 self._x_target = instance.x
                 self._y_target = instance.y
+            
+            if instance.type == "Projectile":
+                if self.get_collision(instance):
+                    #self.health -= instance.damage
+                    self._color = (255, 255, 255)
+                    if self.health <= 0:
+                        self.remove = True
                 
     def tick(self):
         self._dx = self._x_target - self.x
@@ -33,4 +43,5 @@ class Enemy(Instance):
             self.y += self.velocity_y
 
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, (255, 0, 0), (self.x - camera_x, self.y - camera_y), self.width)
+        print(self._color)
+        pygame.draw.circle(self._window, (self._color[0], round(self._color[1]), round(self._color[2])), (self.x - camera_x, self.y - camera_y), self.width)

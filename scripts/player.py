@@ -5,8 +5,9 @@ pygame.init()
 
 class Player(Instance):
 
-    def __init__(self, window, x, y, width, height, room_width, room_height, speed: int):
+    def __init__(self, window, x, y, width, height, room_width, room_height, health: int, speed: int):
         super().__init__("Player", window, x, y, width, height, room_width, room_height)
+        self.health = health
         self.speed = speed
 
         self._dx = 0

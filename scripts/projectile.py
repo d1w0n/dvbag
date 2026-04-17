@@ -10,13 +10,15 @@ class Projectile(Instance):
         self.damage = damage
         self._dx = target_location[0] - self.x
         self._dy = target_location[1] - self.y
-        self.x_velocity = self._dx / (self._dx ** 2 + self._dy ** 2) ** 0.5 * self.speed + add_x_velocity
-        self.y_velocity = self._dy / (self._dx ** 2 + self._dy ** 2) ** 0.5 * self.speed + add_y_velocity
+        self._magnitude = self.get_magnitude(self._dx, self._dy)
+        self.x_velocity = self._dx / self._magnitude * self.speed + add_x_velocity
+        self.y_velocity = self._dy / self._magnitude * self.speed + add_y_velocity
 
     def update(self, instance_list):
         for instance in instance_list:
             if instance.type == "Enemy":
-                pass #self.remove = True
+                if self.get_collision(instance):
+                    self.remove = True
 
     def tick(self):
             self.x += self.x_velocity
