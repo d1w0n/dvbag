@@ -44,6 +44,10 @@ class Player(Instance):
             self.y_velocity = 0
         self.x += self.x_velocity
         self.y += self.y_velocity
+        if self.x > self._room_width / 2 or self.x < -self._room_width / 2:
+            self.x -= self.x_velocity
+        if self.y > self._room_height / 2 or self.y < -self._room_height / 2:
+            self.y -= self.y_velocity
         
     def render(self, camera_x, camera_y):
         pygame.draw.circle(self._window, (0, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
