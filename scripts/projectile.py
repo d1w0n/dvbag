@@ -20,6 +20,9 @@ class Projectile(Instance):
                 if self.get_collision(instance):
                     self.remove = True
 
+        if self.x > self._room_width / 2 or self.x < -self._room_width / 2 or self.y > self._room_height / 2 or self.y < -self._room_height / 2:
+            self.remove = True
+
     def tick(self):
             self.x += self.x_velocity
             self.y += self.y_velocity

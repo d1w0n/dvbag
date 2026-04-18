@@ -21,7 +21,7 @@ camera_y = -height / 2
 camera_smoothing = 0.1
 camera_x_shake = 0
 camera_y_shake = 0
-shake_decay = 0.
+shake_decay = 0.8
 room_width = width * 2
 room_height = height * 2
 
@@ -102,7 +102,7 @@ while running:
     _camera_x_shake = random.randint(-round(camera_x_shake), round(camera_x_shake))
     _camera_y_shake = random.randint(-round(camera_y_shake), round(camera_y_shake))
     # manage random camera shake integers by assigning it to a variable so all instances are offsetted equally.
-    pygame.draw.circle(window, (255, 255, 255), (-camera_x, -camera_y), 10) # ORIGIN PLACEHOLDER
+    pygame.draw.circle(window, (255, 255, 255), (-camera_x + _camera_x_shake, -camera_y + _camera_y_shake), 10) # ORIGIN PLACEHOLDER
     for instance in render_sort(all_instances):
         instance.render(camera_x + _camera_x_shake, camera_y + _camera_y_shake) 
     # renders all instances with camera variables after running.
