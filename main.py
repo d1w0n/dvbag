@@ -102,6 +102,7 @@ while running:
     _camera_x_shake = random.randint(-round(camera_x_shake), round(camera_x_shake))
     _camera_y_shake = random.randint(-round(camera_y_shake), round(camera_y_shake))
     # manage random camera shake integers by assigning it to a variable so all instances are offsetted equally.
+    
     pygame.draw.circle(window, (255, 255, 255), (-camera_x + _camera_x_shake, -camera_y + _camera_y_shake), 10) # ORIGIN PLACEHOLDER
     for instance in render_sort(all_instances):
         instance.render(camera_x + _camera_x_shake, camera_y + _camera_y_shake) 
