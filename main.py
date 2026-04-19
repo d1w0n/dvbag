@@ -61,7 +61,7 @@ while running:
         instance.update(all_instances) 
     # updates each instance before doing anything.
 
-        if instance.type == "Player":
+        if isinstance(instance, Player):
             if pygame.mouse.get_pressed()[0]:
                 add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
                 camera_x_shake += 5
@@ -85,7 +85,7 @@ while running:
         instance.tick() 
     # performs instances next action after updating.
 
-        if instance.type == "Player":
+        if isinstance(instance, Player):
             target_x = instance.x - width / 2   
             target_y = instance.y - height / 2
             camera_x += (target_x - camera_x) * camera_smoothing

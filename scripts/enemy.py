@@ -1,4 +1,6 @@
 from scripts.instance import Instance
+from scripts.player import Player
+from scripts.projectile import Projectile
 import pygame
 
 pygame.init()
@@ -6,7 +8,7 @@ pygame.init()
 class Enemy(Instance):
 
     def __init__(self, window, x, y, width, height, room_width, room_height, health: int, speed: int):
-        super().__init__("Enemy", window, x, y, width, height, room_width, room_height)
+        super().__init__(window, x, y, width, height, room_width, room_height)
         self.health = health
         self.speed = speed
 
@@ -19,11 +21,11 @@ class Enemy(Instance):
     def update(self, instance_list):
         self._color = (255, self._color[1] * 0.9, self._color[2] * 0.9)
         for instance in instance_list:
-            if instance.type == "Player":
+            if isinstance(instance, Player):
                 self._x_target = instance.x
                 self._y_target = instance.y
             
-            if instance.type == "Projectile":
+            if isinstance(instance, Projectile):
                 if self.get_collision(instance):
                     #self.health -= instance.damage
                     self._color = (255, 255, 255)
