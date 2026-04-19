@@ -1,12 +1,11 @@
 from scripts.instance import Instance
-from scripts.enemy import Enemy
 import pygame
 
 pygame.init()
 
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, room_width, room_height, target_location: tuple, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__(window, x, y, width, height, room_width, room_height)
+        super().__init__("Projectile", window, x, y, width, height, room_width, room_height)
         self.speed = speed
         self.damage = damage
         self._dx = target_location[0] - self.x
@@ -17,7 +16,7 @@ class Projectile(Instance):
 
     def update(self, instance_list):
         for instance in instance_list:
-            if isinstance(instance, Enemy):
+            if instance.type == "Enemy":
                 if self.get_collision(instance):
                     self.remove = True
 
@@ -38,7 +37,7 @@ class Beam(Projectile):
     def tick(self):
         self._x_init = self.x
         self._y_init = self.y
-        while not self.get_room_collision_x() and not self.get_room_collision_y():
+        while not self.get_room_collision_x() and self.get_room_collision_y():
             self.x += self.x_velocity
             self.y += self.y_velocity
         

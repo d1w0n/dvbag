@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, window, x: float, y: float, width: int, height: int, room_width: int, room_height: int):
+    def __init__(self, type: str, window, x: float, y: float, width: int, height: int, room_width: int, room_height: int):
+        self.type = type
         self._window = window
         self.x = x
         self.y = y
