@@ -18,10 +18,12 @@ clock = pygame.time.Clock()
 tickrate = 60
 room_width = width * 2
 room_height = height * 2
-camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
 
 _removals = 0
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
+
+camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
+# creates a camera variable from the camera class with a smoothing of 0.1 and decay of 0.8.
 
 all_instances = [Player(window, 0, 0, 15, 15, room_width, room_height, 100, 5), 
                  Enemy(window, (room_width / 4), 0, 15, 15, room_width, room_height, 100, 3)]
@@ -58,7 +60,7 @@ while running:
             if pygame.mouse.get_pressed()[0]:
                 add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
                 camera.shake(5, 5)
-            # if mouse is down, create a projectile instance at player position going towards mouse position.
+            # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2]:
                 add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
@@ -70,7 +72,7 @@ while running:
     # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
 
     camera.shake_decay()
-    # camera shake decay.
+    # multiplies camera shake attributes by its decay.
 
     for instance in all_instances:
         instance.tick() 
@@ -88,12 +90,12 @@ while running:
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
     
     camera.random_shake()
-    # manage random camera shake integers by assigning it to a variable so all instances are offsetted equally.
+    # assign camera shake to dedicated random integer attributes for instance rendering.
     
     pygame.draw.circle(window, (255, 255, 255), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) # ORIGIN PLACEHOLDER
     for instance in render_sort(all_instances):
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
-    # renders all instances with camera variables after running.
+    # renders all instances with camera attributes after ticking.
 
     pygame.display.flip()
     # updates the display after rendering all instances.
