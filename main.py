@@ -1,4 +1,5 @@
 import pygame
+import random
 import sys
 
 from scripts.player import Player
@@ -16,6 +17,7 @@ window = pygame.display.set_mode([width, height])
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
+ticks = 0
 room_width = width * 2
 room_height = height * 2
 
@@ -53,18 +55,25 @@ while running:
     # adds queued instances to the instance list, then clears the add instances list.
 
     for instance in all_instances:
-        instance.update(all_instances) 
+        instance.update(all_instances)
     # updates each instance before doing anything.
 
         if instance.type == "Player":
-            if pygame.mouse.get_pressed()[0]:
-                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
+            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
+                instance.cooldown_ticks = pygame.time.get_ticks()
+                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, mouse_x + camera.x, mouse_y + camera.y, 15, 10))
                 camera.shake(5, 5)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2]:
                 add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
             # creates a beam instead.
+
+    if (pygame.time.get_ticks() - ticks) > 3000: 
+        ticks = pygame.time.get_ticks()
+        add_instances.append(Enemy(window, random.randint(-room_width, room_width), random.randint(-room_height, room_height), 15, 15, room_width, room_height, random.randint(70, 150), random.randint(3, 6)))
+    # every 3 seconds, create an enemy instance at a random position in the room with random health and speed.
+    # currently a placeholder.
     
     for i in range(len(all_instances)):
         if all_instances[i].remove:
@@ -79,8 +88,8 @@ while running:
     # performs instances next action after updating.
 
         if instance.type == "Player":
-            camera.target(instance.x - width / 2, instance.y - height / 2)
-        # smooths camera position to players position.
+            camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 5, instance.y - height / 2 + (mouse_y - height / 2) / 5)
+        # smooths camera position to mouse and player position.
 
     _removals = 0
     for index in remove_instances:
