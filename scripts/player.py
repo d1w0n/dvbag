@@ -5,8 +5,8 @@ pygame.init()
 
 class Player(Instance):
 
-    def __init__(self, window, x, y, width, height, room_width, room_height, health: int, speed: int):
-        super().__init__("Player", window, x, y, width, height, room_width, room_height)
+    def __init__(self, window, x, y, width, height, health: int, speed: int):
+        super().__init__("Player", window, x, y, width, height)
         self.health = health
         self.speed = speed
 
@@ -20,7 +20,10 @@ class Player(Instance):
         self._damage_cooldown = 1000
         self._damage_ticks = 0
     
-    def update(self, instance_list, camera): 
+    def update(self, instance_list, room, camera): 
+        self._room_width = room.width
+        self._room_height = room.height
+        
         for instance in instance_list:
             if instance.type == "Enemy":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:

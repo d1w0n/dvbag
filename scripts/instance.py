@@ -3,21 +3,19 @@ from abc import ABC, abstractmethod
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, type: str, window, x: float, y: float, width: int, height: int, room_width: int, room_height: int):
+    def __init__(self, type: str, window, x: float, y: float, width: int, height: int):
         self.type = type
         self._window = window
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self._room_width = room_width
-        self._room_height = room_height
         self._distance = 0
 
         self.remove = False
 
     @abstractmethod
-    def update(self, instance_list: list, camera: "Instance"):
+    def update(self, instance_list: list, room: "Instance", camera: "Instance"):
         pass
 
     @abstractmethod

@@ -5,8 +5,8 @@ pygame.init()
 
 class Enemy(Instance):
 
-    def __init__(self, window, x, y, width, height, room_width, room_height, health: int, speed: int, damage: int):
-        super().__init__("Enemy", window, x, y, width, height, room_width, room_height)
+    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int):
+        super().__init__("Enemy", window, x, y, width, height)
         self.health = health
         self.speed = speed
         self.damage = damage
@@ -17,7 +17,7 @@ class Enemy(Instance):
         self.velocity_y = 0
         self._color = (255, 0, 0)
 
-    def update(self, instance_list, camera):
+    def update(self, instance_list, room, camera):
         self._color = (255, self._color[1] * 0.9, self._color[2] * 0.9)
         for instance in instance_list:
             if instance.type == "Player":

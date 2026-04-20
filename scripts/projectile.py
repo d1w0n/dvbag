@@ -4,8 +4,8 @@ import pygame
 pygame.init()
 
 class Projectile(Instance):
-    def __init__(self, window, x, y, width, height, room_width, room_height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__("Projectile", window, x, y, width, height, room_width, room_height)
+    def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
+        super().__init__("Projectile", window, x, y, width, height)
         self.speed = speed
         self.damage = damage
         self._dx = target_x - self.x
@@ -14,7 +14,9 @@ class Projectile(Instance):
         self.x_velocity = self._dx / self._magnitude * self.speed + add_x_velocity
         self.y_velocity = self._dy / self._magnitude * self.speed + add_y_velocity
 
-    def update(self, instance_list, camera):
+    def update(self, instance_list, room, camera):
+        self._room_width = room.width
+        self._room_height = room.height
         for instance in instance_list:
             if instance.type == "Enemy":
                 if self.get_collision(instance):
