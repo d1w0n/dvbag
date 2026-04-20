@@ -14,10 +14,16 @@ class Player(Instance):
         self._dy = 0
         self.x_velocity = 0
         self.y_velocity = 0
+        self._color = (0, 0, 255)
         self.cooldown_ticks = 0
         self.projectile_cooldown = 100
     
     def update(self, instance_list): 
+        for instance in instance_list:
+            if instance.type == "Enemy":
+                if self.get_collision(instance):
+                    #self.health -= instance.damage
+                    pass
         
         key = pygame.key.get_pressed()
 
@@ -25,6 +31,10 @@ class Player(Instance):
         self._dy = 0
         # reset target x and y.
 
+        if key[pygame.K_LSHIFT]:
+            self.speed = 10
+        else:
+            self.speed = 5
         if key[pygame.K_w]:
             self._dy = -self.speed
         if key[pygame.K_a]:
@@ -60,4 +70,4 @@ class Player(Instance):
         # if colliding with room bounds, revert x or y velocity change.
         
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, (0, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
+        pygame.draw.circle(self._window, self._color, (self.x - camera_x, self.y - camera_y), self.width)

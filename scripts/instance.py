@@ -12,6 +12,7 @@ class Instance(ABC):
         self.height = height
         self._room_width = room_width
         self._room_height = room_height
+        self._distance = 0
 
         self.remove = False
 

@@ -62,17 +62,17 @@ while running:
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, mouse_x + camera.x, mouse_y + camera.y, 15, 10))
-                camera.shake(5, 5)
+                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
+                camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2]:
                 add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
             # creates a beam instead.
 
-    if (pygame.time.get_ticks() - ticks) > 3000: 
+    if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room_width / 2), round(room_width / 2)), random.randint(round(-room_height / 2), round(room_height / 2)), 15, 15, room_width, room_height, random.randint(70, 150), random.randint(3, 6)))
+        add_instances.append(Enemy(window, random.randint(round(-room_width / 2), round(room_width / 2)), random.randint(round(-room_height / 2), round(room_height / 2)), 15, 15, room_width, room_height, random.randint(70, 100), random.randint(3, 5)))
     # every 3 seconds, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     
