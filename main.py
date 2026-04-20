@@ -44,7 +44,7 @@ while running:
             running = False
     # checks for quit events and if the escape key is pressed to end the program.
 
-    window.fill((200, 200, 200))
+    window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -102,10 +102,10 @@ while running:
     camera.random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
     
-    pygame.draw.circle(window, (255, 255, 255), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) 
+    pygame.draw.circle(window, (200, 200, 200), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) 
     # ORIGIN PLACEHOLDER
 
-    draw_room(window, room_width, room_height, camera.x + camera.shake_random_x, camera.y + camera.shake_random_y)
+    draw_room(window, (200, 200, 200), room_width, room_height, camera.x + camera.shake_random_x, camera.y + camera.shake_random_y)
     # draws the room borders.
 
     for instance in render_sort(all_instances):
