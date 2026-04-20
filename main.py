@@ -1,8 +1,8 @@
 import pygame
-import random
 import sys
 
 from scripts.player import Player
+from scripts.camera import Camera
 from scripts.enemy import Enemy
 from scripts.projectile import Projectile, Beam
 from scripts.render_sort import render_sort
@@ -16,17 +16,10 @@ window = pygame.display.set_mode([width, height])
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
-camera_x = -width / 2
-camera_y = -height / 2
-camera_smoothing = 0.1
-camera_x_shake = 0
-camera_y_shake = 0
-shake_decay = 0.8
 room_width = width * 2
 room_height = height * 2
+camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
 
-_camera_x_shake = 0
-_camera_y_shake = 0
 _removals = 0
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
@@ -63,13 +56,12 @@ while running:
 
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0]:
-                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
-                camera_x_shake += 5
-                camera_y_shake += 5
+                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
+                camera.shake(5, 5)
             # if mouse is down, create a projectile instance at player position going towards mouse position.
             
             if pygame.mouse.get_pressed()[2]:
-                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera_x, mouse_y + camera_y), 15, 25))
+                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, room_width, room_height, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
             # creates a beam instead.
     
     for i in range(len(all_instances)):
@@ -77,8 +69,7 @@ while running:
             remove_instances.append(i)
     # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
 
-    camera_x_shake *= shake_decay
-    camera_y_shake *= shake_decay
+    camera.shake_decay()
     # camera shake decay.
 
     for instance in all_instances:
@@ -86,10 +77,7 @@ while running:
     # performs instances next action after updating.
 
         if instance.type == "Player":
-            target_x = instance.x - width / 2   
-            target_y = instance.y - height / 2
-            camera_x += (target_x - camera_x) * camera_smoothing
-            camera_y += (target_y - camera_y) * camera_smoothing
+            camera.target(instance.x - width / 2, instance.y - height / 2)
         # smooths camera position to players position.
 
     _removals = 0
@@ -99,13 +87,12 @@ while running:
     remove_instances = []
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
     
-    _camera_x_shake = random.randint(-round(camera_x_shake), round(camera_x_shake))
-    _camera_y_shake = random.randint(-round(camera_y_shake), round(camera_y_shake))
+    camera.random_shake()
     # manage random camera shake integers by assigning it to a variable so all instances are offsetted equally.
     
-    pygame.draw.circle(window, (255, 255, 255), (-camera_x + _camera_x_shake, -camera_y + _camera_y_shake), 10) # ORIGIN PLACEHOLDER
+    pygame.draw.circle(window, (255, 255, 255), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) # ORIGIN PLACEHOLDER
     for instance in render_sort(all_instances):
-        instance.render(camera_x + _camera_x_shake, camera_y + _camera_y_shake) 
+        instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera variables after running.
 
     pygame.display.flip()
