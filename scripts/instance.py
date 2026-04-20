@@ -17,7 +17,7 @@ class Instance(ABC):
         self.remove = False
 
     @abstractmethod
-    def update(self, instance_list: list):
+    def update(self, instance_list: list, camera: "Instance"):
         pass
 
     @abstractmethod

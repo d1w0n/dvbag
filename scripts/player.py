@@ -17,13 +17,16 @@ class Player(Instance):
         self._color = (0, 0, 255)
         self.cooldown_ticks = 0
         self.projectile_cooldown = 100
+        self._damage_cooldown = 1000
+        self._damage_ticks = 0
     
-    def update(self, instance_list): 
+    def update(self, instance_list, camera): 
         for instance in instance_list:
             if instance.type == "Enemy":
-                if self.get_collision(instance):
-                    #self.health -= instance.damage
-                    pass
+                if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
+                    self._damage_ticks = pygame.time.get_ticks()
+                    self.health -= instance.damage
+                    camera.shake(50, 50) 
         
         key = pygame.key.get_pressed()
 

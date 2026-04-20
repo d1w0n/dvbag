@@ -14,7 +14,7 @@ class Projectile(Instance):
         self.x_velocity = self._dx / self._magnitude * self.speed + add_x_velocity
         self.y_velocity = self._dy / self._magnitude * self.speed + add_y_velocity
 
-    def update(self, instance_list):
+    def update(self, instance_list, camera):
         for instance in instance_list:
             if instance.type == "Enemy":
                 if self.get_collision(instance):
