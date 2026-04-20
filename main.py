@@ -6,6 +6,7 @@ from scripts.player import Player
 from scripts.camera import Camera
 from scripts.enemy import Enemy
 from scripts.projectile import Projectile, Beam
+from scripts.draw_room import draw_room
 from scripts.render_sort import render_sort
 
 pygame.init()
@@ -101,7 +102,12 @@ while running:
     camera.random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
     
-    pygame.draw.circle(window, (255, 255, 255), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) # ORIGIN PLACEHOLDER
+    pygame.draw.circle(window, (255, 255, 255), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 10) 
+    # ORIGIN PLACEHOLDER
+
+    draw_room(window, room_width, room_height, camera.x + camera.shake_random_x, camera.y + camera.shake_random_y)
+    # draws the room borders.
+
     for instance in render_sort(all_instances):
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera attributes after ticking.

@@ -4,4 +4,4 @@ just created this devlog. i plan on adding more to it later, but for now its jus
 4/19/2026:
 today im gonna turn the camera into its own class. i plan on giving instances their own sprites, as well as giving the player a dash function as well as being able to parry, and creating more variation in the enemies by letting one type being able to dash, and another being able to shoot.
 
-i got the camera class done, and it works good! i added a placeholder for enemy spawns so i can start the actual gameplay loop. i also added a projectile cooldown too, and the camera partially smooths onto the mouse position. 
+i got the camera class done, and it works good! i added a placeholder for enemy spawns so i can start the actual gameplay loop. i also added a projectile cooldown too, and the camera partially smooths onto the mouse position. i also created an early version of room borders rendering.
