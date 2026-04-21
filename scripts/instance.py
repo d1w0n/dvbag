@@ -34,7 +34,7 @@ class Instance(ABC):
         return _distance <= self.width + other.width or _distance <= self.height + other.height
     
     def get_room_collision_x(self):
-        return self.x > self._room_width / 2 or self.x < -self._room_width / 2
+        return self.x + self.width > self._room_width / 2 or self.x - self.width < -self._room_width / 2
     
     def get_room_collision_y(self):
-        return self.y > self._room_height / 2 or self.y < -self._room_height / 2
+        return self.y + self.width > self._room_height / 2 or self.y - self.width < -self._room_height / 2

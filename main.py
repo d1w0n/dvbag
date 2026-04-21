@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import csv
 
 from scripts.room import Room
 from scripts.camera import Camera
@@ -65,14 +66,14 @@ while running:
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
-            if pygame.mouse.get_pressed()[2]:
-                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
+            #if pygame.mouse.get_pressed()[2]:
+                #add_instances.append(Beam(window, instance.x, instance.y, 5, 5, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
             # creates a beam instead.
 
     if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
         add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 15, 15, random.randint(70, 100), random.randint(3, 5), 10))
-    # every 3 seconds, create an enemy instance at a random position in the room with random health and speed.
+    # every second, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     
     for i in range(len(all_instances)):
@@ -116,6 +117,11 @@ while running:
 
     clock.tick(tickrate)
     # updates main loop at set tickrate.
+
+data = [["instance", "x", "y"], [100, 100]]
+with open("saves.csv", mode="w", newline="") as save:
+    pass
+# data save placeholder.
 
 print("\nProgram Successfully Ended\n")
 
