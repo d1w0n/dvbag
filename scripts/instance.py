@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
+import pygame
+
+pygame.init()
 
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, type: str, window, x: float, y: float, width: int, height: int):
+    def __init__(self, type: str, sprite, window, x: float, y: float, width: int, height: int):
         self.type = type
         self._window = window
         self.x = x
@@ -11,6 +14,8 @@ class Instance(ABC):
         self.width = width
         self.height = height
         self._distance = 0
+        self._sprite = pygame.image.load(sprite).convert_alpha()
+        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
 
         self.remove = False
 

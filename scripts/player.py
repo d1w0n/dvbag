@@ -7,7 +7,7 @@ pygame.init()
 class Player(Instance):
 
     def __init__(self, window, x, y, width, height, health: int, speed: int):
-        super().__init__("Player", window, x, y, width, height)
+        super().__init__("Player", "assets/placeholder.png", window, x, y, width, height)
         self.health = health
         self.speed = speed
 
@@ -20,8 +20,6 @@ class Player(Instance):
         self.projectile_cooldown = 100
         self._damage_cooldown = 1000
         self._damage_ticks = 0
-        self._sprite = pygame.image.load("assets/placeholder.png").convert_alpha()
-        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
         self._mouse_dx = 0
         self._mouse_dy = 0
     

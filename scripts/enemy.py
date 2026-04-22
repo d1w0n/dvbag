@@ -6,7 +6,7 @@ pygame.init()
 class Enemy(Instance):
 
     def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int):
-        super().__init__("Enemy", window, x, y, width, height)
+        super().__init__("Enemy", "assets/placeholder.png", window, x, y, width, height)
         self.health = health
         self.speed = speed
         self.damage = damage
@@ -16,6 +16,8 @@ class Enemy(Instance):
         self.velocity_x = 0
         self.velocity_y = 0
         self._color = (255, 0, 0)
+        self._sprite = pygame.image.load("assets/placeholder.png").convert_alpha()
+        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
 
     def update(self, instance_list, room, camera):
         self._color = (255, self._color[1] * 0.9, self._color[2] * 0.9)
@@ -48,4 +50,4 @@ class Enemy(Instance):
         # moves towards the target position.
 
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, (self._color[0], round(self._color[1]), round(self._color[2])), (self.x - camera_x, self.y - camera_y), self.width)
+        pygame.draw.circle(self._window, (self._color[0], round(self._color[1]), round(self._color[2])), (self.x - camera_x, self.y - camera_y), self.width / 2)

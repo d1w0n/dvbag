@@ -29,7 +29,7 @@ camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
 all_instances = [Player(window, 0, 0, 32, 32, 100, 5), 
-                 Enemy(window, (room.width / 4), 0, 16, 16, 100, 3, 10)]
+                 Enemy(window, (room.width / 4), 0, 32, 32, 100, 3, 10)]
 remove_instances = []
 add_instances = []
 # initialize instance lists.
@@ -49,6 +49,9 @@ while running:
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # gets the current position of the mouse cursor.
+    
+    camera.shake_decay()
+    # multiplies camera shake attributes by its decay.
 
     for instance in add_instances:
         all_instances.append(instance)
@@ -80,9 +83,6 @@ while running:
         if all_instances[i].remove:
             remove_instances.append(i)
     # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
-
-    camera.shake_decay()
-    # multiplies camera shake attributes by its decay.
 
     for instance in all_instances:
         instance.tick() 

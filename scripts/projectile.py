@@ -5,7 +5,7 @@ pygame.init()
 
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__("Projectile", window, x, y, width, height)
+        super().__init__("Projectile", "assets/placeholder.png", window, x, y, width, height)
         self.speed = speed
         self.damage = damage
         self._dx = target_x - self.x
