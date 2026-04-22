@@ -22,7 +22,8 @@ class Player(Instance):
         self._damage_ticks = 0
         self._sprite = pygame.image.load("assets/placeholder.png").convert_alpha()
         self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
-
+        self._mouse_dx = 0
+        self._mouse_dy = 0
     
     def update(self, instance_list, room, camera): 
         self._room_width = room.width
@@ -83,7 +84,9 @@ class Player(Instance):
             self.y -= self.y_velocity
         # if colliding with room bounds, revert x or y velocity change.
 
-        #self._rotated = 
+        self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
         
     def render(self, camera_x, camera_y):
-        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+        _rotated = pygame.transform.rotate(self._sprite, self._angle)
+        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        self._window.blit(_rotated, _rect.topleft)

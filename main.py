@@ -29,7 +29,7 @@ camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
 all_instances = [Player(window, 0, 0, 32, 32, 100, 5), 
-                 Enemy(window, (room.width / 4), 0, 15, 15, 100, 3, 10)]
+                 Enemy(window, (room.width / 4), 0, 16, 16, 100, 3, 10)]
 remove_instances = []
 add_instances = []
 # initialize instance lists.
@@ -72,7 +72,7 @@ while running:
 
     if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 15, 15, random.randint(70, 100), random.randint(3, 5), 10))
+        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 16, 16, random.randint(70, 100), random.randint(3, 5), 10))
     # every second, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     
