@@ -36,7 +36,7 @@ class Instance(ABC):
     
     def get_collision(self, other: "Instance"):
         _distance = self.get_magnitude(self.x - other.x, self.y - other.y)
-        return _distance <= self.width + other.width or _distance <= self.height + other.height
+        return _distance <= self.width / 2 + other.width / 2 or _distance <= self.height / 2 + other.height / 2
     
     def get_room_collision_x(self):
         return self.x + self.width / 2 > self._room_width / 2 or self.x - self.width / 2 < -self._room_width / 2
