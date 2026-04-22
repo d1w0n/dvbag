@@ -34,3 +34,34 @@ class Projectile(Instance):
 
     def render(self, camera_x, camera_y):
         pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
+
+class Beam(Projectile):
+    def update(self, instance_list, room, camera):
+        self._instance_list = instance_list
+        self._room_width = room.width
+        self._room_height = room.height
+        super().update(self._instance_list, room, camera)
+
+    def tick(self):
+        self._break = False
+        self._x_init = self.x
+        self._y_init = self.y
+        while not self.get_room_collision_x() and not self.get_room_collision_y() and not self._break:
+            self.x += self.x_velocity
+            self.y += self.y_velocity
+            """
+            for instance in self._instance_list:
+                self._break = self.get_collision(instance)
+                if self._break:
+                    break
+            """
+        self.x_velocity = self._dx / self._magnitude * 1
+        self.y_velocity = self._dy / self._magnitude * 1
+        while self.get_room_collision_x() or self.get_room_collision_y():
+            self.x -= self.x_velocity
+            self.y -= self.y_velocity
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+            
+    def render(self, camera_x, camera_y):
+        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)

@@ -66,8 +66,8 @@ while running:
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
-            #if pygame.mouse.get_pressed()[2]:
-                #add_instances.append(Beam(window, instance.x, instance.y, 5, 5, (mouse_x + camera.x, mouse_y + camera.y), 15, 25))
+            if pygame.mouse.get_pressed()[2]:
+                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
             # creates a beam instead.
 
     if (pygame.time.get_ticks() - ticks) > 1000: 
@@ -118,8 +118,7 @@ while running:
     clock.tick(tickrate)
     # updates main loop at set tickrate.
 
-data = [["instance", "x", "y"], [100, 100]]
-with open("saves.csv", mode="w", newline="") as save:
+with open("saves/save.csv", mode="w", newline="") as save:
     pass
 # data save placeholder.
 

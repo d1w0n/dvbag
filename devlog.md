@@ -8,3 +8,6 @@ i got the camera class done, and it works good! i added a placeholder for enemy 
 
 4/20/2026:
 i dont have much plans for today other than what i wrote yesterday. today i will add a room class, but that means deleting the draw_room function to add into the room class.
+
+4/21/2026:
+i tried rewriting the beam class and it went... okay. still cant make it hit enemies at the moment. though i will try implementing sprites today, it will serve as a major step in this project.
