@@ -5,7 +5,7 @@ pygame.init()
 
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__("Projectile", "assets/placeholder.png", window, x, y, width, height)
+        super().__init__("Projectile", "assets/placeholder_thick.png", window, x, y, width, height)
         self.speed = speed
         self.damage = damage
         self._dx = target_x - self.x
@@ -33,7 +33,10 @@ class Projectile(Instance):
         # change x and y by velocities.
 
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
+        #pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+
+
 
 class Beam(Projectile):
     def update(self, instance_list, room, camera):

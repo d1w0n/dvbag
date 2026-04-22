@@ -49,7 +49,7 @@ while running:
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # gets the current position of the mouse cursor.
-    
+
     camera.shake_decay()
     # multiplies camera shake attributes by its decay.
 
@@ -65,7 +65,7 @@ while running:
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                add_instances.append(Projectile(window, instance.x, instance.y, 5, 5, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
+                add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
@@ -75,7 +75,7 @@ while running:
 
     if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 16, 16, random.randint(70, 100), random.randint(3, 5), 10))
+        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10))
     # every second, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     
