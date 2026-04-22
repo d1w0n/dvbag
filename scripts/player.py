@@ -1,5 +1,6 @@
 from scripts.instance import Instance
 import pygame
+import math
 
 pygame.init()
 
@@ -19,6 +20,9 @@ class Player(Instance):
         self.projectile_cooldown = 100
         self._damage_cooldown = 1000
         self._damage_ticks = 0
+        self._sprite = pygame.image.load("assets/placeholder.png").convert_alpha()
+        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
+
     
     def update(self, instance_list, room, camera): 
         self._room_width = room.width
@@ -32,6 +36,10 @@ class Player(Instance):
                     camera.shake(50, 50) 
         
         key = pygame.key.get_pressed()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        self._mouse_dx = mouse_x - (self.x - camera.x)
+        self._mouse_dy = mouse_y - (self.y - camera.y)
 
         self._dx = 0
         self._dy = 0
@@ -69,11 +77,13 @@ class Player(Instance):
         self.y += self.y_velocity
         # adds x and y by velocities.
 
-        if self.x > self._room_width / 2 or self.x < -self._room_width / 2:
+        if self.get_room_collision_x():
             self.x -= self.x_velocity
-        if self.y > self._room_height / 2 or self.y < -self._room_height / 2:
+        if self.get_room_collision_y():
             self.y -= self.y_velocity
         # if colliding with room bounds, revert x or y velocity change.
+
+        #self._rotated = 
         
     def render(self, camera_x, camera_y):
-        pygame.draw.circle(self._window, self._color, (self.x - camera_x, self.y - camera_y), self.width)
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))

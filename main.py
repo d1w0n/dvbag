@@ -28,7 +28,7 @@ room = Room(width * 2, height * 2)
 camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
-all_instances = [Player(window, 0, 0, 15, 15, 100, 5), 
+all_instances = [Player(window, 0, 0, 32, 32, 100, 5), 
                  Enemy(window, (room.width / 4), 0, 15, 15, 100, 3, 10)]
 remove_instances = []
 add_instances = []
