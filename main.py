@@ -8,6 +8,7 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy
 from scripts.projectile import Projectile, Beam
+from scripts.particle import Particle
 from scripts.render_sort import render_sort
 
 pygame.init()
@@ -91,6 +92,11 @@ while running:
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 5, instance.y - height / 2 + (mouse_y - height / 2) / 5)
         # smooths camera position to mouse and player position.
+
+        if instance.type == "Enemy" and instance.remove:
+            for i in range(5):
+                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, 5, instance.x + random.randint(-100, 100), instance.y + random.randint(-100, 100)))
+        # create 5 particles on death. 
 
     _removals = 0
     for index in remove_instances:
