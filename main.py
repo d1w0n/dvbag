@@ -153,7 +153,7 @@ for instance in all_instances:
 with open("saves/save.csv", mode="w", newline="") as save:
     writer = csv.writer(save)
     writer.writerows(data)
-# writes complete data to the save.
+# writes completed data to the save. (currently just acts as placeholder)
 
 print("\nProgram Successfully Ended\n")
 
