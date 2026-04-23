@@ -32,6 +32,12 @@ class Player(Instance):
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
                     camera.shake(50, 50) 
+
+            if instance.type == "Particle":
+                if self.get_collision(instance):
+                    self.health += 10
+                    if self.health > 100:
+                        self.health = 100
         
         key = pygame.key.get_pressed()
 
@@ -57,6 +63,9 @@ class Player(Instance):
         if key[pygame.K_d]:
             self._dx = self.speed
         # player movement.
+
+        if self.health <= 0:
+            self.remove = True
 
     def tick(self):
         self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)

@@ -91,11 +91,12 @@ while running:
 
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 5, instance.y - height / 2 + (mouse_y - height / 2) / 5)
+            _hp = instance.health # placeholder
         # smooths camera position to mouse and player position.
 
         if instance.type == "Enemy" and instance.remove:
             for i in range(5):
-                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, 10, random.randint(1, 360)))
+                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360)))
         # create 5 particles on death. 
 
     _removals = 0
@@ -117,6 +118,8 @@ while running:
     for instance in render_sort(all_instances, camera):
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera attributes after ticking.
+
+    pygame.draw.line(window, (0, 255, 0), (0, 0), (width * (_hp / 100), 0), 50)
 
     pygame.display.flip()
     # updates the display after rendering all instances.

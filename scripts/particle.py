@@ -9,7 +9,7 @@ class Particle(Instance):
         super().__init__("Particle", "assets/placeholder_red.png", window, x, y, width, height)
         self.speed = speed
         self.direction = direction
-        self._speed_decay = 0.8
+        self._speed_decay = 0.9
 
     def update(self, instance_list, room, camera):
         for instance in instance_list:
