@@ -127,9 +127,18 @@ while running:
     clock.tick(tickrate)
     # updates main loop at set tickrate.
 
+data = [
+    ["instance", "x", "y"]
+]
+
+for instance in all_instances:
+    if instance.type == "Player":
+        data.append([instance.type, instance.x, instance.y])
+
 with open("saves/save.csv", mode="w", newline="") as save:
-    pass
-# data save placeholder.
+    writer = csv.writer(save)
+    writer.writerows(data)
+# writes player data to a save. (placeholder)
 
 print("\nProgram Successfully Ended\n")
 
