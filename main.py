@@ -23,17 +23,30 @@ tickrate = 60
 ticks = 0
 
 _removals = 0
+_save_has_player = False
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
 room = Room(width * 2, height * 2)
 camera = Camera(-width / 2, -height / 2, width, height, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
-all_instances = [Player(window, 0, 0, 32, 32, 100, 5), 
-                 Enemy(window, (room.width / 4), 0, 32, 32, 100, 3, 10)]
+all_instances = [Enemy(window, (room.width / 4), 0, 32, 32, 100, 3, 10)]
 remove_instances = []
 add_instances = []
 # initialize instance lists.
+
+with open("saves/save.csv", "r") as save:
+    csv_reader = csv.DictReader(save)
+    for row in csv_reader:
+        if row["instance"] == "Player":
+            _save_has_player = True
+            all_instances.append(Player(window, float(row["x"]), float(row["y"]), 32, 32, 100, 5))
+            camera.x = float(row["x"]) - width / 2
+            camera.y = float(row["y"]) - height / 2
+        # sets player position to saved position.
+
+if not _save_has_player:
+    all_instances.append(Player(window, 0, 0, 32, 32, 100, 5))
 
 while running:
 # main loop.
@@ -130,15 +143,17 @@ while running:
 data = [
     ["instance", "x", "y"]
 ]
+# prepares program data for save after quitting, starts with column labels.
 
 for instance in all_instances:
     if instance.type == "Player":
-        data.append([instance.type, instance.x, instance.y])
+        data.append([instance.type, int(instance.x), int(instance.y)])
+    # adds player data to the save.
 
 with open("saves/save.csv", mode="w", newline="") as save:
     writer = csv.writer(save)
     writer.writerows(data)
-# writes player data to a save. (placeholder)
+# writes complete data to the save.
 
 print("\nProgram Successfully Ended\n")
 
