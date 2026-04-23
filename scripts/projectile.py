@@ -42,6 +42,8 @@ class Parry(Instance):
         super().__init__(self, "assets/placeholder.png", window, x, y, width, height)
         self._target_instance = target_instance
         self.damage = damage
+        self._start_ticks = pygame.time.get_ticks()
+        self._duration = 250
 
     def update(self, instance_list, room, camera):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -52,6 +54,9 @@ class Parry(Instance):
             if instance.type == self._target_instance:
                 self._target_x = instance.x + self.get_velocity_x(self._mouse_dx, self._mouse_dy, instance.width / 2 + self.width / 2)
                 self._target_y = instance.y + self.get_velocity_y(self._mouse_dx, self._mouse_dy, instance.height / 2 + self.height / 2)
+
+        if (pygame.time.get_ticks() - self._start_ticks) > self._duration:
+            self.remove = True
 
     def tick(self):
         self.x = self._target_x

@@ -6,7 +6,7 @@ pygame.init()
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, type: str, sprite, window, x: float, y: float, width: int, height: int):
+    def __init__(self, type, sprite = "assets/placeholder.png", window = 0, x = 0, y = 0, width = 32, height = 32):
         self.type = type
         self._window = window
         self.x = x
