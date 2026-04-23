@@ -7,7 +7,7 @@ from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy
-from scripts.projectile import Projectile, Beam
+from scripts.projectile import Projectile, Parry
 from scripts.particle import Particle
 from scripts.render_sort import render_sort
 
@@ -84,7 +84,7 @@ while running:
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2]:
-                add_instances.append(Beam(window, instance.x, instance.y, 5, 5, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
+                add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
             # creates a beam instead.
 
     if (pygame.time.get_ticks() - ticks) > 1000: 

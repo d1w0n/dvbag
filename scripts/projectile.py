@@ -1,5 +1,6 @@
 from scripts.instance import Instance
 import pygame
+import math
 
 pygame.init()
 
@@ -36,33 +37,22 @@ class Projectile(Instance):
 
 
 
-class Beam(Projectile):
+class Parry(Instance):
+    def __init__(self, window, x, y, width, height, target_instance, damage):
+        super().__init__(self, "assets/placeholder.png", window, x, y, width, height)
+        self._target_instance = target_instance
+        self.damage = damage
+
     def update(self, instance_list, room, camera):
-        self._instance_list = instance_list
-        self._room_width = room.width
-        self._room_height = room.height
-        super().update(self._instance_list, room, camera)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        for instance in instance_list:
+            if instance.type == self._target_instance:
+                self._target_x = instance.x + self.get_velocity_x(mouse_x - camera.width / 2, mouse_y - camera.height / 2, instance.width / 2 + self.width / 2)
+                self._target_y = instance.y + self.get_velocity_y(mouse_x - camera.width / 2, mouse_y - camera.height / 2, instance.height / 2 + self.height / 2)
 
     def tick(self):
-        self._break = False
-        self._x_init = self.x
-        self._y_init = self.y
-        while not self.get_room_collision_x() and not self.get_room_collision_y() and not self._break:
-            self.x += self.x_velocity
-            self.y += self.y_velocity
-            """
-            for instance in self._instance_list:
-                self._break = self.get_collision(instance)
-                if self._break:
-                    break
-            """
-        self.x_velocity = self._dx / self._magnitude * 1
-        self.y_velocity = self._dy / self._magnitude * 1
-        while self.get_room_collision_x() or self.get_room_collision_y():
-            self.x -= self.x_velocity
-            self.y -= self.y_velocity
-        self.x += self.x_velocity
-        self.y += self.y_velocity
-            
+        self.x = self._target_x
+        self.y = self._target_y
+
     def render(self, camera_x, camera_y):
-        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
