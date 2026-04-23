@@ -95,7 +95,7 @@ while running:
 
         if instance.type == "Enemy" and instance.remove:
             for i in range(5):
-                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, 10, instance.x + random.randint(-100, 100), instance.y + random.randint(-100, 100)))
+                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, 10, random.randint(1, 360)))
         # create 5 particles on death. 
 
     _removals = 0

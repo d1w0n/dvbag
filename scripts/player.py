@@ -13,8 +13,8 @@ class Player(Instance):
 
         self._dx = 0
         self._dy = 0
-        self.x_velocity = 0
-        self.y_velocity = 0
+        self.velocity_x = 0
+        self.velocity_y = 0
         self._color = (0, 0, 255)
         self.cooldown_ticks = 0
         self.projectile_cooldown = 100
@@ -24,8 +24,7 @@ class Player(Instance):
         self._mouse_dy = 0
     
     def update(self, instance_list, room, camera): 
-        self._room_width = room.width
-        self._room_height = room.height
+        self._room = room
         
         for instance in instance_list:
             if instance.type == "Enemy":
@@ -48,6 +47,7 @@ class Player(Instance):
             self.speed = 10
         else:
             self.speed = 5
+
         if key[pygame.K_w]:
             self._dy = -self.speed
         if key[pygame.K_a]:
@@ -59,27 +59,16 @@ class Player(Instance):
         # player movement.
 
     def tick(self):
-        self._target_distance = (self._dx ** 2 + self._dy ** 2) ** 0.5 
-        # use pythagorean theorem to stop extra diagonal speed.
-
-        if self._target_distance > 0:
-            self.x_velocity = self._dx / self._target_distance * self.speed
-            self.y_velocity = self._dy / self._target_distance * self.speed
-        # sets velocity to move towards the target.
-
-        else:
-            self.x_velocity = 0
-            self.y_velocity = 0
-        # if no movement, set velocity to 0.
-
-        self.x += self.x_velocity
-        self.y += self.y_velocity
+        self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
+        self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self.x += self.velocity_x
+        self.y += self.velocity_y
         # adds x and y by velocities.
 
-        if self.get_room_collision_x():
-            self.x -= self.x_velocity
-        if self.get_room_collision_y():
-            self.y -= self.y_velocity
+        if self.get_room_collision_x(self._room):
+            self.x -= self.velocity_x
+        if self.get_room_collision_y(self._room):
+            self.y -= self.velocity_y
         # if colliding with room bounds, revert x or y velocity change.
 
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))

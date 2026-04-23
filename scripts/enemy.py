@@ -21,6 +21,7 @@ class Enemy(Instance):
 
     def update(self, instance_list, room, camera):
         self._alpha_offset *= 0.8
+
         for instance in instance_list:
             if instance.type == "Player":
                 self._x_target = instance.x
@@ -39,14 +40,10 @@ class Enemy(Instance):
     def tick(self):
         self._dx = self._x_target - self.x
         self._dy = self._y_target - self.y
-        self._target_distance = (self._dx ** 2 + self._dy ** 2) ** 0.5 
-        # calculate distance to target using pythagorean theorem.
-        
-        if self._target_distance > 0:
-            self.velocity_x = self._dx / self._target_distance * self.speed
-            self.velocity_y = self._dy / self._target_distance * self.speed
-            self.x += self.velocity_x
-            self.y += self.velocity_y
+        self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
+        self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self.x += self.velocity_x
+        self.y += self.velocity_y
         # moves towards the target position.
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))

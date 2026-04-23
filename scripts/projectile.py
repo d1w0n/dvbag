@@ -10,20 +10,19 @@ class Projectile(Instance):
         self.damage = damage
         self._dx = target_x - self.x
         self._dy = target_y - self.y
-        self._magnitude = self.get_magnitude(self._dx, self._dy)
+        self._magnitude = self.get_distance(self._dx, self._dy)
         self.x_velocity = self._dx / self._magnitude * self.speed + add_x_velocity
         self.y_velocity = self._dy / self._magnitude * self.speed + add_y_velocity
 
     def update(self, instance_list, room, camera):
-        self._room_width = room.width
-        self._room_height = room.height
+        self._room = room
         for instance in instance_list:
             if instance.type == "Enemy":
                 if self.get_collision(instance):
                     self.remove = True
                 # if colliding with an enemy, remove itself.
 
-        if self.get_room_collision_x() or self.get_room_collision_y():
+        if self.get_room_collision_x(room) or self.get_room_collision_y(room):
             self.remove = True
         # if colliding with room bounds, remove itself.
 

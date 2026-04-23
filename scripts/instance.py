@@ -31,18 +31,24 @@ class Instance(ABC):
     def render(self, camera_x: float, camera_y: float):
         pass
 
-    def get_magnitude(self, dx, dy):
+    def get_distance(self, dx, dy):
         return (dx ** 2 + dy ** 2) ** 0.5
     
-    def get_collision(self, other: "Instance"):
-        _distance = self.get_magnitude(self.x - other.x, self.y - other.y)
+    def get_velocity_x(self, dx, dy, speed):
+        return dx / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0
+    
+    def get_velocity_y(self, dx, dy, speed):
+        return dy / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0
+    
+    def get_collision(self, other):
+        _distance = self.get_distance(self.x - other.x, self.y - other.y)
         return _distance <= self.width / 2 + other.width / 2 or _distance <= self.height / 2 + other.height / 2
     
-    def get_room_collision_x(self):
-        return self.x + self.width / 2 > self._room_width / 2 or self.x - self.width / 2 < -self._room_width / 2
+    def get_room_collision_x(self, room):
+        return self.x + self.width / 2 > room.width / 2 or self.x - self.width / 2 < -room.width / 2
     
-    def get_room_collision_y(self):
-        return self.y + self.height / 2 > self._room_height / 2 or self.y - self.height / 2 < -self._room_height / 2
+    def get_room_collision_y(self, room):
+        return self.y + self.height / 2 > room.height / 2 or self.y - self.height / 2 < -room.height / 2
     
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_random_x > camera.width or \
