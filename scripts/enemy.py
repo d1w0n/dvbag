@@ -16,10 +16,11 @@ class Enemy(Instance):
         self._y_target = 0
         self.velocity_x = 0
         self.velocity_y = 0
-        self._color = (255, 0, 0)
+        self._alpha = 255
+        self._alpha_offset = 0
 
     def update(self, instance_list, room, camera):
-        self._color = (255, self._color[1] * 0.9, self._color[2] * 0.9)
+        self._alpha_offset *= 0.8
         for instance in instance_list:
             if instance.type == "Player":
                 self._x_target = instance.x
@@ -29,7 +30,7 @@ class Enemy(Instance):
             if instance.type == "Projectile":
                 if self.get_collision(instance):
                     self.health -= instance.damage
-                    self._color = (255, 255, 255)
+                    self._alpha_offset = 255
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.health <= 0:
@@ -51,7 +52,10 @@ class Enemy(Instance):
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
 
     def render(self, camera_x, camera_y):
-        #pygame.draw.circle(self._window, (self._color[0], round(self._color[1]), round(self._color[2])), (self.x - camera_x, self.y - camera_y), self.width / 2)
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
+        _rotated.set_alpha(self._alpha - self._alpha_offset)
         _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
         self._window.blit(_rotated, _rect.topleft)
+
+class ProjectileEnemy(Enemy):
+    pass

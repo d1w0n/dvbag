@@ -11,3 +11,6 @@ i dont have much plans for today other than what i wrote yesterday. today i will
 
 4/21/2026:
 i tried rewriting the beam class and it went... okay. still cant make it hit enemies at the moment. though i will try implementing sprites today, it will serve as a major step in this project.
+
+4/22/2026:
+today i got a lot of work related to sprites done, and it works awesome! though i must admit i am too lazy to log all the changes i made today (and late yesterday) so i will leave this at that.

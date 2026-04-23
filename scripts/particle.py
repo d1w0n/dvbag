@@ -18,7 +18,7 @@ class Particle(Instance):
             if instance.type == "Player":
                 if self.get_collision(instance):
                     self.remove = True
-                    
+
         self._room_width = room.width
         self._room_height = room.height
         if self.get_room_collision_x() or self.get_room_collision_y():

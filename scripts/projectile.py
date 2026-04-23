@@ -33,7 +33,6 @@ class Projectile(Instance):
         # change x and y by velocities.
 
     def render(self, camera_x, camera_y):
-        #pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width)
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
 
 
