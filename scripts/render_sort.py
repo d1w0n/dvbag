@@ -1,4 +1,6 @@
-def render_sort(instance_list, *types):
-    return instance_list
-# TODO: add priority for instance rendering (ex: player always renders over all other instances but vfx renders over player.)
-
+def render_sort(instance_list, camera, *types):
+    _visible_instance_list = [] 
+    for instance in instance_list:
+        if not instance.get_out_of_view(camera):
+            _visible_instance_list.append(instance)
+    return _visible_instance_list

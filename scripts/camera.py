@@ -1,9 +1,11 @@
 import random
 
 class Camera:
-    def __init__(self, x, y, smoothing, decay):
+    def __init__(self, x, y, width, height, smoothing, decay):
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
         self.smoothing = smoothing
         self.decay = decay
         

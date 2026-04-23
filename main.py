@@ -26,7 +26,7 @@ _removals = 0
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
 room = Room(width * 2, height * 2)
-camera = Camera(-width / 2, -height / 2, 0.1, 0.8)
+camera = Camera(-width / 2, -height / 2, width, height, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
 all_instances = [Player(window, 0, 0, 32, 32, 100, 5), 
@@ -114,7 +114,7 @@ while running:
     room.draw(window, (200, 200, 200), camera.x + camera.shake_random_x, camera.y + camera.shake_random_y)
     # draws the room borders.
 
-    for instance in render_sort(all_instances):
+    for instance in render_sort(all_instances, camera):
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera attributes after ticking.
 

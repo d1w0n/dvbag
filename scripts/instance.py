@@ -20,7 +20,7 @@ class Instance(ABC):
         self.remove = False
 
     @abstractmethod
-    def update(self, instance_list: list, room: "Instance", camera: "Instance"):
+    def update(self, instance_list: list, room, camera):
         pass
 
     @abstractmethod
@@ -43,3 +43,9 @@ class Instance(ABC):
     
     def get_room_collision_y(self):
         return self.y + self.height / 2 > self._room_height / 2 or self.y - self.height / 2 < -self._room_height / 2
+    
+    def get_out_of_view(self, camera):
+        return self.x - self.width / 2 - camera.x + camera.shake_random_x > camera.width or \
+        self.x + self.width / 2 - camera.x + camera.shake_random_x < 0 or \
+        self.y - self.height / 2 - camera.y + camera.shake_random_y > camera.height or \
+        self.y + self.height / 2 - camera.y + camera.shake_random_y < 0
