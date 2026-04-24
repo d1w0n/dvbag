@@ -88,3 +88,15 @@ class ProjectileEnemy(Enemy):
 
         if self.health <= 0:
             self.remove = True
+
+    def tick(self):
+        self._dx = self.x_target - self.x
+        self._dy = self.y_target - self.y
+        if not self.spawn_projectile:
+            self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
+            self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+            self.x += self.velocity_x
+            self.y += self.velocity_y
+        # moves towards the target position.
+
+        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
