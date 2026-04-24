@@ -55,3 +55,6 @@ class Instance(ABC):
         self.x + self.width / 2 - camera.x + camera.shake_random_x < 0 or \
         self.y - self.height / 2 - camera.y + camera.shake_random_y > camera.height or \
         self.y + self.height / 2 - camera.y + camera.shake_random_y < 0
+    
+    def get_instance_in_range(self, other, range):
+        return self.get_distance((other.x + other.width / 2) - (self.x + self.width / 2), (other.y + other.height / 2) - (self.y + self.height / 2)) <= range

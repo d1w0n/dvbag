@@ -47,11 +47,11 @@ class Parry(Instance):
 
     def update(self, instance_list, room, camera):
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        self._mouse_dx = mouse_x - camera.width / 2
-        self._mouse_dy = mouse_y - camera.height / 2
 
         for instance in instance_list:
             if instance.type == self._target_instance:
+                self._mouse_dx = mouse_x + camera.x - instance.x
+                self._mouse_dy = mouse_y + camera.y - instance.y
                 self._target_x = instance.x + self.get_velocity_x(self._mouse_dx, self._mouse_dy, instance.width / 2 + self.width / 2)
                 self._target_y = instance.y + self.get_velocity_y(self._mouse_dx, self._mouse_dy, instance.height / 2 + self.height / 2)
 
@@ -67,3 +67,11 @@ class Parry(Instance):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
         _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
         self._window.blit(_rotated, _rect.topleft)
+
+
+
+class Beam(Instance):
+    def __init__(self, window, x, y, width, height, target_x, target_y, damage):
+        super().__init__("Projectile", "assets/placeholder_thick.png", window, x, y, width, height)
+        self._target_x = target_x
+        self._target_y = target_y

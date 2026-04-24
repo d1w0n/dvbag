@@ -54,5 +54,31 @@ class Enemy(Instance):
         _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
         self._window.blit(_rotated, _rect.topleft)
 
+
+
 class ProjectileEnemy(Enemy):
-    pass
+    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int, range):
+        super().__init__(window, x, y, width, height, health, speed, damage)
+        self.range = range
+        
+
+    def update(self, instance_list, room, camera):
+        self._alpha_offset *= 0.8
+
+        for instance in instance_list:
+            if instance.type == "Player":
+                self._x_target = instance.x
+                self._y_target = instance.y
+                # sets target position to go to the player.
+
+                if self.get_instance_in_range(instance, self.range):
+                    self._alpha_offset = 255
+            
+            if instance.type == "Projectile":
+                if self.get_collision(instance):
+                    self.health -= instance.damage
+                    self._alpha_offset = 255
+                # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
+
+        if self.health <= 0:
+            self.remove = True
