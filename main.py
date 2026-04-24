@@ -94,7 +94,7 @@ while running:
 
     if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
-        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300))
+        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
     # every second, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     

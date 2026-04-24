@@ -57,14 +57,14 @@ class Enemy(Instance):
 
 
 class ProjectileEnemy(Enemy):
-    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int, range):
+    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int, range, cooldown = 1000):
         super().__init__(window, x, y, width, height, health, speed, damage)
         self.range = range
 
         self.type = "ProjectileEnemy"
         self.spawn_projectile = False
         self.cooldown_ticks = 0
-        self.projectile_cooldown = 100
+        self.projectile_cooldown = cooldown
     
     def update(self, instance_list, room, camera):
         self._alpha_offset *= 0.8

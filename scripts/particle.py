@@ -6,10 +6,11 @@ pygame.init()
 
 class Particle(Instance):
     def __init__(self, window, x, y, width, height, speed, direction):
-        super().__init__("Particle", "assets/placeholder_red.png", window, x, y, width, height)
+        super().__init__("Particle", "assets/placeholder_green.png", window, x, y, width, height)
         self.speed = speed
         self.direction = direction
         self._speed_decay = 0.9
+        self._init_ticks = pygame.time.get_ticks()
 
     def update(self, instance_list, room, camera):
         for instance in instance_list:
@@ -17,7 +18,7 @@ class Particle(Instance):
                 if self.get_collision(instance):
                     self.remove = True
 
-        if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+        if self.get_room_collision_x(room) or self.get_room_collision_y(room) or ((pygame.time.get_ticks() - self._init_ticks) > 3000):
             self.remove = True
 
     def tick(self):
