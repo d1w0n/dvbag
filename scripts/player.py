@@ -7,7 +7,7 @@ pygame.init()
 class Player(Instance):
 
     def __init__(self, window, x, y, width, height, health: int, speed: int):
-        super().__init__("Player", "assets/placeholder_thick.png", window, x, y, width, height)
+        super().__init__("Player", "assets/images/placeholder_thick.png", window, x, y, width, height)
         self.health = health
         self.speed = speed
 
@@ -35,7 +35,7 @@ class Player(Instance):
 
             if instance.type == "Particle":
                 if self.get_collision(instance):
-                    self.health += 10
+                    self.health += 5
                     if self.health > 100:
                         self.health = 100
         

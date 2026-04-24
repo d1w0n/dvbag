@@ -7,7 +7,7 @@ pygame.init()
 class Enemy(Instance):
 
     def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int):
-        super().__init__("Enemy", "assets/placeholder_red.png", window, x, y, width, height)
+        super().__init__("Enemy", "assets/images/placeholder_red.png", window, x, y, width, height)
         self.health = health
         self.speed = speed
         self.damage = damage

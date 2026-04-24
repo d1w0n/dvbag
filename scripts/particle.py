@@ -6,7 +6,7 @@ pygame.init()
 
 class Particle(Instance):
     def __init__(self, window, x, y, width, height, speed, direction):
-        super().__init__("Particle", "assets/placeholder_green.png", window, x, y, width, height)
+        super().__init__("Particle", "assets/images/placeholder_green.png", window, x, y, width, height)
         self.speed = speed
         self.direction = direction
         self._speed_decay = 0.9
