@@ -58,3 +58,7 @@ class Instance(ABC):
     
     def get_instance_in_range(self, other, range):
         return self.get_distance((other.x + other.width / 2) - (self.x + self.width / 2), (other.y + other.height / 2) - (self.y + self.height / 2)) <= range
+    
+    def set_sprite(self, file):
+        self._sprite = pygame.image.load(file).convert_alpha()
+        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))

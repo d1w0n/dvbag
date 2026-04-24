@@ -18,7 +18,7 @@ class Projectile(Instance):
     def update(self, instance_list, room, camera):
         self._room = room
         for instance in instance_list:
-            if instance.type == "Enemy":
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
                 if self.get_collision(instance):
                     self.remove = True
                 # if colliding with an enemy, remove itself.
@@ -34,6 +34,8 @@ class Projectile(Instance):
 
     def render(self, camera_x, camera_y):
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+
+
 
 
 
@@ -70,8 +72,22 @@ class Parry(Instance):
 
 
 
-class Beam(Instance):
-    def __init__(self, window, x, y, width, height, target_x, target_y, damage):
-        super().__init__("Projectile", "assets/placeholder_thick.png", window, x, y, width, height)
-        self._target_x = target_x
-        self._target_y = target_y
+
+
+class EnemyProjectile(Projectile):
+    def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
+        super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
+        self.type = "EnemyProjectile"
+        self.set_sprite("assets/placeholder_red.png")
+
+    def update(self, instance_list, room, camera):
+        self._room = room
+        for instance in instance_list:
+            if instance.type == "Player":
+                if self.get_collision(instance):
+                    self.remove = True
+                # if colliding with an enemy, remove itself.
+
+        if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+            self.remove = True
+        # if colliding with room bounds, remove itself.

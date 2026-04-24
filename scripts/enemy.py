@@ -12,8 +12,8 @@ class Enemy(Instance):
         self.speed = speed
         self.damage = damage
 
-        self._x_target = 0
-        self._y_target = 0
+        self.x_target = 0
+        self.y_target = 0
         self.velocity_x = 0
         self.velocity_y = 0
         self._alpha = 255
@@ -24,8 +24,8 @@ class Enemy(Instance):
 
         for instance in instance_list:
             if instance.type == "Player":
-                self._x_target = instance.x
-                self._y_target = instance.y
+                self.x_target = instance.x
+                self.y_target = instance.y
                 # sets target position to go to the player.
             
             if instance.type == "Projectile":
@@ -38,8 +38,8 @@ class Enemy(Instance):
             self.remove = True
                 
     def tick(self):
-        self._dx = self._x_target - self.x
-        self._dy = self._y_target - self.y
+        self._dx = self.x_target - self.x
+        self._dy = self.y_target - self.y
         self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
         self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
@@ -60,19 +60,25 @@ class ProjectileEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int, range):
         super().__init__(window, x, y, width, height, health, speed, damage)
         self.range = range
-        
 
+        self.type = "ProjectileEnemy"
+        self.spawn_projectile = False
+        self.cooldown_ticks = 0
+        self.projectile_cooldown = 100
+    
     def update(self, instance_list, room, camera):
         self._alpha_offset *= 0.8
 
         for instance in instance_list:
             if instance.type == "Player":
-                self._x_target = instance.x
-                self._y_target = instance.y
+                self.x_target = instance.x
+                self.y_target = instance.y
                 # sets target position to go to the player.
 
                 if self.get_instance_in_range(instance, self.range):
-                    self._alpha_offset = 255
+                    self.spawn_projectile = True
+                else:
+                    self.spawn_projectile = False
             
             if instance.type == "Projectile":
                 if self.get_collision(instance):

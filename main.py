@@ -7,7 +7,7 @@ from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy
-from scripts.projectile import Projectile, Parry
+from scripts.projectile import Projectile, Parry, EnemyProjectile
 from scripts.particle import Particle
 from scripts.render_sort import render_sort
 
@@ -87,9 +87,14 @@ while running:
                 add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
             # creates a beam instead.
 
+        if instance.type == "ProjectileEnemy":
+            if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
+                instance.cooldown_ticks = pygame.time.get_ticks()
+                add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.x_target, instance.y_target, 10, 10))
+
     if (pygame.time.get_ticks() - ticks) > 1000: 
         ticks = pygame.time.get_ticks()
-        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 100))
+        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300))
     # every second, create an enemy instance at a random position in the room with random health and speed.
     # currently a placeholder.
     
@@ -107,7 +112,7 @@ while running:
             _hp = instance.health # placeholder
         # smooths camera position to mouse and player position.
 
-        if instance.type == "Enemy" and instance.remove:
+        if (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
             for i in range(5):
                 add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360)))
         # create 5 particles on death. 

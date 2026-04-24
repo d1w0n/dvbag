@@ -27,7 +27,7 @@ class Player(Instance):
         self._room = room
         
         for instance in instance_list:
-            if instance.type == "Enemy":
+            if instance.type == "Enemy" or instance.type == "EnemyProjectile":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
