@@ -1,7 +1,11 @@
+import time
+_start_time = time.perf_counter()
+print("\nLoading...")
+
 import pygame
 import random
-import sys
 import csv
+import sys
 
 from scripts.room import Room
 from scripts.camera import Camera
@@ -21,8 +25,8 @@ running = True
 clock = pygame.time.Clock()
 tickrate = 60
 ticks = 0
+removals = 0
 
-_removals = 0
 _save_has_player = False
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
@@ -30,7 +34,7 @@ room = Room(width * 2, height * 2)
 camera = Camera(-width / 2, -height / 2, width, height, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
-all_instances = [Enemy(window, (room.width / 4), 0, 32, 32, 100, 3, 10)]
+all_instances = []
 remove_instances = []
 add_instances = []
 # initialize instance lists.
@@ -45,8 +49,18 @@ with open("saves/save.csv", "r") as save:
             camera.y = float(row["y"]) - height / 2
         # sets player position to saved position.
 
+        elif row["instance"] == "Enemy":
+            all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 32, 32, 100, 3, 10))
+
+        elif row["instance"] == "ProjectileEnemy":
+            all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+
 if not _save_has_player:
-    all_instances.append(Player(window, 0, 0, 32, 32, 100, 5))
+    all_instances = [Player(window, 0, 0, 32, 32, 100, 5), Enemy(window, room.width / 4, 0, 32, 32, 100, 3, 10)]
+# if the player was removed in the save, start from a clean slate.
+
+print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
+# prints successful load with elapsed time.
 
 while running:
 # main loop.
@@ -108,7 +122,7 @@ while running:
     # performs instances next action after updating.
 
         if instance.type == "Player":
-            camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 5, instance.y - height / 2 + (mouse_y - height / 2) / 5)
+            camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
             _hp = instance.health # placeholder
         # smooths camera position to mouse and player position.
 
@@ -117,10 +131,10 @@ while running:
                 add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360)))
         # create 5 particles on death. 
 
-    _removals = 0
+    removals = 0
     for index in remove_instances:
-        all_instances.pop(index - _removals)
-        _removals += 1
+        all_instances.pop(index - removals)
+        removals += 1
     remove_instances = []
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
     
@@ -146,21 +160,23 @@ while running:
     # updates main loop at set tickrate.
 # end of main loop.
 
+_start_time = time.perf_counter()
+print("\nSaving...")
 data = [
     ["instance", "x", "y"]
 ]
 # prepares program data for save after quitting, starts with column labels.
 
 for instance in all_instances:
-    if instance.type == "Player":
-        data.append([instance.type, int(instance.x), int(instance.y)])
-    # adds player data to the save.
+    data.append([instance.type, int(instance.x), int(instance.y)])
+# adds player data to the save.
 
 with open("saves/save.csv", mode="w", newline="") as save:
     writer = csv.writer(save)
     writer.writerows(data)
 # writes completed data to the save. (currently just acts as placeholder)
 
-print("\nProgram Successfully Ended\n")
+print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)" + ("\n" * 2) + "Program Successfully Ended\n")
+# prints successful save with elapsed time.
 
 sys.exit()
