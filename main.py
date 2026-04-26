@@ -107,7 +107,7 @@ while running:
             
             if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
                 instance.beam_ticks = pygame.time.get_ticks()
-                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 25))
+                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15))
                 camera.shake(5, 5)
             # creates a beam instead.
 

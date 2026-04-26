@@ -114,6 +114,7 @@ class Beam(Instance):
 
         if self._collision:
             self.remove = True
+            pass
 
         while not self._collision:
             for instance in instance_list:
@@ -129,9 +130,30 @@ class Beam(Instance):
             self.x += self.x_velocity
             self.y += self.y_velocity
 
+        self.x_velocity = self.get_velocity_x(self._dx, self._dy, 1)
+        self.y_velocity = self.get_velocity_y(self._dx, self._dy, 1)
+
+        while self._collision:
+            self.x -= self.x_velocity
+            self.y -= self.y_velocity
+            self._collision = False
+
+            for instance in instance_list:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                    if self.get_collision(instance):
+                        self._collision = True
+
+            if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                self._collision = True
+
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+        self._collision = True
+
     def tick(self):
         pass
 
     def render(self, camera_x, camera_y):
         #self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
         pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
+        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width / 2)
