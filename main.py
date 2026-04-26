@@ -6,6 +6,7 @@ import pygame
 import random
 import csv
 import sys
+import os
 
 from scripts.room import Room
 from scripts.camera import Camera
@@ -38,6 +39,11 @@ all_instances = []
 remove_instances = []
 add_instances = []
 # initialize instance lists.
+
+if not os.path.exists("saves/save.csv"):
+    print("Save file not found. Creating new save file...")
+    open("saves/save.csv", mode="w", newline="")
+# creates a new save file if the file is not found. (usually happens when cloning the github repository.)
 
 with open("saves/save.csv", "r") as save:
     csv_reader = csv.DictReader(save)
