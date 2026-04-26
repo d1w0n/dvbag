@@ -99,16 +99,23 @@ while running:
     # updates each instance before doing anything.
 
         if instance.type == "Player":
-            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
-                instance.cooldown_ticks = pygame.time.get_ticks()
-                #add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
-                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 25))
+            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
+                instance.projectile_ticks = pygame.time.get_ticks()
+                add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
-            if pygame.mouse.get_pressed()[2]:
-                add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
+            if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
+                instance.beam_ticks = pygame.time.get_ticks()
+                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 25))
+                camera.shake(5, 5)
             # creates a beam instead.
+
+            if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - instance.parry_ticks) > instance.parry_cooldown:
+                instance.parry_ticks = pygame.time.get_ticks()
+                add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
+                camera.shake(20, 20)
+            # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:

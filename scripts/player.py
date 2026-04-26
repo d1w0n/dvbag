@@ -16,12 +16,16 @@ class Player(Instance):
         self.velocity_x = 0
         self.velocity_y = 0
         self._color = (0, 0, 255)
-        self.cooldown_ticks = 0
+        self.projectile_ticks = 0
         self.projectile_cooldown = 100
         self._damage_cooldown = 1000
         self._damage_ticks = 0
         self._mouse_dx = 0
         self._mouse_dy = 0
+        self.beam_ticks = 0
+        self.beam_cooldown = 50
+        self.parry_ticks = 0
+        self.parry_cooldown = 1000
     
     def update(self, instance_list, room, camera): 
         self._room = room
