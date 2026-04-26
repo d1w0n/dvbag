@@ -33,7 +33,7 @@ class Player(Instance):
                     self.health -= instance.damage
                     camera.shake(50, 50) 
 
-            if instance.type == "Particle":
+            elif instance.type == "Particle":
                 if self.get_collision(instance):
                     self.health += 5
                     if self.health > 100:

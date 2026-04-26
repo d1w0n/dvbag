@@ -107,7 +107,7 @@ while running:
                 add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
             # creates a beam instead.
 
-        if instance.type == "ProjectileEnemy":
+        elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
                 add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.x_target, instance.y_target, 10, 10))
@@ -132,7 +132,7 @@ while running:
             _hp = instance.health # placeholder
         # smooths camera position to mouse and player position.
 
-        if (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
+        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
             for i in range(5):
                 add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360)))
         # create 5 particles on death. 
