@@ -114,7 +114,7 @@ while running:
             if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - instance.parry_ticks) > instance.parry_cooldown:
                 instance.parry_ticks = pygame.time.get_ticks()
                 add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
-                camera.shake(20, 20)
+                camera.shake(10, 10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         elif instance.type == "ProjectileEnemy":
@@ -156,9 +156,6 @@ while running:
     
     camera.random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
-    
-    pygame.draw.circle(window, (200, 200, 200), (-camera.x + camera.shake_random_x, -camera.y + camera.shake_random_y), 3) 
-    # ORIGIN PLACEHOLDER
 
     room.draw(window, (200, 200, 200), camera.x + camera.shake_random_x, camera.y + camera.shake_random_y)
     # draws the room borders.

@@ -19,3 +19,6 @@ class Room:
 
         pygame.draw.line(window, color, (-self.width / 2 - camera_x, self.height / 2 - camera_y), (-self.width / 2 - camera_x, -self.height / 2 - camera_y), 5)
         # left border.
+
+        pygame.draw.circle(window, color, (-camera_x, -camera_y), 3)
+        # origin indicator. 

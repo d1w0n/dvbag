@@ -41,7 +41,7 @@ class Projectile(Instance):
 
 class Parry(Instance):
     def __init__(self, window, x, y, width, height, target_instance, damage):
-        super().__init__(self, "assets/images/placeholder.png", window, x, y, width, height)
+        super().__init__("Parry", "assets/images/placeholder.png", window, x, y, width, height)
         self._target_instance = target_instance
         self.damage = damage
         self._start_ticks = pygame.time.get_ticks()
@@ -81,12 +81,25 @@ class EnemyProjectile(Projectile):
         self.set_sprite("assets/images/placeholder_red.png")
 
     def update(self, instance_list, room, camera):
-        self._room = room
-        for instance in instance_list:
-            if instance.type == "Player":
-                if self.get_collision(instance):
-                    self.remove = True
-                # if colliding with an enemy, remove itself.
+        if self.type == "EnemyProjectile":
+            self._room = room
+            for instance in instance_list:
+                if instance.type == "Player":
+                    if self.get_collision(instance):
+                        self.remove = True
+                    # if colliding with an enemy, remove itself.
+
+                elif instance.type == "Parry":
+                    if self.get_collision(instance):
+                        self.type = "Projectile"
+                        self.damage = 100
+                        camera.shake(20, 20)
+                        self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
+                        self.x_velocity = self.get_velocity_x((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
+                        self.y_velocity = self.get_velocity_y((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
+        
+        elif self.type == "Projectile":
+            super().update(instance_list, room, camera)
 
         if self.get_room_collision_x(room) or self.get_room_collision_y(room):
             self.remove = True
