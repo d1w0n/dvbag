@@ -12,7 +12,7 @@ from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy
-from scripts.projectile import Projectile, Parry, EnemyProjectile
+from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle
 from scripts.render_sort import render_sort
 
@@ -40,26 +40,28 @@ remove_instances = []
 add_instances = []
 # initialize instance lists.
 
-if not os.path.exists("saves/save.csv"):
+if os.path.exists("saves/save.csv"):
+    with open("saves/save.csv", "r") as save:
+        csv_reader = csv.DictReader(save)
+        for row in csv_reader:
+            if row["instance"] == "Player":
+                _save_has_player = True
+                all_instances.append(Player(window, float(row["x"]), float(row["y"]), 32, 32, 100, 5))
+                camera.x = float(row["x"]) - width / 2
+                camera.y = float(row["y"]) - height / 2
+            # sets player position to saved position.
+
+            elif row["instance"] == "Enemy":
+                all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 32, 32, 100, 3, 10))
+
+            elif row["instance"] == "ProjectileEnemy":
+                all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+# if there is a save file, load the instances with their positions from there.
+
+else:
     print("Save file not found. Creating new save file...")
     open("saves/save.csv", mode="w", newline="")
 # creates a new save file if the file is not found. (usually happens when cloning the github repository.)
-
-with open("saves/save.csv", "r") as save:
-    csv_reader = csv.DictReader(save)
-    for row in csv_reader:
-        if row["instance"] == "Player":
-            _save_has_player = True
-            all_instances.append(Player(window, float(row["x"]), float(row["y"]), 32, 32, 100, 5))
-            camera.x = float(row["x"]) - width / 2
-            camera.y = float(row["y"]) - height / 2
-        # sets player position to saved position.
-
-        elif row["instance"] == "Enemy":
-            all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 32, 32, 100, 3, 10))
-
-        elif row["instance"] == "ProjectileEnemy":
-            all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
 
 if not _save_has_player:
     all_instances = [Player(window, 0, 0, 32, 32, 100, 5), Enemy(window, room.width / 4, 0, 32, 32, 100, 3, 10)]
@@ -99,7 +101,8 @@ while running:
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
+                #add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15, 25))
+                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 25))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             

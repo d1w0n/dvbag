@@ -28,7 +28,7 @@ class Enemy(Instance):
                 self.y_target = instance.y
                 # sets target position to go to the player.
             
-            elif instance.type == "Projectile":
+            elif instance.type == "Projectile" or instance.type == "Beam":
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -80,7 +80,7 @@ class ProjectileEnemy(Enemy):
                 else:
                     self.spawn_projectile = False
             
-            elif instance.type == "Projectile":
+            elif instance.type == "Projectile" or instance.type == "Beam":
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255

@@ -16,3 +16,6 @@ i tried rewriting the beam class and it went... okay. still cant make it hit ene
 today i got a lot of work related to sprites done, and it works awesome! though i must admit i am too lazy to log all the changes i made today (and late yesterday) so i will leave this at that.
 
 currently the entire project is at a good standing but i feel like a lot of the code in scripts is pretty poorly made with repitition and vague methods so i might spend some time working on that and optimizing instead of working on new stuff.
+
+4/25/2026:
+i forgot to devlog for like two of the days and the only thing that reminded me was getting the beam script to work but i have been updating the repository... the game is absolutely going great though with consistent progress. im really becoming happy with how the game is turning out! i definitely should plan to add a scrolling background soon, because that will finally get me out of the placeholder sprites phase and start making art for the game.

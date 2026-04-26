@@ -91,3 +91,47 @@ class EnemyProjectile(Projectile):
         if self.get_room_collision_x(room) or self.get_room_collision_y(room):
             self.remove = True
         # if colliding with room bounds, remove itself.
+
+
+
+
+
+class Beam(Instance):
+    def __init__(self, window, x, y, width, height, target_x, target_y, damage: int):
+        super().__init__("Beam", "assets/images/placeholder.png", window, x, y, width, height)
+        self.speed = height if height <= width else width
+        self.damage = damage
+        self._dx = target_x - self.x
+        self._dy = target_y - self.y
+        self.x_velocity = self.get_velocity_x(self._dx, self._dy, self.speed)
+        self.y_velocity = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self._x_init = self.x
+        self._y_init = self.y
+        self._collision = False
+
+    def update(self, instance_list, room, camera):
+        self._room = room
+
+        if self._collision:
+            self.remove = True
+
+        while not self._collision:
+            for instance in instance_list:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                    if self.get_collision(instance):
+                        self._collision = True
+                    # if colliding with an enemy, remove itself.
+
+            if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                self._collision = True
+            # if colliding with room bounds, remove itself.
+
+            self.x += self.x_velocity
+            self.y += self.y_velocity
+
+    def tick(self):
+        pass
+
+    def render(self, camera_x, camera_y):
+        #self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
