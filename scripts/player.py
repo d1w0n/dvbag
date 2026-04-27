@@ -72,8 +72,7 @@ class Player(Instance):
             self.remove = True
 
     def tick(self):
-        self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
-        self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
         # adds x and y by velocities.

@@ -7,13 +7,9 @@ pygame.init()
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
-        self.speed = speed
         self.damage = damage
-        self._dx = target_x - self.x
-        self._dy = target_y - self.y
-        self._magnitude = self.get_distance(self._dx, self._dy)
-        self.x_velocity = self._dx / self._magnitude * self.speed + add_x_velocity
-        self.y_velocity = self._dy / self._magnitude * self.speed + add_y_velocity
+        self.speed = speed
+        self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
 
     def update(self, instance_list, room, camera):
         self._room = room
@@ -28,14 +24,12 @@ class Projectile(Instance):
         # if colliding with room bounds, remove itself.
 
     def tick(self):
-        self.x += self.x_velocity
-        self.y += self.y_velocity
+        self.x += self.velocity_x
+        self.y += self.velocity_y
         # change x and y by velocities.
 
     def render(self, camera_x, camera_y):
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
-
-
 
 
 
@@ -54,9 +48,10 @@ class Parry(Instance):
             if instance.type == self._target_instance:
                 self._mouse_dx = mouse_x + camera.x - instance.x
                 self._mouse_dy = mouse_y + camera.y - instance.y
-                self._target_x = instance.x + self.get_velocity_x(self._mouse_dx, self._mouse_dy, instance.width / 2 + self.width / 2)
-                self._target_y = instance.y + self.get_velocity_y(self._mouse_dx, self._mouse_dy, instance.height / 2 + self.height / 2)
-
+                self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2 + self.width / 2)
+                self._target_x += instance.x
+                self._target_y += instance.y
+                
         if (pygame.time.get_ticks() - self._start_ticks) > self._duration:
             self.remove = True
 
@@ -95,8 +90,7 @@ class EnemyProjectile(Projectile):
                         self.damage = 100
                         camera.shake(20, 20)
                         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-                        self.x_velocity = self.get_velocity_x((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
-                        self.y_velocity = self.get_velocity_y((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
+                        self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
         
         elif self.type == "Projectile":
             super().update(instance_list, room, camera)
@@ -116,8 +110,7 @@ class Beam(Instance):
         self.damage = damage
         self._dx = target_x - self.x
         self._dy = target_y - self.y
-        self.x_velocity = self.get_velocity_x(self._dx, self._dy, self.speed)
-        self.y_velocity = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self._x_init = self.x
         self._y_init = self.y
         self._collision = False
@@ -140,15 +133,14 @@ class Beam(Instance):
                 self._collision = True
             # if colliding with room bounds, remove itself.
 
-            self.x += self.x_velocity
-            self.y += self.y_velocity
+            self.x += self.velocity_x
+            self.y += self.velocity_y
 
-        self.x_velocity = self.get_velocity_x(self._dx, self._dy, 1)
-        self.y_velocity = self.get_velocity_y(self._dx, self._dy, 1)
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, 1)
 
         while self._collision:
-            self.x -= self.x_velocity
-            self.y -= self.y_velocity
+            self.x -= self.velocity_x
+            self.y -= self.velocity_y
             self._collision = False
 
             for instance in instance_list:
@@ -159,8 +151,8 @@ class Beam(Instance):
             if self.get_room_collision_x(room) or self.get_room_collision_y(room):
                 self._collision = True
 
-        self.x += self.x_velocity
-        self.y += self.y_velocity
+        self.x += self.velocity_x
+        self.y += self.velocity_y
         self._collision = True
 
     def tick(self):

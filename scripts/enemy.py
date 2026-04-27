@@ -12,8 +12,8 @@ class Enemy(Instance):
         self.speed = speed
         self.damage = damage
 
-        self.x_target = 0
-        self.y_target = 0
+        self.target_x = 0
+        self.target_y = 0
         self.velocity_x = 0
         self.velocity_y = 0
         self._alpha = 255
@@ -24,8 +24,8 @@ class Enemy(Instance):
 
         for instance in instance_list:
             if instance.type == "Player":
-                self.x_target = instance.x
-                self.y_target = instance.y
+                self.target_x = instance.x
+                self.target_y = instance.y
                 # sets target position to go to the player.
             
             elif instance.type == "Projectile" or instance.type == "Beam":
@@ -38,10 +38,9 @@ class Enemy(Instance):
             self.remove = True
                 
     def tick(self):
-        self._dx = self.x_target - self.x
-        self._dy = self.y_target - self.y
-        self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
-        self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+        self._dx = self.target_x - self.x
+        self._dy = self.target_y - self.y
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
         # moves towards the target position.
@@ -94,8 +93,7 @@ class ProjectileEnemy(Enemy):
         self._dx = self.x_target - self.x
         self._dy = self.y_target - self.y
         if not self.spawn_projectile:
-            self.velocity_x = self.get_velocity_x(self._dx, self._dy, self.speed)
-            self.velocity_y = self.get_velocity_y(self._dx, self._dy, self.speed)
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
             self.x += self.velocity_x
             self.y += self.velocity_y
         # moves towards the target position.
