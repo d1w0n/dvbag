@@ -6,7 +6,7 @@ pygame.init()
 
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__("Projectile", "assets/images/placeholder_thick.png", window, x, y, width, height)
+        super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
         self.speed = speed
         self.damage = damage
         self._dx = target_x - self.x
@@ -78,7 +78,7 @@ class EnemyProjectile(Projectile):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
         self.type = "EnemyProjectile"
-        self.set_sprite("assets/images/placeholder_red.png")
+        self.set_sprite("assets/images/placeholder_dark_red.png")
 
     def update(self, instance_list, room, camera):
         if self.type == "EnemyProjectile":

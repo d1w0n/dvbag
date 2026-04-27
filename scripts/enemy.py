@@ -65,6 +65,7 @@ class ProjectileEnemy(Enemy):
         self.spawn_projectile = False
         self.cooldown_ticks = 0
         self.projectile_cooldown = cooldown
+        self.set_sprite("assets/images/placeholder_dark_red.png")
     
     def update(self, instance_list, room, camera):
         self._alpha_offset *= 0.8
