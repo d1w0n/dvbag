@@ -18,7 +18,11 @@ class Instance(ABC):
         self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
 
         self.remove = False
+        self.can_pre_update = False
 
+    def pre_update(self, instance_list, room, camera):
+        pass
+    
     @abstractmethod
     def update(self, instance_list: list, room, camera):
         pass

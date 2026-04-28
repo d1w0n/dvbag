@@ -14,7 +14,7 @@ from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle
-from scripts.render_sort import render_sort
+from scripts.list_sort import render_sort
 
 pygame.init()
 
@@ -26,7 +26,7 @@ running = True
 clock = pygame.time.Clock()
 tickrate = 60
 enemy_ticks = 0
-projectileenemy_ticks = 0
+projectile_enemy_ticks = 0
 removals = 0
 
 _save_has_player = False
@@ -94,6 +94,11 @@ while running:
         all_instances.append(instance)
     add_instances = []
     # adds queued instances to the instance list, then clears the add instances list.
+    
+    for instance in all_instances:
+        if instance.can_pre_update:
+            instance.pre_update(all_instances, room, camera)
+    # runs pre-update for instances that have that priority.
 
     for instance in all_instances:
         instance.update(all_instances, room, camera)
@@ -124,13 +129,13 @@ while running:
                 add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.x_target, instance.y_target, 10, 10))
             # if player is in range, fire a projectile at the player.
 
-    if (pygame.time.get_ticks() - enemy_ticks) > 1000: 
+    if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
         add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
-    if (pygame.time.get_ticks() - projectileenemy_ticks) > 3000: 
-        projectileenemy_ticks = pygame.time.get_ticks()
+    if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
+        projectile_enemy_ticks = pygame.time.get_ticks()
         add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 

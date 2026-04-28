@@ -114,10 +114,10 @@ class Beam(Instance):
         self._x_init = self.x
         self._y_init = self.y
         self._collision = False
+        self.can_pre_update = True
 
-    def update(self, instance_list, room, camera):
+    def pre_update(self, instance_list, room, camera):
         self._room = room
-
         if self._collision:
             self.remove = True
             pass
@@ -154,6 +154,9 @@ class Beam(Instance):
         self.x += self.velocity_x
         self.y += self.velocity_y
         self._collision = True
+
+    def update(self, instance_list, room, camera):
+        pass
 
     def tick(self):
         pass
