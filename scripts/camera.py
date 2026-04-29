@@ -2,7 +2,8 @@ import random
 from scripts.screen_effects import Effect
 
 class Camera:
-    def __init__(self, x, y, width, height, smoothing, decay):
+    def __init__(self, window, x, y, width, height, smoothing, decay):
+        self._window = window
         self.x = x
         self.y = y
         self.width = width
@@ -36,5 +37,5 @@ class Camera:
         self.shake_random_x = random.randint(-round(self.shake_x), round(self.shake_x))
         self.shake_random_y = random.randint(-round(self.shake_y), round(self.shake_y))
 
-    def add_effect(self, window, sprite, duration):
-        self.effects.append(Effect(window, sprite, self.width, self.height, duration))
+    def add_effect(self, sprite, duration, intensity):
+        self.effects.append(Effect(self._window, sprite, self.width, self.height, duration, intensity))

@@ -35,7 +35,7 @@ _save_has_player = False
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
 
 room = Room(width * 2, height * 2)
-camera = Camera(-width / 2, -height / 2, width, height, 0.1, 0.8)
+camera = Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8)
 # initializes variables from camera and room classes.
 
 all_instances = []
