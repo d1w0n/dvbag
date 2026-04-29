@@ -71,8 +71,8 @@ class ProjectileEnemy(Enemy):
 
         for instance in instance_list:
             if instance.type == "Player":
-                self.x_target = instance.x
-                self.y_target = instance.y
+                self.target_x = instance.x
+                self.target_y = instance.y
                 # sets target position to go to the player.
 
                 if self.get_instance_in_range(instance, self.range):
@@ -90,8 +90,8 @@ class ProjectileEnemy(Enemy):
             self.remove = True
 
     def tick(self):
-        self._dx = self.x_target - self.x
-        self._dy = self.y_target - self.y
+        self._dx = self.target_x - self.x
+        self._dy = self.target_y - self.y
         if not self.spawn_projectile:
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
             self.x += self.velocity_x

@@ -35,7 +35,8 @@ class Player(Instance):
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
-                    camera.shake(50, 50) 
+                    camera.shake(50, 50)
+                    camera.add_effect(self._window, "assets/images/red.png", 1000)
 
             elif instance.type == "Particle":
                 if self.get_collision(instance):

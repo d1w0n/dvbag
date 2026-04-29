@@ -15,6 +15,7 @@ from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle, ProjectileParticle
+from scripts.screen_effects import Effect
 from scripts.list_sort import render_sort
 
 pygame.init()
@@ -129,9 +130,9 @@ while running:
         elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.x_target, instance.y_target, 10, 10))
+                add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.target_x, instance.target_y, 10, 10))
                 for i in range(5):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.y_target - instance.y, instance.x_target - instance.x)) + random.randint(-45, 45), 250))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
@@ -179,6 +180,9 @@ while running:
     for instance in render_sort(all_instances, camera):
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera attributes after ticking.
+
+    for effect in camera.effects:
+        effect.render()
 
     pygame.draw.line(window, (0, 255, 0), (0, 0), (width * (_hp / 100), 0), 50)
 
