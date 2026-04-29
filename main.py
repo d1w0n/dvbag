@@ -7,13 +7,14 @@ import random
 import csv
 import sys
 import os
+import math
 
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle
+from scripts.particle import Particle, ProjectileParticle
 from scripts.list_sort import render_sort
 
 pygame.init()
@@ -108,6 +109,8 @@ while running:
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
                 add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
+                for i in range(5):
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
@@ -155,7 +158,7 @@ while running:
 
         elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
             for i in range(5):
-                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360)))
+                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360), 3000))
         # create 5 particles on death. 
 
     removals = 0
