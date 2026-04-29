@@ -49,16 +49,16 @@ if os.path.exists("saves/save.csv"):
         for row in csv_reader:
             if row["instance"] == "Player":
                 _save_has_player = True
-                all_instances.append(Player(window, float(row["x"]), float(row["y"]), 32, 32, 100, 5))
+                all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
                 camera.x = float(row["x"]) - width / 2
                 camera.y = float(row["y"]) - height / 2
             # sets player position to saved position.
 
             elif row["instance"] == "Enemy":
-                all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 32, 32, 100, 3, 10))
+                all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
 
             elif row["instance"] == "ProjectileEnemy":
-                all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+                all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
 # if there is a save file, load the instances with their positions from there.
 
 else:
@@ -67,7 +67,7 @@ else:
 # creates a new save file if the file is not found. (usually happens when cloning the github repository.)
 
 if not _save_has_player:
-    all_instances = [Player(window, 0, 0, 32, 32, 100, 5), Enemy(window, room.width / 4, 0, 32, 32, 100, 3, 10)]
+    all_instances = [Player(window, 0, 0, 48, 48, 100, 5), Enemy(window, room.width / 4, 0, 48, 48, 100, 3, 10)]
 # if the player was removed in the save, start from a clean slate.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
@@ -109,42 +109,42 @@ while running:
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
-                add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
+                add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
                 for i in range(5):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
                 instance.beam_ticks = pygame.time.get_ticks()
-                add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15))
+                add_instances.append(Beam(window, instance.x, instance.y, 24, 24, mouse_x + camera.x, mouse_y + camera.y, 15))
                 for i in range(3):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 150))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 150))
                 camera.shake(5, 5)
             # creates a beam instead.
 
             if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - instance.parry_ticks) > instance.parry_cooldown:
                 instance.parry_ticks = pygame.time.get_ticks()
-                add_instances.append(Parry(window, instance.x, instance.y, 64, 64, "Player", 10))
+                add_instances.append(Parry(window, instance.x, instance.y, 96, 96, "Player", 10))
                 camera.shake(10, 10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.target_x, instance.target_y, 10, 10))
+                add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
                 for i in range(5):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10))
+        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
         projectile_enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 32, 32, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
     for i in range(len(all_instances)):
@@ -163,7 +163,7 @@ while running:
 
         elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
             for i in range(5):
-                add_instances.append(Particle(window, instance.x, instance.y, 16, 16, random.randint(5, 10), random.randint(1, 360), 3000))
+                add_instances.append(Particle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
         # create 5 particles on death. 
 
     removals = 0
