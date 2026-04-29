@@ -110,7 +110,7 @@ while running:
                 instance.projectile_ticks = pygame.time.get_ticks()
                 add_instances.append(Projectile(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
                 for i in range(5):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
@@ -130,6 +130,8 @@ while running:
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
                 add_instances.append(EnemyProjectile(window, instance.x, instance.y, 16, 16, instance.x_target, instance.y_target, 10, 10))
+                for i in range(5):
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.y_target - instance.y, instance.x_target - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 

@@ -37,10 +37,10 @@ class Particle(Instance):
 
 
 class ProjectileParticle(Particle):
-    def __init__(self, window, x, y, width, height, speed, direction, duration):
+    def __init__(self, window, x, y, width, height, sprite, speed, direction, duration):
         super().__init__(window, x, y, width, height, speed, direction, duration)
         self.type = "ProjectileParticle"
-        self.set_sprite("assets/images/dot.png")
+        self.set_sprite(sprite)
         self._speed_decay = 1 # constant speed.
 
     def update(self, instance_list, room, camera):
