@@ -1,4 +1,4 @@
-def render_sort(instance_list, camera, *types):
+def render_sort(instance_list, camera, *types): # TODO: make it sort based off the arguments in types.
     _visible_instance_list = [] 
     
     for instance in instance_list:
