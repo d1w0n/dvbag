@@ -183,6 +183,8 @@ while running:
 
     for effect in camera.effects:
         effect.render()
+        if effect.remove:
+            camera.effects.remove(effect)
 
     pygame.draw.line(window, (0, 255, 0), (0, 0), (width * (_hp / 100), 0), 50)
 
