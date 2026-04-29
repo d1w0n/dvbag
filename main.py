@@ -118,6 +118,8 @@ while running:
             if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
                 instance.beam_ticks = pygame.time.get_ticks()
                 add_instances.append(Beam(window, instance.x, instance.y, 16, 16, mouse_x + camera.x, mouse_y + camera.y, 15))
+                for i in range(3):
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 8, 8, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 150))
                 camera.shake(5, 5)
             # creates a beam instead.
 
