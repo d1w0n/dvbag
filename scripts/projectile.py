@@ -121,39 +121,48 @@ class Beam(Instance):
         if self._collision:
             self.remove = True
             pass
-
-        while not self._collision:
-            for instance in instance_list:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
-                    if self.get_collision(instance):
-                        self._collision = True
-                    # if colliding with an enemy, remove itself.
+        
+        for instance in instance_list:
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                if self.get_collision(instance):
+                    self._collision = True
 
             if self.get_room_collision_x(room) or self.get_room_collision_y(room):
                 self._collision = True
-            # if colliding with room bounds, remove itself.
+
+        if not self._collision:
+            while not self._collision:
+                for instance in instance_list:
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                        if self.get_collision(instance):
+                            self._collision = True
+                        # if colliding with an enemy, remove itself.
+
+                if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                    self._collision = True
+                # if colliding with room bounds, remove itself.
+
+                self.x += self.velocity_x
+                self.y += self.velocity_y
+
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, 1)
+
+            while self._collision:
+                self.x -= self.velocity_x
+                self.y -= self.velocity_y
+                self._collision = False
+
+                for instance in instance_list:
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                        if self.get_collision(instance):
+                            self._collision = True
+
+                if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                    self._collision = True
 
             self.x += self.velocity_x
             self.y += self.velocity_y
-
-        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, 1)
-
-        while self._collision:
-            self.x -= self.velocity_x
-            self.y -= self.velocity_y
-            self._collision = False
-
-            for instance in instance_list:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
-                    if self.get_collision(instance):
-                        self._collision = True
-
-            if self.get_room_collision_x(room) or self.get_room_collision_y(room):
-                self._collision = True
-
-        self.x += self.velocity_x
-        self.y += self.velocity_y
-        self._collision = True
+            self._collision = True
 
     def update(self, instance_list, room, camera):
         pass

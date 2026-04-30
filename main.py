@@ -110,7 +110,7 @@ while running:
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
                 add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
-                for i in range(5):
+                for i in range(3):
                     add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + camera.y - instance.y, mouse_x + camera.x - instance.x)) + random.randint(-45, 45), 250))
                 camera.shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
@@ -133,13 +133,13 @@ while running:
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
                 add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
-                for i in range(5):
+                for i in range(3):
                     add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10))
+        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
