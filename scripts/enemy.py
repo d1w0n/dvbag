@@ -18,6 +18,7 @@ class Enemy(Instance):
         self.velocity_y = 0
         self._alpha = 255
         self._alpha_offset = 0
+        self.supertype = "Enemy"
 
     def update(self, instance_list, room, camera):
         self._alpha_offset *= 0.8
@@ -94,6 +95,60 @@ class ProjectileEnemy(Enemy):
         self._dy = self.target_y - self.y
         if not self.spawn_projectile:
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+            self.x += self.velocity_x
+            self.y += self.velocity_y
+        # moves towards the target position.
+
+        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+
+
+
+class ChargerEnemy(Enemy):
+    def __init__(self, window, x, y, width, height, health, speed, damage, range):
+        super().__init__(window, x, y, width, height, health, speed, damage)
+        self.range = range
+        self.type = "ChargerEnemy"
+        self.phase = 0
+        self._phase_ticks = pygame.time.get_ticks()
+        self.spawn_particle = False
+
+    def update(self, instance_list, room, camera):
+        self._alpha_offset *= 0.8
+        for instance in instance_list:
+            if instance.type == "Player":
+                self.target_x = instance.x
+                self.target_y = instance.y
+
+                if self.phase == 0 and self.get_instance_in_range(instance, self.range):
+                    self.phase = 1
+                    self._phase_ticks = pygame.time.get_ticks()
+                    self.spawn_particle = True
+
+            elif instance.type == "Projectile" or instance.type == "Beam":
+                if self.get_collision(instance):
+                    self.health -= instance.damage
+                    self._alpha_offset = 255
+                # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
+
+        if self.phase == 1 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
+                self.phase = 2
+                self._phase_ticks = pygame.time.get_ticks()
+
+        elif self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
+            self.phase = 3
+            self._phase_ticks = pygame.time.get_ticks()
+
+        elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
+            self.phase = 0
+
+        if self.health <= 0:
+            self.remove = True
+                    
+    def tick(self):
+        self._dx = self.target_x - self.x
+        self._dy = self.target_y - self.y
+        if not self.phase == 1 and not self.phase == 3: 
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 0 else self.speed * 2)
             self.x += self.velocity_x
             self.y += self.velocity_y
         # moves towards the target position.

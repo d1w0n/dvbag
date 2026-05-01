@@ -10,11 +10,12 @@ class Projectile(Instance):
         self.damage = damage
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
+        self.supertype = "Projectile"
 
     def update(self, instance_list, room, camera):
         self._room = room
         for instance in instance_list:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self.remove = True
                 # if colliding with an enemy, remove itself.
@@ -123,7 +124,7 @@ class Beam(Instance):
             pass
         
         for instance in instance_list:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self._collision = True
 
@@ -133,7 +134,7 @@ class Beam(Instance):
         if not self._collision:
             while not self._collision:
                 for instance in instance_list:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
                         # if colliding with an enemy, remove itself.
@@ -153,7 +154,7 @@ class Beam(Instance):
                 self._collision = False
 
                 for instance in instance_list:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy":
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
 

@@ -31,14 +31,14 @@ class Player(Instance):
         self._room = room
         
         for instance in instance_list:
-            if instance.type == "Enemy" or instance.type == "EnemyProjectile":
+            if instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
                     camera.shake(100, 100)
                     camera.add_effect("assets/images/red.png", 1000, 100)
 
-            elif instance.type == "Particle":
+            elif instance.type == "EnemyParticle":
                 if self.get_collision(instance):
                     self.health += 5
                     if self.health > 100:

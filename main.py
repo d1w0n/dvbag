@@ -12,9 +12,9 @@ import math
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
-from scripts.enemy import Enemy, ProjectileEnemy
+from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, ProjectileParticle
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle
 from scripts.screen_effects import Effect
 from scripts.list_sort import render_sort
 
@@ -137,9 +137,15 @@ while running:
                     add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
+        elif instance.type == "ChargerEnemy":
+            if instance.spawn_particle:
+                for i in range(5):
+                    add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(1, 360), 1000))
+                instance.spawn_particle = False
+
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(Enemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10))
+        add_instances.append(ChargerEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 100))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
@@ -161,9 +167,9 @@ while running:
             _hp = instance.health # placeholder
         # smooths camera position to mouse and player position.
 
-        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy") and instance.remove:
+        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
             for i in range(5):
-                add_instances.append(Particle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
+                add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
         # create 5 particles on death. 
 
     removals = 0
