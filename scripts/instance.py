@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from config import BASE_DIR
+import os
 import pygame
 
 pygame.init()
@@ -14,8 +16,7 @@ class Instance(ABC):
         self.width = width
         self.height = height
         self._distance = 0
-        self._sprite = pygame.image.load(sprite).convert_alpha()
-        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
+        self.set_sprite(sprite)
 
         self.remove = False
         self.can_pre_update = False
@@ -61,5 +62,5 @@ class Instance(ABC):
         return self.get_distance((other.x + other.width / 2) - (self.x + self.width / 2), (other.y + other.height / 2) - (self.y + self.height / 2)) <= range
     
     def set_sprite(self, file):
-        self._sprite = pygame.image.load(file).convert_alpha()
+        self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha() # side note: i hate this so much
         self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))

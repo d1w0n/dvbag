@@ -9,6 +9,7 @@ import sys
 import os
 import math
 
+from config import BASE_DIR
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
@@ -43,8 +44,10 @@ remove_instances = []
 add_instances = []
 # initialize instance lists.
 
-if os.path.exists("saves/save.csv"):
-    with open("saves/save.csv", "r") as save:
+save_path = os.path.join(BASE_DIR, "saves", "save.csv")
+
+if os.path.exists(save_path):
+    with open(save_path, "r") as save:
         csv_reader = csv.DictReader(save)
         for row in csv_reader:
             if row["instance"] == "Player":
@@ -63,7 +66,7 @@ if os.path.exists("saves/save.csv"):
 
 else:
     print("Save file not found. Creating new save file...")
-    open("saves/save.csv", mode="w", newline="")
+    open(save_path, mode="w", newline="")
 # creates a new save file if the file is not found. (usually happens when cloning the github repository.)
 
 if not _save_has_player:
@@ -214,7 +217,7 @@ for instance in all_instances:
     data.append([instance.type, int(instance.x), int(instance.y)])
 # adds player data to the save.
 
-with open("saves/save.csv", mode="w", newline="") as save:
+with open(save_path, mode="w", newline="") as save:
     writer = csv.writer(save)
     writer.writerows(data)
 # writes completed data to the save. (currently just acts as placeholder)
