@@ -64,3 +64,8 @@ class Instance(ABC):
     def set_sprite(self, file):
         self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha() # side note: i hate this so much
         self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
+
+    def tint_surface(surface, color):
+        tinted = surface.copy()
+        tinted.fill(color, special_flags=pygame.BLEND_RGB_MULT)
+        return tinted

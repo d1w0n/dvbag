@@ -197,7 +197,7 @@ while running:
         if effect.remove:
             camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
 
-    pygame.draw.line(window, (0, 255, 0), (0, 0), (width * (_hp / 100), 0), 50)
+    pygame.draw.line(window, (0, 255, 0), (0, 25), (width * (_hp / 100), 25), 50) # hp bar placeholder
 
     pygame.display.flip()
     # updates the display after rendering all instances.
