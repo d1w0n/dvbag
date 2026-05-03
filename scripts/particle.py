@@ -66,3 +66,18 @@ class ProjectileParticle(Particle):
         self._room = room 
         if self.get_room_collision_x(room) or self.get_room_collision_y(room) or ((pygame.time.get_ticks() - self._init_ticks) > self.duration):
             self.remove = True
+
+
+
+class ParryFlash(Particle):
+    def __init__(self, window, x, y, width, height, duration):
+        super().__init__(window, x, y, width, height, 0, 0, duration)
+        self.set_sprite("assets/images/parryflash.png")
+
+    def update(self, instance_list, room, camera):
+        #self.width += 5
+        #self.height += 5
+        super().update(instance_list, room, camera)
+
+    def tick(self):
+        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))

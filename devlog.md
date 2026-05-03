@@ -19,3 +19,6 @@ currently the entire project is at a good standing but i feel like a lot of the 
 
 4/25/2026:
 i forgot to devlog for like two of the days and the only thing that reminded me was getting the beam script to work but i have been updating the repository... the game is absolutely going great though with consistent progress. im really becoming happy with how the game is turning out! i definitely should plan to add a scrolling background soon, because that will finally get me out of the placeholder sprites phase and start making art for the game.
+
+5/2/2026:
+i really just forgot to commit to the repo on april 30th... there goes my commit streak. development has been slowing down mainly because im not sure what to make for this next, but people have been telling me to make sprites, so ill do that.

@@ -10,7 +10,6 @@ class Projectile(Instance):
         self.damage = damage
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
-        self.supertype = "Projectile"
 
     def update(self, instance_list, room, camera):
         self._room = room

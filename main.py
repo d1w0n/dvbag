@@ -14,7 +14,7 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash
 from scripts.screen_effects import Effect
 from scripts.list_sort import render_sort
 
@@ -139,9 +139,9 @@ while running:
 
         elif instance.type == "ChargerEnemy":
             if instance.spawn_particle:
-                for i in range(5):
-                    add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(1, 360), 1000))
-                instance.spawn_particle = False
+                add_instances.append(ParryFlash(window, instance.x, instance.y, 48, 48, 1000))
+            instance.spawn_particle = False
+        # creates parry indicator particles.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
@@ -192,7 +192,7 @@ while running:
     for effect in camera.effects:
         effect.render()
         if effect.remove:
-            camera.effects.remove(effect) # TODO: PLEASE OPTIMIZE THIS ITS SO BAD
+            camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
 
     pygame.draw.line(window, (0, 255, 0), (0, 0), (width * (_hp / 100), 0), 50)
 
