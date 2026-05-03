@@ -148,7 +148,7 @@ while running:
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(ChargerEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 100))
+        add_instances.append(ChargerEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 

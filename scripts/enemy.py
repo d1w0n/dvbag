@@ -124,6 +124,10 @@ class ChargerEnemy(Enemy):
                     self._phase_ticks = pygame.time.get_ticks()
                     self.spawn_particle = True
 
+                elif self.phase == 2 and self.get_collision(instance):
+                    self.phase = 3
+                    self._phase_ticks = pygame.time.get_ticks()
+
             elif instance.type == "Projectile" or instance.type == "Beam":
                 if self.get_collision(instance):
                     self.health -= instance.damage
