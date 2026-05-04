@@ -17,6 +17,7 @@ from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash
 from scripts.screen_effects import Effect
+from scripts.ui import Bar
 from scripts.list_sort import render_sort
 
 pygame.init()
@@ -42,6 +43,7 @@ camera = Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8)
 all_instances = []
 remove_instances = []
 add_instances = []
+ui = [Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0))]
 # initialize instance lists.
 
 save_path = os.path.join(BASE_DIR, "saves", "save.csv")
@@ -167,7 +169,9 @@ while running:
 
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
-            _hp = instance.health # placeholder
+            for element in ui:
+                if element.name == "HealthBar":
+                    element.stat = instance.health
         # smooths camera position to mouse and player position.
 
         elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
@@ -197,7 +201,8 @@ while running:
         if effect.remove:
             camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
 
-    pygame.draw.line(window, (0, 255, 0), (0, 25), (width * (_hp / 100), 25), 50) # hp bar placeholder
+    for element in ui:
+        element.render()
 
     pygame.display.flip()
     # updates the display after rendering all instances.
