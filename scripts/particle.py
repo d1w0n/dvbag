@@ -77,10 +77,11 @@ class ParryFlash(Particle):
 
     def update(self, instance_list, room, camera):
         super().update(instance_list, room, camera)
-        self.direction += self._rotation_speed
 
     def tick(self):
         self.direction += self._rotation_speed
+        self.height += 5
+        self.set_sprite("assets/images/parryflash.png")
 
     def render(self, camera_x, camera_y):
         _rotated = pygame.transform.rotate(self._sprite, self.direction)
