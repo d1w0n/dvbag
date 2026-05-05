@@ -32,6 +32,7 @@ tickrate = 60
 enemy_ticks = 0
 projectile_enemy_ticks = 0
 removals = 0
+score = 0
 
 _save_has_player = False
 # initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
@@ -44,7 +45,8 @@ all_instances = []
 remove_instances = []
 add_instances = []
 ui = [Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0)), 
-      Text("HealthText", window, 10, 60, 36, "Health", (0, 255, 0))]
+      Text("HealthText", window, 10, 60, 36, "Health", (0, 255, 0)),
+      Text("ScoreText", window, 10, height - 50, 48, "Score", (0, 0, 0))]
 # initialize instance lists.
 
 save_path = os.path.join(BASE_DIR, "saves", "save.csv")
@@ -110,7 +112,12 @@ while running:
 
     for instance in all_instances:
         instance.update(all_instances, room, camera)
+        ui.append()
     # updates each instance before doing anything.
+
+        if instance.add_score > 0:
+            score += instance.add_score
+            instance.add_score = 0
 
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
@@ -205,7 +212,10 @@ while running:
             camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
 
     for element in ui:
+        if element.name == "ScoreText":
+            element.set_text("Score: " + str(score) + "")
         element.render()
+    # renders ui elements.
 
     pygame.display.flip()
     # updates the display after rendering all instances.

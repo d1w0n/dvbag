@@ -88,6 +88,7 @@ class EnemyProjectile(Projectile):
                     if self.get_collision(instance):
                         self.type = "Projectile"
                         self.damage = 100
+                        self.add_score += 25
                         camera.shake(20, 20)
                         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
                         self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)

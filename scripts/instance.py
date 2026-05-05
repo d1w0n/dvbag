@@ -16,6 +16,7 @@ class Instance(ABC):
         self.width = width
         self.height = height
         self._distance = 0
+        self.add_score = 0
         self.set_sprite(sprite)
 
         self.remove = False

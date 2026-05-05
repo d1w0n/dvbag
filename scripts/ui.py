@@ -30,7 +30,7 @@ class Bar(UI):
 
 class Text(UI):
     def __init__(self, name, window, x, y, size, text, color, font = None):
-        super().__init__("Bar", name, window, x, y, 0, 0, color)
+        super().__init__("Text", name, window, x, y, 0, 0, color)
         self.font = pygame.font.Font(font, size)
         self._text_surface = self.font.render(text, True, self.color)
 
@@ -39,3 +39,13 @@ class Text(UI):
 
     def set_text(self, text: str):
         self._text_surface = self.font.render(text, True, self.color)
+
+class TextParticle(Text):
+    def __init__(self, name, window, x, y, size, text, color, font = None, duration = 0, x_velocity = 0, y_velocity = 0):
+        super().__init__(name, window, x, y, size, text, color, font)
+        self.duration = duration
+        self.x_velocity = 0
+        self.y_velocity = 0
+
+    def render(self):
+        pass

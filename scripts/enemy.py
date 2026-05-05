@@ -33,10 +33,12 @@ class Enemy(Instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+                    self.add_score += 5
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.health <= 0:
             self.remove = True
+            self.add_score += 50
                 
     def tick(self):
         self._dx = self.target_x - self.x
@@ -67,7 +69,7 @@ class ProjectileEnemy(Enemy):
         self.projectile_cooldown = cooldown
         self.set_sprite("assets/images/placeholder_dark_red.png")
     
-    def update(self, instance_list, room, camera):
+    def update(self, instance_list, room, camera): 
         self._alpha_offset *= 0.8
 
         for instance in instance_list:
@@ -85,10 +87,12 @@ class ProjectileEnemy(Enemy):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+                    self.add_score += 5
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.health <= 0:
             self.remove = True
+            self.add_score += 50
 
     def tick(self):
         self._dx = self.target_x - self.x
@@ -132,11 +136,13 @@ class ChargerEnemy(Enemy):
                 if self.get_collision(instance):
                     self.phase = 3
                     self._phase_ticks = pygame.time.get_ticks()
+                    self.add_score += 25
 
             elif instance.type == "Projectile" or instance.type == "Beam":
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+                    self.add_score += 5
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.phase == 1 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
@@ -152,6 +158,7 @@ class ChargerEnemy(Enemy):
 
         if self.health <= 0:
             self.remove = True
+            self.add_score += 50
                     
     def tick(self):
         self._dx = self.target_x - self.x
