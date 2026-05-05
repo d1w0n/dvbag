@@ -15,6 +15,7 @@ class UI(ABC):
         self.width = width
         self.height = height
         self.color = color
+        self.remove = False
 
     @abstractmethod
     def render(self):
@@ -44,8 +45,17 @@ class TextParticle(Text):
     def __init__(self, name, window, x, y, size, text, color, font = None, duration = 0, x_velocity = 0, y_velocity = 0):
         super().__init__(name, window, x, y, size, text, color, font)
         self.duration = duration
-        self.x_velocity = 0
-        self.y_velocity = 0
+        self._init_ticks = pygame.time.get_ticks()
+        self.x_velocity = x_velocity
+        self.y_velocity = y_velocity
 
     def render(self):
-        pass
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
+            self.remove = True
+            pass
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+        self.x_velocity *= 0.9
+        self.y_velocity *= 0.9
+        self._text_surface.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        self._window.blit(self._text_surface, (self.x, self.y))

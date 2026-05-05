@@ -17,7 +17,7 @@ from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash
 from scripts.screen_effects import Effect
-from scripts.ui import Bar, Text
+from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
 
 pygame.init()
@@ -112,11 +112,11 @@ while running:
 
     for instance in all_instances:
         instance.update(all_instances, room, camera)
-        ui.append()
     # updates each instance before doing anything.
 
         if instance.add_score > 0:
             score += instance.add_score
+            ui.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
             instance.add_score = 0
 
         if instance.type == "Player":
@@ -210,6 +210,13 @@ while running:
         effect.render()
         if effect.remove:
             camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
+
+    removals = 0
+    for i in range(len(ui)):
+        if ui[i - removals].remove:
+            ui.pop(i - removals)
+            removals += 1
+    # removes ui elements that need to be removed.
 
     for element in ui:
         if element.name == "ScoreText":
