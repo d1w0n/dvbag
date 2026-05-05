@@ -155,12 +155,12 @@ while running:
                 for i in range(3):
                     add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 60, random.randint(1, 360), 1000, random.randint(-10, 10)))
             if instance.phase == 2:
-                add_instances.append(AfterImage(window, "assets/images/placeholder_red.png", instance.x, instance.y, instance.width, instance.height, instance._angle, 250, -1.5))
+                add_instances.append(AfterImage(window, "assets/images/placeholder_red.png", instance.x, instance.y, instance.width, instance.height, instance._angle, 250, 125, -1.5))
             instance.spawn_particle = False
         # creates parry indicator particles.
 
         elif instance.type == "EnemyProjectile":
-            add_instances.append(AfterImage(window, "assets/images/placeholder_dark_red.png", instance.x, instance.y, instance.width, instance.height, 0, 250, -1))
+            add_instances.append(AfterImage(window, "assets/images/placeholder_dark_red.png", instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()

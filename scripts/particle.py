@@ -92,9 +92,10 @@ class ParryFlash(Particle):
 
 
 class AfterImage(Particle):
-    def __init__(self, window, sprite, x, y, width, height, direction, duration, size_change = 0):
+    def __init__(self, window, sprite, x, y, width, height, direction, duration, strength, size_change = 0):
         super().__init__(window, x, y, width, height, 0, direction, duration)
         self._spritepath = sprite
+        self.strength = strength
         self._size_change = size_change
 
     def update(self, instance_list, room, camera):
@@ -112,6 +113,6 @@ class AfterImage(Particle):
     def render(self, camera_x, camera_y):
         if not self.remove:
             _rotated = pygame.transform.rotate(self._sprite, self.direction)
-            _rotated.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+            _rotated.set_alpha(self.strength - round(self.strength * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
             _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
             self._window.blit(_rotated, _rect.topleft)
