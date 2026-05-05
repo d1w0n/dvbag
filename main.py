@@ -15,7 +15,7 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
@@ -152,7 +152,10 @@ while running:
 
         elif instance.type == "ChargerEnemy":
             if instance.spawn_particle:
-                add_instances.append(ParryFlash(window, instance.x, instance.y, 48, 48, 1000))
+                for i in range(3):
+                    add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 96, random.randint(1, 360), 1000, random.randint(-10, 10)))
+            if instance.phase == 2:
+                add_instances.append(AfterImage(window, "assets/images/placeholder_red.png", instance.x, instance.y, instance.width, instance.height, instance._angle, 250, -1.5))
             instance.spawn_particle = False
         # creates parry indicator particles.
 
@@ -209,7 +212,8 @@ while running:
     for effect in camera.effects:
         effect.render()
         if effect.remove:
-            camera.effects.remove(effect) # TODO: PLEASE CLEAN THIS UP ITS SO BAD
+            camera.effects.remove(effect)
+    # renders screen overlay effects.
 
     removals = 0
     for i in range(len(ui)):

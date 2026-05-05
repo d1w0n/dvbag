@@ -18,7 +18,7 @@ class UI(ABC):
         self.remove = False
 
     @abstractmethod
-    def render(self):
+    def render(self, offset_x, offset_y):
         pass
 
 class Bar(UI):
@@ -28,6 +28,8 @@ class Bar(UI):
 
     def render(self):
         pygame.draw.line(self._window, self.color, (self.x, self.y + self.height / 2), (self.x + self.width * (self.stat / 100), self.y + self.height / 2), self.height)
+
+
 
 class Text(UI):
     def __init__(self, name, window, x, y, size, text, color, font = None):
@@ -40,6 +42,8 @@ class Text(UI):
 
     def set_text(self, text: str):
         self._text_surface = self.font.render(text, True, self.color)
+
+
 
 class TextParticle(Text):
     def __init__(self, name, window, x, y, size, text, color, font = None, duration = 0, x_velocity = 0, y_velocity = 0):

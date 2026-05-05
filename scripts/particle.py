@@ -70,14 +70,47 @@ class ProjectileParticle(Particle):
 
 
 class ParryFlash(Particle):
-    def __init__(self, window, x, y, width, height, duration):
-        super().__init__(window, x, y, width, height, 0, 0, duration)
+    def __init__(self, window, x, y, width, height, direction, duration, rotation_speed = 0):
+        super().__init__(window, x, y, width, height, 0, direction, duration)
+        self._rotation_speed = rotation_speed
         self.set_sprite("assets/images/parryflash.png")
 
     def update(self, instance_list, room, camera):
-        #self.width += 5
-        #self.height += 5
         super().update(instance_list, room, camera)
+        self.direction += self._rotation_speed
 
     def tick(self):
-        self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
+        self.direction += self._rotation_speed
+
+    def render(self, camera_x, camera_y):
+        _rotated = pygame.transform.rotate(self._sprite, self.direction)
+        _rotated.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        self._window.blit(_rotated, _rect.topleft)
+
+
+
+class AfterImage(Particle):
+    def __init__(self, window, sprite, x, y, width, height, direction, duration, size_change = 0):
+        super().__init__(window, x, y, width, height, 0, direction, duration)
+        self._spritepath = sprite
+        self._size_change = size_change
+
+    def update(self, instance_list, room, camera):
+        if self.width <= 0 or self.height <= 0:
+            self.remove = True
+
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
+            self.remove = True
+
+    def tick(self):
+        self.width += self._size_change
+        self.height += self._size_change
+        self.set_sprite(self._spritepath)
+
+    def render(self, camera_x, camera_y):
+        if not self.remove:
+            _rotated = pygame.transform.rotate(self._sprite, self.direction)
+            _rotated.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+            _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+            self._window.blit(_rotated, _rect.topleft)
