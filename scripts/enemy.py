@@ -18,6 +18,7 @@ class Enemy(Instance):
         self.velocity_y = 0
         self._alpha = 255
         self._alpha_offset = 0
+        self.phase = 0
         self.supertype = "Enemy"
 
     def update(self, instance_list, room, camera):
@@ -112,7 +113,6 @@ class ChargerEnemy(Enemy):
         super().__init__(window, x, y, width, height, health, speed, damage)
         self.range = range
         self.type = "ChargerEnemy"
-        self.phase = 0
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
 
