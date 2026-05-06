@@ -119,6 +119,39 @@ while running:
             ui.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
             instance.add_score = 0
 
+    if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
+        enemy_ticks = pygame.time.get_ticks()
+        add_instances.append(ChargerEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+    # every second, create an enemy instance at a random position in the room with random health and speed.
+
+    if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
+        projectile_enemy_ticks = pygame.time.get_ticks()
+        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+    # every second, create a projectile enemy instance at a random position in the room with random health and speed.
+
+    for i in range(len(all_instances)):
+        if all_instances[i].remove:
+            remove_instances.append(i)
+    # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
+
+    for instance in all_instances:
+        instance.tick() 
+    # performs instances next action after updating.
+
+        if instance.type == "Player":
+            camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
+            for element in ui:
+                if element.name == "HealthBar":
+                    element.stat = instance.health
+                if element.name == "HealthText":
+                    element.set_text("Health: " + str(instance.health) + "")
+        # smooths camera position to mouse and player position.
+
+        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
+            for i in range(5):
+                add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
+        # create 5 particles on death. 
+
         if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
@@ -161,39 +194,6 @@ while running:
 
         elif instance.type == "EnemyProjectile":
             add_instances.append(AfterImage(window, "assets/images/placeholder_dark_red.png", instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
-
-    if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
-        enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(ChargerEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
-    # every second, create an enemy instance at a random position in the room with random health and speed.
-
-    if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
-        projectile_enemy_ticks = pygame.time.get_ticks()
-        add_instances.append(ProjectileEnemy(window, random.randint(round(-room.width / 2), round(room.width / 2)), random.randint(round(-room.height / 2), round(room.height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
-    # every second, create a projectile enemy instance at a random position in the room with random health and speed.
-
-    for i in range(len(all_instances)):
-        if all_instances[i].remove:
-            remove_instances.append(i)
-    # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
-
-    for instance in all_instances:
-        instance.tick() 
-    # performs instances next action after updating.
-
-        if instance.type == "Player":
-            camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
-            for element in ui:
-                if element.name == "HealthBar":
-                    element.stat = instance.health
-                if element.name == "HealthText":
-                    element.set_text("Health: " + str(instance.health) + "")
-        # smooths camera position to mouse and player position.
-
-        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
-            for i in range(5):
-                add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
-        # create 5 particles on death. 
 
     removals = 0
     for index in remove_instances:
