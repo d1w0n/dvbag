@@ -180,7 +180,7 @@ while running:
                 instance.cooldown_ticks = pygame.time.get_ticks()
                 add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
                 for i in range(3):
-                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/placeholder_dark_red.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
+                    add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
         elif instance.type == "ChargerEnemy":
@@ -193,7 +193,7 @@ while running:
         # creates parry indicator particles.
 
         elif instance.type == "EnemyProjectile":
-            add_instances.append(AfterImage(window, "assets/images/placeholder_dark_red.png", instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+            add_instances.append(AfterImage(window, "assets/images/enemyprojectile.png", instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
 
     removals = 0
     for index in remove_instances:
