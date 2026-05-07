@@ -45,8 +45,8 @@ all_instances = []
 remove_instances = []
 add_instances = []
 ui = [Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0)), 
-      Text("HealthText", window, 10, 60, 36, "Health", (0, 255, 0)),
-      Text("ScoreText", window, 10, height - 50, 48, "Score", (0, 0, 0))]
+      Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
+      Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))]
 # initialize instance lists.
 
 save_path = os.path.join(BASE_DIR, "saves", "save.csv")
@@ -186,7 +186,7 @@ while running:
         elif instance.type == "ChargerEnemy":
             if instance.spawn_particle:
                 for i in range(3):
-                    add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 60, random.randint(1, 360), 1000, random.randint(-10, 10)))
+                    add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 60, random.randint(1, 360), 500, random.randint(-10, 10)))
             if instance.phase == 2:
                 add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, instance._angle, 250, 125, -1.5))
             instance.spawn_particle = False
@@ -212,10 +212,13 @@ while running:
         instance.render(camera.x + camera.shake_random_x, camera.y + camera.shake_random_y) 
     # renders all instances with camera attributes after ticking.
 
-    for effect in camera.effects:
-        effect.render()
-        if effect.remove:
-            camera.effects.remove(effect)
+    removals = 0
+    for i in range(len(camera.effects)):
+        if camera.effects[i - removals].remove:
+            camera.effects.pop(i - removals)
+            removals += 1
+        else:
+            camera.effects[i - removals].render
     # renders screen overlay effects.
 
     removals = 0

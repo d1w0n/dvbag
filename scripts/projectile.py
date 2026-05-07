@@ -48,7 +48,7 @@ class Parry(Instance):
             if instance.type == self._target_instance:
                 self._mouse_dx = mouse_x + camera.x - instance.x
                 self._mouse_dy = mouse_y + camera.y - instance.y
-                self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2 + self.width / 2)
+                self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2)
                 self._target_x += instance.x
                 self._target_y += instance.y
                 

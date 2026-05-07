@@ -21,4 +21,4 @@ class Room:
         # left border.
 
         pygame.draw.circle(window, color, (-camera_x, -camera_y), 3)
-        # origin indicator. 
+        # origin indicator (remove soon). 

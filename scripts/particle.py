@@ -116,3 +116,19 @@ class AfterImage(Particle):
             _rotated.set_alpha(self.strength - round(self.strength * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
             _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
             self._window.blit(_rotated, _rect.topleft)
+
+
+
+class TextParticle(Particle):
+    def __init__(self, window, x, y, speed, direction, duration, size, text = "", color = (0, 0, 0), font = None):
+        super().__init__(window, x, y, 0, 0, speed, direction, duration)
+        self.color = color
+        self.font = pygame.font.Font(font, size)
+        self._text_surface = self.font.render(text, True, self.color)
+    
+    def render(self, camera_x, camera_y):
+        self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        self._window.blit(self._text_surface, (self.x - camera_x, self.y - camera_y))
+
+    def set_text(self, text: str):
+        self._text_surface = self.font.render(text, True, self.color)
