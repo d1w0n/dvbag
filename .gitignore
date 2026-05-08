@@ -8,3 +8,6 @@ venv/
 .idea/
 *.csv
 .venv/
+dist/
+build/
+*.spec

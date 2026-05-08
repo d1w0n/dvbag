@@ -40,10 +40,12 @@ class Parry(Instance):
         self.damage = damage
         self._start_ticks = pygame.time.get_ticks()
         self._duration = 250
+        self._has_target = False
 
     def update(self, instance_list, room, camera):
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
+        self._has_target = False
         for instance in instance_list:
             if instance.type == self._target_instance:
                 self._mouse_dx = mouse_x + camera.x - instance.x
@@ -51,6 +53,10 @@ class Parry(Instance):
                 self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2)
                 self._target_x += instance.x
                 self._target_y += instance.y
+                self._has_target = True
+        
+        if not self._has_target:
+            self.remove = True
                 
         if (pygame.time.get_ticks() - self._start_ticks) > self._duration:
             self.remove = True
