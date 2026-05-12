@@ -29,13 +29,35 @@ window = pygame.display.set_mode([width, height])
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
+
+menu_running = True
+menu_skip = False
+# initializes crucial variables for all loops.
+
+while menu_running and not menu_skip:
+    if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+        running = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    window.fill((255, 255, 255))
+
+    if pygame.key.get_pressed()[pygame.K_RETURN]:
+        menu_running = False
+
+    pygame.display.flip()
+
+    clock.tick(tickrate)
+# menu loop.
+
 enemy_ticks = 0
 projectile_enemy_ticks = 0
 removals = 0
 score = 0
 
 _save_has_player = False
-# initializes variables for the main loop, including a clock for controlling frame rate and placeholders for camera position.
+# main gameplay loop variables.
 
 room = Room(width * 2, height * 2)
 camera = Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8)
