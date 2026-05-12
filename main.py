@@ -50,7 +50,7 @@ while menu_running and not menu_skip:
 
     window.fill((255, 255, 255))
 
-    if pygame.key.get_pressed()[pygame.K_RETURN]:
+    if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]:
         menu_running = False
 
     removals = 0
