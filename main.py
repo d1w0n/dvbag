@@ -29,10 +29,14 @@ window = pygame.display.set_mode([width, height])
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
+removals = 0
 
 menu_running = True
 menu_skip = False
 # initializes crucial variables for all loops.
+
+menu_ui = [Text("Title", window, 0, 0, 96, "game_test", (0, 0, 0))]
+# initializes menu ui.
 
 while menu_running and not menu_skip:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
@@ -46,6 +50,15 @@ while menu_running and not menu_skip:
     if pygame.key.get_pressed()[pygame.K_RETURN]:
         menu_running = False
 
+    removals = 0
+    for i in range(len(menu_ui)):
+        if menu_ui[i - removals].remove:
+            menu_ui.pop(i - removals)
+            removals += 1
+        else:
+            menu_ui[i - removals].render()
+    # removes ui elements that need to be removed.
+
     pygame.display.flip()
 
     clock.tick(tickrate)
@@ -53,7 +66,6 @@ while menu_running and not menu_skip:
 
 enemy_ticks = 0
 projectile_enemy_ticks = 0
-removals = 0
 score = 0
 
 _save_has_player = False
@@ -220,7 +232,7 @@ while running:
 
         elif instance.type == "Projectile" and hasattr(instance, "parry_text"):
             if instance.parry_text:
-                add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (255, 255, 0)))
+                add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
                 instance.parry_text = False
 
     removals = 0
