@@ -38,9 +38,12 @@ menu_skip = False
 menu_ui = [Text("Title", window, 0, 0, 96, "game_test", (0, 0, 0))]
 # initializes menu ui.
 
+print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
+
 while menu_running and not menu_skip:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
+        menu_running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -63,6 +66,9 @@ while menu_running and not menu_skip:
 
     clock.tick(tickrate)
 # menu loop.
+
+_start_time = time.perf_counter()
+print("\nLoading save...")
 
 enemy_ticks = 0
 projectile_enemy_ticks = 0
