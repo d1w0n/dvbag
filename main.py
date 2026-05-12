@@ -265,7 +265,7 @@ while running:
             camera.effects.pop(i - removals)
             removals += 1
         else:
-            camera.effects[i - removals].render
+            camera.effects[i - removals].render()
     # renders screen overlay effects.
 
     removals = 0
