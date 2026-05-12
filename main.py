@@ -233,10 +233,11 @@ while running:
             instance.spawn_particle = False
         # creates parry indicator particles.
 
-        elif instance.type == "EnemyProjectile":
-            add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+        if hasattr(instance, "has_trail"):
+            if instance.has_trail:
+                add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
 
-        elif instance.type == "Projectile" and hasattr(instance, "parry_text"):
+        if hasattr(instance, "parry_text"):
             if instance.parry_text:
                 add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
                 instance.parry_text = False

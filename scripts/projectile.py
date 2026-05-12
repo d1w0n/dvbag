@@ -10,6 +10,7 @@ class Projectile(Instance):
         self.parry_text = False
         self.damage = damage
         self.speed = speed
+        self.has_trail = False
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
 
     def update(self, instance_list, room, camera):
@@ -81,6 +82,7 @@ class EnemyProjectile(Projectile):
         super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
         self.type = "EnemyProjectile"
         self.parry_text = False
+        self.has_trail = True
         self.set_sprite("assets/images/enemyprojectile.png")
 
     def update(self, instance_list, room, camera):
