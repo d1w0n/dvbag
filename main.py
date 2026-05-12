@@ -15,7 +15,7 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
@@ -118,6 +118,7 @@ while running:
             score += instance.add_score
             ui.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
             instance.add_score = 0
+        # adds instance add score to score and creates a text particle with score added.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
@@ -186,7 +187,7 @@ while running:
         elif instance.type == "ChargerEnemy":
             if instance.spawn_particle:
                 for i in range(3):
-                    add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 60, random.randint(1, 360), 500, random.randint(-10, 10)))
+                    add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
             if instance.phase == 2:
                 add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, instance._angle, 250, 125, -1.5))
             instance.spawn_particle = False
@@ -194,6 +195,11 @@ while running:
 
         elif instance.type == "EnemyProjectile":
             add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+
+        elif instance.type == "Projectile" and hasattr(instance, "parry_text"):
+            if instance.parry_text:
+                add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (255, 255, 0)))
+                instance.parry_text = False
 
     removals = 0
     for index in remove_instances:

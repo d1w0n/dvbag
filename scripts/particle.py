@@ -119,7 +119,7 @@ class AfterImage(Particle):
 
 
 
-class TextParticle(Particle):
+class TextDisplay(Particle):
     def __init__(self, window, x, y, speed, direction, duration, size, text = "", color = (0, 0, 0), font = None):
         super().__init__(window, x, y, 0, 0, speed, direction, duration)
         self.color = color
