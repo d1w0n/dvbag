@@ -10,7 +10,6 @@ class Projectile(Instance):
         self.parry_text = False
         self.damage = damage
         self.speed = speed
-        self.has_trail = False
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
 
     def update(self, instance_list, room, camera):
@@ -40,7 +39,7 @@ class Parry(Instance):
         super().__init__("Parry", "assets/images/placeholder.png", window, x, y, width, height)
         self._target_instance = target_instance
         self.damage = damage
-        self._start_ticks = pygame.time.get_ticks()
+        self.start_ticks = pygame.time.get_ticks()
         self._duration = 250
         self._has_target = False
 
@@ -60,7 +59,7 @@ class Parry(Instance):
         if not self._has_target:
             self.remove = True
                 
-        if (pygame.time.get_ticks() - self._start_ticks) > self._duration:
+        if (pygame.time.get_ticks() - self.start_ticks) > self._duration:
             self.remove = True
 
     def tick(self):
@@ -82,7 +81,7 @@ class EnemyProjectile(Projectile):
         super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
         self.type = "EnemyProjectile"
         self.parry_text = False
-        self.has_trail = True
+        self.trail = True
         self.set_sprite("assets/images/enemyprojectile.png")
 
     def update(self, instance_list, room, camera):

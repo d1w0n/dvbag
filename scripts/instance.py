@@ -21,6 +21,7 @@ class Instance(ABC):
 
         self.remove = False
         self.can_pre_update = False
+        self.trail = False
 
     def pre_update(self, instance_list, room, camera):
         pass

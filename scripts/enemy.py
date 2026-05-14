@@ -130,11 +130,13 @@ class ChargerEnemy(Enemy):
 
                 elif self.phase == 2 and self.get_collision(instance):
                     self.phase = 3
+                    self.trail = False
                     self._phase_ticks = pygame.time.get_ticks()
 
             elif instance.type == "Parry" and self.phase == 2:
                 if self.get_collision(instance):
                     self.phase = 3
+                    self.trail = False
                     self._phase_ticks = pygame.time.get_ticks()
                     self.add_score += 25
 
@@ -147,10 +149,12 @@ class ChargerEnemy(Enemy):
 
         if self.phase == 1 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 2
+                self.trail = True
                 self._phase_ticks = pygame.time.get_ticks()
 
         elif self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
             self.phase = 3
+            self.trail = False
             self._phase_ticks = pygame.time.get_ticks()
 
         elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) > 500:

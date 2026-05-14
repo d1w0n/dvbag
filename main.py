@@ -35,7 +35,7 @@ menu_running = True
 menu_skip = False
 # initializes crucial variables for all loops.
 
-menu_ui = [Text("Title", window, 0, 0, 96, "game_test", (0, 0, 0))]
+menu_ui = [Text("Title", window, 0, 0, 96, "this is technially a menu", (0, 0, 0))]
 # initializes menu ui.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
@@ -228,14 +228,11 @@ while running:
             if instance.spawn_particle:
                 for i in range(3):
                     add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
-            if instance.phase == 2:
-                add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, instance._angle, 250, 125, -1.5))
             instance.spawn_particle = False
         # creates parry indicator particles.
 
-        if hasattr(instance, "has_trail"):
-            if instance.has_trail:
-                add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+        if instance.trail:
+            add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
 
         if hasattr(instance, "parry_text"):
             if instance.parry_text:
