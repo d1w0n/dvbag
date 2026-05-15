@@ -231,6 +231,11 @@ while running:
             instance.spawn_particle = False
         # creates parry indicator particles.
 
+        elif instance.type == "Projectile":
+            pass#if instance.spawn_particles:
+                #for i in range(5):
+                        #add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
+
         if instance.trail:
             add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
 
