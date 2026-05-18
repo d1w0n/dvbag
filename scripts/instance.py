@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from config import BASE_DIR
 import os
 import pygame
 
@@ -17,6 +16,7 @@ class Instance(ABC):
         self.height = height
         self._distance = 0
         self.add_score = 0
+        self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         self.set_sprite(sprite)
 
         self.remove = False
@@ -65,7 +65,7 @@ class Instance(ABC):
     
     def set_sprite(self, file):
         self.spritepath = file
-        self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha() # side note: i hate this so much
+        self._sprite = pygame.image.load(os.path.join(self.BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha() # side note: i hate this so much
         self._sprite = pygame.transform.scale(self._sprite, (round(self.width), round(self.height)))
 
     def tint_surface(surface, color):

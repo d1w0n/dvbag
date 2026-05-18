@@ -9,7 +9,6 @@ import sys
 import os
 import math
 
-from config import BASE_DIR
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.player import Player
@@ -26,6 +25,7 @@ width, height = 800, 600
 window = pygame.display.set_mode([width, height])
 # creates a window with the specified width and height.
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
@@ -84,7 +84,7 @@ camera = Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8)
 all_instances = []
 remove_instances = []
 add_instances = []
-ui = [Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0)), 
+ui = [Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
       Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
       Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))]
 # initialize instance lists.
@@ -122,7 +122,7 @@ print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 # prints successful load with elapsed time.
 
 while running:
-# main loop.
+# main loop; instance management is in here.
 
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
@@ -157,6 +157,9 @@ while running:
         if instance.add_score > 0:
             score += instance.add_score
             ui.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
+            for element in ui:
+                if element.name == "ScoreText":
+                    element.set_text("Score: " + str(score) + "")
             instance.add_score = 0
         # adds instance add score to score and creates a text particle with score added.
 
@@ -178,6 +181,10 @@ while running:
     for instance in all_instances:
         instance.tick() 
     # performs instances next action after updating.
+
+        if instance.trail:
+            add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+        # if instance trail attribute is true, create an afterimage in its position.
 
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
@@ -229,20 +236,21 @@ while running:
                 for i in range(3):
                     add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
             instance.spawn_particle = False
-        # creates parry indicator particles.
+            # creates parry indicator particles.
 
-        elif instance.type == "Projectile":
-            pass#if instance.spawn_particles:
-                #for i in range(5):
-                        #add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
-
-        if instance.trail:
-            add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
-
-        if hasattr(instance, "parry_text"):
-            if instance.parry_text:
+        if hasattr(instance, "parried"):
+            if instance.parried:
                 add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
-                instance.parry_text = False
+                
+                if instance.type == "Projectile":
+                    for i in range(5):
+                        add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
+
+                elif instance.type == "ChargerEnemy":
+                    add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
+
+                instance.parried = False
+        # creates parry text.
 
     removals = 0
     for index in remove_instances:
@@ -275,13 +283,9 @@ while running:
         if ui[i - removals].remove:
             ui.pop(i - removals)
             removals += 1
-    # removes ui elements that need to be removed.
-
-    for element in ui:
-        if element.name == "ScoreText":
-            element.set_text("Score: " + str(score) + "")
-        element.render()
-    # renders ui elements.
+        else:
+            ui[i - removals].render()
+    # removes ui elements that need to be removed; else render the ui element.
 
     pygame.display.flip()
     # updates the display after rendering all instances.

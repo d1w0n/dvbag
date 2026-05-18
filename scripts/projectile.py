@@ -7,7 +7,7 @@ pygame.init()
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
-        self.parry_text = False
+        self.parried = False
         self.damage = damage
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
@@ -96,7 +96,7 @@ class EnemyProjectile(Projectile):
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
                         self.type = "Projectile"
-                        self.parry_text = True
+                        self.parried = True
                         self.damage = 100
                         self.add_score += 25
                         camera.shake(20, 20)

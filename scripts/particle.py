@@ -94,7 +94,7 @@ class ParryFlash(Particle):
 class AfterImage(Particle):
     def __init__(self, window, sprite, x, y, width, height, direction, duration, strength, size_change = 0):
         super().__init__(window, x, y, width, height, 0, direction, duration)
-        self._spritepath = sprite
+        self.set_sprite(sprite)
         self.strength = strength
         self._size_change = size_change
 
@@ -108,7 +108,7 @@ class AfterImage(Particle):
     def tick(self):
         self.width += self._size_change
         self.height += self._size_change
-        self.set_sprite(self._spritepath)
+        self.set_sprite(self.spritepath)
 
     def render(self, camera_x, camera_y):
         if not self.remove:
