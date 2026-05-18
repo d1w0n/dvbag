@@ -1,5 +1,6 @@
 import os
 import pygame
+from config import BASE_DIR
 
 pygame.init()
 
@@ -10,8 +11,7 @@ class Effect:
         self.height = height
         self.duration = duration
         self.intensity = intensity
-        self.BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        self._sprite = pygame.image.load(os.path.join(self.BASE_DIR, *sprite.replace("\\", "/").split("/"))).convert_alpha()
+        self._sprite = pygame.image.load(os.path.join(BASE_DIR, *sprite.replace("\\", "/").split("/"))).convert_alpha()
         self._sprite = pygame.transform.scale(self._sprite, (self.width, self.height))
         self._init_ticks = pygame.time.get_ticks()
         self._alpha = 255

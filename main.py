@@ -18,6 +18,7 @@ from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryF
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
+from config import BASE_DIR
 
 pygame.init()
 
@@ -25,7 +26,6 @@ width, height = 800, 600
 window = pygame.display.set_mode([width, height])
 # creates a window with the specified width and height.
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 running = True
 clock = pygame.time.Clock()
 tickrate = 60
@@ -241,7 +241,7 @@ while running:
         if hasattr(instance, "parried"):
             if instance.parried:
                 add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
-                
+
                 if instance.type == "Projectile":
                     for i in range(5):
                         add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))

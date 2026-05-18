@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from config import BASE_DIR
 import os
 import pygame
+from config import BASE_DIR
 
 pygame.init()
 
