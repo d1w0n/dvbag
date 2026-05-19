@@ -112,7 +112,6 @@ class ChargerEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range):
         super().__init__(window, x, y, width, height, health, speed, damage)
         self.range = range
-        self.parried = False
         self.type = "ChargerEnemy"
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False

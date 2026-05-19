@@ -14,11 +14,11 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
-from config import BASE_DIR
+import config
 
 pygame.init()
 
@@ -32,7 +32,6 @@ tickrate = 60
 removals = 0
 
 menu_running = True
-menu_skip = False
 # initializes crucial variables for all loops.
 
 menu_ui = [Text("Title", window, 0, 0, 96, "this is technially a menu", (0, 0, 0))]
@@ -40,7 +39,7 @@ menu_ui = [Text("Title", window, 0, 0, 96, "this is technially a menu", (0, 0, 0
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 
-while menu_running and not menu_skip:
+while menu_running and not config.MENU_SKIP:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
         menu_running = False
@@ -89,7 +88,7 @@ ui = [Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)),
       Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))]
 # initialize instance lists.
 
-save_path = os.path.join(BASE_DIR, "saves", "save.csv")
+save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
 
 if os.path.exists(save_path):
     with open(save_path, "r") as save:
@@ -188,19 +187,15 @@ while running:
 
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
+            # smooths camera position to mouse and player position.
+
             for element in ui:
                 if element.name == "HealthBar":
                     element.stat = instance.health
                 if element.name == "HealthText":
                     element.set_text("Health: " + str(instance.health) + "")
-        # smooths camera position to mouse and player position.
+            # updates ui elements correlated to player stats.
 
-        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
-            for i in range(5):
-                add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
-        # create 5 particles on death. 
-
-        if instance.type == "Player":
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
                 add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + camera.x, mouse_y + camera.y, 24, 25))
@@ -223,6 +218,11 @@ while running:
                 camera.shake(10, 10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
+        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
+            for i in range(5):
+                add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
+        # create 5 particles on death. 
+
         elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
@@ -237,6 +237,10 @@ while running:
                     add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
             instance.spawn_particle = False
             # creates parry indicator particles.
+
+        elif instance.type == "Beam":
+            if instance.remove:
+                add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 100))
 
         if hasattr(instance, "parried"):
             if instance.parried:

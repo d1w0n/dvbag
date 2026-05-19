@@ -132,3 +132,22 @@ class TextDisplay(Particle):
 
     def set_text(self, text: str):
         self._text_surface = self.font.render(text, True, self.color)
+
+
+
+
+
+class BeamFade(Particle):
+    def __init__(self, window, x_init, y_init, x, y, width, height, duration):
+        super().__init__(window, x, y, width, height, 0, 0, duration)
+        self.type = "BeamFade"
+        self._x_init = x_init
+        self._y_init = y_init
+        self._width_init = width
+
+    def tick(self):
+        self.width = self._width_init - self._width_init * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)
+
+    def render(self, camera_x, camera_y):
+        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), round(self.width))
+        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), round(self.width / 2))

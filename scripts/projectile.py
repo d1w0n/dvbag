@@ -7,7 +7,6 @@ pygame.init()
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
-        self.parried = False
         self.damage = damage
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
@@ -122,8 +121,8 @@ class Beam(Instance):
         self._dx = target_x - self.x
         self._dy = target_y - self.y
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
-        self._x_init = self.x
-        self._y_init = self.y
+        self.x_init = self.x
+        self.y_init = self.y
         self._collision = False
         self.can_pre_update = True
 
@@ -182,6 +181,5 @@ class Beam(Instance):
         pass
 
     def render(self, camera_x, camera_y):
-        #self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
-        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
+        pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera_x, self.y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
         pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width / 2)
