@@ -135,6 +135,7 @@ class ChargerEnemy(Enemy):
 
             elif instance.type == "Parry" and self.phase == 2:
                 if self.get_collision(instance):
+                    self.health = 0
                     self.parried = True
                     self.phase = 3
                     self.trail = False

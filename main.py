@@ -240,7 +240,8 @@ while running:
 
         elif instance.type == "Beam":
             if instance.remove:
-                add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 100))
+                add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
+            # creates a beam fading effect on its position.
 
         if hasattr(instance, "parried"):
             if instance.parried:
