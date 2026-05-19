@@ -14,7 +14,8 @@ from scripts.camera import Camera
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, \
+    ParryFlash, AfterImage, TextDisplay, BeamFade
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 from scripts.list_sort import render_sort
@@ -30,9 +31,9 @@ running = True
 clock = pygame.time.Clock()
 tickrate = 60
 removals = 0
-
 menu_running = True
-# initializes crucial variables for all loops.
+tick_pause = 0
+# variable initialization.
 
 menu_ui = [Text("Title", window, 0, 0, 96, "this is technially a menu", (0, 0, 0))]
 # initializes menu ui.
@@ -106,12 +107,15 @@ if os.path.exists(save_path):
 
             elif row["instance"] == "ProjectileEnemy":
                 all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+
+            elif row["instance"] == "ChargerEnemy":
+                all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
 # if there is a save file, load the instances with their positions from there.
 
 else:
     print("Save file not found. Creating new save file...")
     open(save_path, mode="w", newline="")
-# creates a new save file if the file is not found. (usually happens when cloning the github repository.)
+# creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
     all_instances = [Player(window, 0, 0, 48, 48, 100, 5), Enemy(window, room.width / 4, 0, 48, 48, 100, 3, 10)]
@@ -185,6 +189,21 @@ while running:
             add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
         # if instance trail attribute is true, create an afterimage in its position.
 
+        if hasattr(instance, "parried"):
+            if instance.parried:
+                #tick_pause += 30
+                add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
+
+                if instance.type == "Projectile":
+                    for i in range(5):
+                        add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
+
+                elif instance.type == "ChargerEnemy":
+                    add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
+
+                instance.parried = False
+        # creates parry text.
+
         if instance.type == "Player":
             camera.target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
             # smooths camera position to mouse and player position.
@@ -243,20 +262,6 @@ while running:
                 add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
             # creates a beam fading effect on its position.
 
-        if hasattr(instance, "parried"):
-            if instance.parried:
-                add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
-
-                if instance.type == "Projectile":
-                    for i in range(5):
-                        add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
-
-                elif instance.type == "ChargerEnemy":
-                    add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
-
-                instance.parried = False
-        # creates parry text.
-
     removals = 0
     for index in remove_instances:
         all_instances.pop(index - removals)
@@ -297,6 +302,11 @@ while running:
 
     clock.tick(tickrate)
     # updates main loop at set tickrate.
+
+    while tick_pause > 0:
+        clock.tick(tickrate)
+        tick_pause -= 1
+    # pauses main loop for tick pause duration.
 # end of main loop.
 
 _start_time = time.perf_counter()

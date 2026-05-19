@@ -54,6 +54,10 @@ class Parry(Instance):
                 self._target_x += instance.x
                 self._target_y += instance.y
                 self._has_target = True
+
+            elif instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or instance.type == "ChargerEnemy":
+                if self.get_collision(instance):
+                    self.remove = True
         
         if not self._has_target:
             self.remove = True
