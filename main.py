@@ -39,7 +39,7 @@ menu_running = True
 tick_pause = 0
 # variable initialization.
 
-menu_ui = [Text("Title", window, 0, 0, 96, "this is technially a menu", (0, 0, 0))]
+menu_ui = [Text("Title", window, 0, 0, 96, "this is technically a menu", (0, 0, 0))]
 # initializes menu ui.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
