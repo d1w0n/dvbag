@@ -2,12 +2,16 @@ import time
 _start_time = time.perf_counter()
 print("\nLoading...")
 
-import pygame
 import random
 import csv
 import sys
 import os
 import math
+try:
+    import pygame
+except ModuleNotFoundError:
+    print("Pygame is not installed. Please install Pygame! Instructions below.\n1. Open terminal\n2. Enter this command: \'pip3 install pygame\'")
+    sys.exit()
 
 from scripts.room import Room
 from scripts.camera import Camera
