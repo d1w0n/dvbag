@@ -10,7 +10,7 @@ import math
 try:
     import pygame
 except ModuleNotFoundError:
-    print("Pygame is not installed. Please install Pygame! Instructions below.\n1. Open terminal\n2. Enter this command: \'pip3 install pygame\'")
+    print("Pygame is not installed. Please install Pygame! Instructions below.\n1. Open terminal\n2. Enter this command: \'pip3 install pygame\'\n3. Retry this program!")
     sys.exit()
 
 from scripts.room import Room
