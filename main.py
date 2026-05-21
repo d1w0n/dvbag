@@ -10,7 +10,10 @@ import math
 try:
     import pygame
 except ModuleNotFoundError:
-    print("Pygame is not installed. Please install Pygame! Instructions below.\n1. Open terminal\n2. Enter this command: \'pip3 install pygame\'\n3. Retry this program!")
+    print("\nPygame is not installed. Please install Pygame! Instructions below.\n \
+          1. Open the terminal\n \
+          2. Enter this command: \'pip install pygame\'\n \
+          3. Retry this program!" + "\n" * 2 + "Program Successfully Ended\n")
     sys.exit()
 
 from scripts.room import Room
@@ -329,7 +332,7 @@ with open(save_path, mode="w", newline="") as save:
     writer.writerows(data)
 # writes completed data to the save. (currently just acts as placeholder)
 
-print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)" + ("\n" * 2) + "Program Successfully Ended\n")
+print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)" + "\n" * 2 + "Program Successfully Ended\n")
 # prints successful save with elapsed time.
 
 sys.exit()
