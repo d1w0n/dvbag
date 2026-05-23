@@ -129,6 +129,7 @@ class Beam(Instance):
         self.y_init = self.y
         self._collision = False
         self.can_pre_update = True
+        self.always_render = True
 
     def pre_update(self, instance_list, room, camera):
         self._room = room

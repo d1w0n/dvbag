@@ -144,6 +144,7 @@ class BeamFade(Particle):
         self._x_init = x_init
         self._y_init = y_init
         self._width_init = width
+        self.always_render = True
 
     def tick(self):
         self.width = self._width_init - self._width_init * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)
