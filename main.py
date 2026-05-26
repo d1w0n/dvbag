@@ -103,28 +103,31 @@ save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
 # get save file location.
 
 if os.path.exists(save_path):
-    with open(save_path, "r") as save:
-        csv_reader = csv.DictReader(save)
-        for row in csv_reader:
-            if row["instance"] == "Player":
-                _save_has_player = True
-                data["instance_lists"].all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
-                data["camera"].x = float(row["x"]) - width / 2
-                data["camera"].y = float(row["y"]) - height / 2
-            # sets player position to saved position.
+    try:
+        with open(save_path, "r") as save:
+            csv_reader = csv.DictReader(save)
+            for row in csv_reader:
+                if row["instance"] == "Player":
+                    _save_has_player = True
+                    data["instance_lists"].all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
+                    data["camera"].x = float(row["x"]) - width / 2
+                    data["camera"].y = float(row["y"]) - height / 2
+                # sets player position to saved position.
 
-            elif row["instance"] == "Enemy":
-                data["instance_lists"].all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
+                elif row["instance"] == "Enemy":
+                    data["instance_lists"].all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
 
-            elif row["instance"] == "ProjectileEnemy":
-                data["instance_lists"].all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+                elif row["instance"] == "ProjectileEnemy":
+                    data["instance_lists"].all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
 
-            elif row["instance"] == "ChargerEnemy":
-                data["instance_lists"].all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+                elif row["instance"] == "ChargerEnemy":
+                    data["instance_lists"].all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+    except:
+        print("Save file data is corrupted! Creating a new save file...")
 # if there is a save file, load the instances with their positions from there.
 
 else:
-    print("Save file not found. Creating new save file...")
+    print("Save file not found. Creating a new save file...")
     open(save_path, mode="w", newline="")
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 

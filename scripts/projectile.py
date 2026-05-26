@@ -137,7 +137,7 @@ class Beam(Instance):
             self.remove = True
             pass
         
-        for instance in data["instance_list"].all_instances:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self._collision = True
@@ -147,7 +147,7 @@ class Beam(Instance):
 
         if not self._collision:
             while not self._collision:
-                for instance in data["instance_list"].all_instances:
+                for instance in data["instance_lists"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
@@ -167,7 +167,7 @@ class Beam(Instance):
                 self.y -= self.velocity_y
                 self._collision = False
 
-                for instance in data["instance_list"].all_instances:
+                for instance in data["instance_lists"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
