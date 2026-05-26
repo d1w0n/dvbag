@@ -163,11 +163,11 @@ while running:
     
     for instance in data["instance_lists"].all_instances:
         if instance.can_pre_update:
-            instance.pre_update(data["instance_lists"].all_instances, data["room"], data["camera"])
+            instance.pre_update(data)
     # runs pre-update for instances that have that priority.
 
     for instance in data["instance_lists"].all_instances:
-        instance.update(data["instance_lists"].all_instances, data["room"], data["camera"])
+        instance.update(data)
     # updates each instance before doing anything.
 
         if instance.add_score > 0:

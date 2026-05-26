@@ -15,8 +15,8 @@ class Particle(Instance):
         self._alpha = 255
         self.supertype = "Particle"
 
-    def update(self, instance_list, room, camera):
-        self._room = room
+    def update(self, data):
+        self._room = data["room"]
 
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True
@@ -45,13 +45,13 @@ class EnemyParticle(Particle):
         self.type = "EnemyParticle"
         self.set_sprite("assets/images/placeholder_green.png")
 
-    def update(self, instance_list, room, camera):
-        for instance in instance_list:
+    def update(self, data):
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Player":
                 if self.get_collision(instance):
                     self.remove = True
 
-        super().update(instance_list, room, camera)
+        super().update(data)
 
 
 
@@ -62,9 +62,9 @@ class ProjectileParticle(Particle):
         self.set_sprite(sprite)
         self._speed_decay = 1 # constant speed.
 
-    def update(self, instance_list, room, camera):
-        self._room = room 
-        if self.get_room_collision_x(room) or self.get_room_collision_y(room) or ((pygame.time.get_ticks() - self._init_ticks) > self.duration):
+    def update(self, data):
+        self._room = data["room"] 
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]) or ((pygame.time.get_ticks() - self._init_ticks) > self.duration):
             self.remove = True
 
 
@@ -75,8 +75,8 @@ class ParryFlash(Particle):
         self._rotation_speed = rotation_speed
         self.set_sprite("assets/images/parryflash.png")
 
-    def update(self, instance_list, room, camera):
-        super().update(instance_list, room, camera)
+    def update(self, data):
+        super().update(data)
 
     def tick(self):
         self.direction += self._rotation_speed
@@ -98,7 +98,7 @@ class AfterImage(Particle):
         self.strength = strength
         self._size_change = size_change
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         if self.width <= 0 or self.height <= 0:
             self.remove = True
 

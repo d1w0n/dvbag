@@ -27,16 +27,16 @@ class Player(Instance):
         self.parry_ticks = 0
         self.parry_cooldown = 1000
     
-    def update(self, instance_list, room, camera): 
-        self._room = room
+    def update(self, data): 
+        self._room = data["room"]
         
-        for instance in instance_list:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
-                    camera.shake(100, 100)
-                    camera.add_effect("assets/images/red.png", 1000, 100)
+                    data["camera"].shake(100, 100)
+                    data["camera"].add_effect("assets/images/red.png", 1000, 100)
 
             elif instance.type == "EnemyParticle":
                 if self.get_collision(instance):
@@ -47,8 +47,8 @@ class Player(Instance):
         key = pygame.key.get_pressed()
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        self._mouse_dx = mouse_x - (self.x - camera.x)
-        self._mouse_dy = mouse_y - (self.y - camera.y)
+        self._mouse_dx = mouse_x - (self.x - data["camera"].x)
+        self._mouse_dy = mouse_y - (self.y - data["camera"].y)
 
         self._dx = 0
         self._dy = 0

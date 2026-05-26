@@ -21,10 +21,10 @@ class Enemy(Instance):
         self.phase = 0
         self.supertype = "Enemy"
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         self._alpha_offset *= 0.8
 
-        for instance in instance_list:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y
@@ -70,10 +70,10 @@ class ProjectileEnemy(Enemy):
         self.projectile_cooldown = cooldown
         self.set_sprite("assets/images/placeholder_dark_red.png")
     
-    def update(self, instance_list, room, camera): 
+    def update(self, data): 
         self._alpha_offset *= 0.8
 
-        for instance in instance_list:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y
@@ -116,9 +116,9 @@ class ChargerEnemy(Enemy):
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         self._alpha_offset *= 0.8
-        for instance in instance_list:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y

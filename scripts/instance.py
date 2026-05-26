@@ -23,7 +23,7 @@ class Instance(ABC):
         self.can_pre_update = False
         self.trail = False
 
-    def pre_update(self, instance_list, room, camera):
+    def pre_update(self, data):
         pass
     
     @abstractmethod

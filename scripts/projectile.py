@@ -11,15 +11,15 @@ class Projectile(Instance):
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
 
-    def update(self, instance_list, room, camera):
-        self._room = room
-        for instance in instance_list:
+    def update(self, data):
+        self._room = data["room"]
+        for instance in data["instance_lists"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self.remove = True
                 # if colliding with an enemy, remove itself.
 
-        if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
         # if colliding with room bounds, remove itself.
 
@@ -42,14 +42,14 @@ class Parry(Instance):
         self._duration = 250
         self._has_target = False
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         self._has_target = False
-        for instance in instance_list:
+        for instance in data["instance_lists"].all_instances:
             if instance.type == self._target_instance:
-                self._mouse_dx = mouse_x + camera.x - instance.x
-                self._mouse_dy = mouse_y + camera.y - instance.y
+                self._mouse_dx = mouse_x + data["camera"].x - instance.x
+                self._mouse_dy = mouse_y + data["camera"].y - instance.y
                 self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2)
                 self._target_x += instance.x
                 self._target_y += instance.y
@@ -87,10 +87,10 @@ class EnemyProjectile(Projectile):
         self.trail = True
         self.set_sprite("assets/images/enemyprojectile.png")
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         if self.type == "EnemyProjectile":
-            self._room = room
-            for instance in instance_list:
+            self._room = data["room"]
+            for instance in data["instance_lists"].all_instances:
                 if instance.type == "Player":
                     if self.get_collision(instance):
                         self.remove = True
@@ -102,14 +102,14 @@ class EnemyProjectile(Projectile):
                         self.parried = True
                         self.damage = 100
                         self.add_score += 25
-                        camera.shake(20, 20)
+                        data["camera"].shake(20, 20)
                         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-                        self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + camera.x) - self.x, (self.mouse_y + camera.y) - self.y, self.speed * 2)
+                        self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + data["camera"].x) - self.x, (self.mouse_y + data["camera"].y) - self.y, self.speed * 2)
         
         elif self.type == "Projectile":
-            super().update(instance_list, room, camera)
+            super().update(data)
 
-        if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
         # if colliding with room bounds, remove itself.
 
@@ -131,29 +131,29 @@ class Beam(Instance):
         self.can_pre_update = True
         self.always_render = True
 
-    def pre_update(self, instance_list, room, camera):
-        self._room = room
+    def pre_update(self, data):
+        self._room = data["room"]
         if self._collision:
             self.remove = True
             pass
         
-        for instance in instance_list:
+        for instance in data["instance_list"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self._collision = True
 
-            if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                 self._collision = True
 
         if not self._collision:
             while not self._collision:
-                for instance in instance_list:
+                for instance in data["instance_list"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
                         # if colliding with an enemy, remove itself.
 
-                if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                     self._collision = True
                 # if colliding with room bounds, remove itself.
 
@@ -167,19 +167,19 @@ class Beam(Instance):
                 self.y -= self.velocity_y
                 self._collision = False
 
-                for instance in instance_list:
+                for instance in data["instance_list"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
 
-                if self.get_room_collision_x(room) or self.get_room_collision_y(room):
+                if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                     self._collision = True
 
             self.x += self.velocity_x
             self.y += self.velocity_y
             self._collision = True
 
-    def update(self, instance_list, room, camera):
+    def update(self, data):
         pass
 
     def tick(self):
