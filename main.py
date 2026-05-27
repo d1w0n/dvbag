@@ -160,10 +160,8 @@ while running:
     data["camera"].shake_decay()
     # multiplies camera shake attributes by its decay.
 
-    for instance in data["instance_lists"].add_instances:
-        data["instance_lists"].all_instances.append(instance)
-    data["instance_lists"].add_instances = []
-    # adds queued instances to the instance list, then clears the add instances list.
+    data["instance_lists"].append_queued()
+    # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
     
     for instance in data["instance_lists"].all_instances:
         if instance.can_pre_update:
