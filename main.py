@@ -193,10 +193,8 @@ while running:
         data["instance_lists"].add_instances.append(ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
-    for i in range(len(data["instance_lists"].all_instances)):
-        if data["instance_lists"].all_instances[i].remove:
-            data["instance_lists"].remove_instances.append(i)
-    # if an instance needs to be removed, its index will be appended to the remove instance list and skips next actions.
+    data["instance_lists"].queue_removals()
+    # if an instance needs to be removed, its index will be appended to the remove instance list.
 
     for instance in data["instance_lists"].all_instances:
         instance.tick() 
@@ -279,11 +277,7 @@ while running:
                 data["instance_lists"].add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
             # creates a beam fading effect on its position.
 
-    removals = 0
-    for index in data["instance_lists"].remove_instances:
-        data["instance_lists"].all_instances.pop(index - removals)
-        removals += 1
-    data["instance_lists"].remove_instances = []
+    data["instance_lists"].remove_queued()
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
     
     data["camera"].random_shake()
