@@ -84,7 +84,6 @@ print("\nLoading save...")
 
 enemy_ticks = 0
 projectile_enemy_ticks = 0
-score = 0
 
 _save_has_player = False
 # main gameplay loop variables.
@@ -95,7 +94,9 @@ data = {
     "instance_lists": InstanceLists(),
     "ui": [Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
         Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
-        Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))]
+        Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))],
+    "score": 0,
+    "tick_pause": 0
 }
 # initialize main loop data.
 
