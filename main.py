@@ -86,6 +86,8 @@ enemy_ticks = 0
 projectile_enemy_ticks = 0
 
 _save_has_player = False
+score = 0
+tick_pause = 0
 # main gameplay loop variables.
 
 data = {
