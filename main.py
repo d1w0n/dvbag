@@ -86,6 +86,8 @@ enemy_ticks = 0
 projectile_enemy_ticks = 0
 
 _save_has_player = False
+score = 0
+tick_pause = 0
 # main gameplay loop variables.
 
 data = {
@@ -205,17 +207,18 @@ while running:
         # if instance trail attribute is true, create an afterimage in its position.
 
         if hasattr(instance, "parried"):
-            #tick_pause += 30
-            data["instance_lists"].add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
+            if instance.parried:
+                #tick_pause += 30
+                data["instance_lists"].add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
 
-            if instance.type == "Projectile":
-                for i in range(5):
-                    data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
+                if instance.type == "Projectile":
+                    for i in range(5):
+                        data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
 
-            elif instance.type == "ChargerEnemy":
-                data["instance_lists"].add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
+                elif instance.type == "ChargerEnemy":
+                    data["instance_lists"].add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
 
-            del instance.parried
+            instance.parried = False
         # creates parry text.
 
         if instance.type == "Player":
