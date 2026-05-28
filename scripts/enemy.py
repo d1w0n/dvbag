@@ -51,10 +51,10 @@ class Enemy(Instance):
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
 
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
         _rotated.set_alpha(self._alpha - self._alpha_offset)
-        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
 

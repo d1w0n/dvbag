@@ -45,6 +45,26 @@ class UIList:
     def __init__(self, ui_list = []):
         self.ui_list = ui_list
 
+    def render(self):
+        self._removals = 0
+        for i in range(len(self.ui_list)):
+            if self.ui_list[i - self._removals].remove:
+                self.ui_list.pop(i - self._removals)
+                self._removals += 1
+            else:
+                self.ui_list[i - self._removals].render()
+        # removes ui elements that need to be removed; else render the ui element.
+"""
 class EffectList:
     def __init__(self, effect_list = []):
         self.effect_list = effect_list
+
+    def render(self):
+        self._removals = 0
+        for i in range(len(self.effects)):
+            if self.effects[i - self._removals].remove:
+                self.effects.pop(i - self._removals)
+                self._removals += 1
+            else:
+                self.effects[i - self._removals].render()
+"""

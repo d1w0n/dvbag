@@ -27,7 +27,7 @@ class Instance(ABC):
         pass
     
     @abstractmethod
-    def update(self, instance_list: list, room, camera):
+    def update(self, data):
         pass
 
     @abstractmethod
@@ -35,7 +35,7 @@ class Instance(ABC):
         pass
 
     @abstractmethod
-    def render(self, camera_x: float, camera_y: float):
+    def render(self, camera):
         pass
 
     def get_distance(self, dx, dy):
@@ -55,10 +55,10 @@ class Instance(ABC):
         return self.y + self.height / 2 > room.height / 2 or self.y - self.height / 2 < -room.height / 2
     
     def get_out_of_view(self, camera):
-        return self.x - self.width / 2 - camera.x + camera.shake_random_x > camera.width or \
-        self.x + self.width / 2 - camera.x + camera.shake_random_x < 0 or \
-        self.y - self.height / 2 - camera.y + camera.shake_random_y > camera.height or \
-        self.y + self.height / 2 - camera.y + camera.shake_random_y < 0
+        return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \
+        self.x + self.width / 2 - camera.x + camera.shake_x < 0 or \
+        self.y - self.height / 2 - camera.y + camera.shake_y > camera.height or \
+        self.y + self.height / 2 - camera.y + camera.shake_y < 0
     
     def get_instance_in_range(self, other, range):
         return self.get_distance((other.x + other.width / 2) - (self.x + self.width / 2), (other.y + other.height / 2) - (self.y + self.height / 2)) <= range

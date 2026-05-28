@@ -28,8 +28,8 @@ class Projectile(Instance):
         self.y += self.velocity_y
         # change x and y by velocities.
 
-    def render(self, camera_x, camera_y):
-        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+    def render(self, camera):
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 
 
@@ -70,9 +70,9 @@ class Parry(Instance):
         self.y = self._target_y
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
 
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
-        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
 
@@ -185,6 +185,6 @@ class Beam(Instance):
     def tick(self):
         pass
 
-    def render(self, camera_x, camera_y):
-        pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera_x, self.y_init - camera_y), (self.x - camera_x, self.y - camera_y), self.width)
-        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), self.width / 2)
+    def render(self, camera):
+        pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width)
+        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width / 2)

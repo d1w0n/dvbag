@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instance_lists import InstanceLists, UIList, EffectList
+from scripts.instance_lists import InstanceLists, UIList#, EffectList
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
@@ -103,7 +103,7 @@ data = {
             Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
         ]
     ),
-    "effects": EffectList(),
+    #"effects": EffectList(),
     "score": 0,
     "tick_pause": 0
 }
@@ -290,11 +290,11 @@ while running:
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
 
-    data["room"].draw(window, (200, 200, 200), data["camera"].x + data["camera"].shake_random_x, data["camera"].y + data["camera"].shake_random_y)
+    data["room"].draw(window, (200, 200, 200), data["camera"])
     # draws the room borders.
 
     for instance in render_sort(data["instances"].all_instances, data["camera"]):
-        instance.render(data["camera"].x + data["camera"].shake_random_x, data["camera"].y + data["camera"].shake_random_y) 
+        instance.render(data["camera"]) 
     # renders all instances with camera attributes after ticking.
 
     removals = 0
@@ -306,13 +306,7 @@ while running:
             data["camera"].effects[i - removals].render()
     # renders screen overlay effects.
 
-    removals = 0
-    for i in range(len(data["ui"].ui_list)):
-        if data["ui"].ui_list[i - removals].remove:
-            data["ui"].ui_list.pop(i - removals)
-            removals += 1
-        else:
-            data["ui"].ui_list[i - removals].render()
+    data["ui"].render()
     # removes ui elements that need to be removed; else render the ui element.
 
     pygame.display.flip()
@@ -321,9 +315,9 @@ while running:
     clock.tick(tickrate)
     # updates main loop at set tickrate.
 
-    while tick_pause > 0:
+    while data["tick_pause"] > 0:
         clock.tick(tickrate)
-        tick_pause -= 1
+        data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
 # end of main loop.
 

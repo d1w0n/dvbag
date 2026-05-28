@@ -33,9 +33,9 @@ class Particle(Instance):
         if self.get_room_collision_y(self._room):
             self.y -= self.velocity_y
 
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
-        self._window.blit(self._sprite, (self.x - self.width / 2 - camera_x, self.y - self.height / 2 - camera_y))
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 
 
@@ -83,10 +83,10 @@ class ParryFlash(Particle):
         self.height += 5
         self.set_sprite("assets/images/parryflash.png")
 
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self.direction)
         _rotated.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
-        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
 
@@ -110,11 +110,11 @@ class AfterImage(Particle):
         self.height += self._size_change
         self.set_sprite(self.spritepath)
 
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         if not self.remove:
             _rotated = pygame.transform.rotate(self._sprite, self.direction)
             _rotated.set_alpha(self.strength - round(self.strength * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
-            _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+            _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
             self._window.blit(_rotated, _rect.topleft)
 
 
@@ -126,9 +126,9 @@ class TextDisplay(Particle):
         self.font = pygame.font.Font(font, size)
         self._text_surface = self.font.render(text, True, self.color)
     
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
-        self._window.blit(self._text_surface, (self.x - camera_x, self.y - camera_y))
+        self._window.blit(self._text_surface, (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
 
     def set_text(self, text: str):
         self._text_surface = self.font.render(text, True, self.color)
@@ -149,6 +149,6 @@ class BeamFade(Particle):
     def tick(self):
         self.width = self._width_init - self._width_init * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)
 
-    def render(self, camera_x, camera_y):
-        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera_x, self._y_init - camera_y), (self.x - camera_x, self.y - camera_y), round(self.width))
-        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera_x, self.y - camera_y), round(self.width / 2))
+    def render(self, camera):
+        pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera.x + camera.shake_x, self._y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width))
+        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width / 2))

@@ -86,7 +86,7 @@ class Player(Instance):
 
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
         
-    def render(self, camera_x, camera_y):
+    def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
-        _rect = _rotated.get_rect(center=(self.x - camera_x, self.y - camera_y))
+        _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
