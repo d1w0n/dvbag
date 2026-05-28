@@ -1,11 +1,15 @@
-import os
 import pygame
 
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, \
-    ParryFlash, AfterImage, TextDisplay, BeamFade
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
+from scripts.list_sort import render_sort
+
+from scripts.ui import Bar, Text, TextParticle
+
+from scripts.screen_effects import Effect
+
 import config
 
 pygame.init()
@@ -36,3 +40,11 @@ class InstanceLists:
         self.remove_instances = []
         del self._removals
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
+
+class UIList:
+    def __init__(self, ui_list = []):
+        self.ui_list = ui_list
+
+class EffectList:
+    def __init__(self, effect_list = []):
+        self.effect_list = effect_list

@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instance_lists import InstanceLists
+from scripts.instance_lists import InstanceLists, UIList, EffectList
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
@@ -44,9 +44,11 @@ tick_pause = 0
 # variable initialization.
 
 data = {
-    "ui": [
-        Text("Title", window, 0, 0, 96, "this is technically a menu", (0, 0, 0))
-    ]
+    "ui": UIList(
+        [
+            Text("Title", window, 0, 0, 96, "this is technically a menu", (0, 0, 0))
+        ]
+    )
 }
 # initializes menu data.
 
@@ -66,12 +68,12 @@ while menu_running and not config.MENU_SKIP:
         menu_running = False
 
     removals = 0
-    for i in range(len(data["ui"])):
-        if data["ui"][i - removals].remove:
-            data["ui"].pop(i - removals)
+    for i in range(len(data["ui"].ui_list)):
+        if data["ui"].ui_list[i - removals].remove:
+            data["ui"].ui_list.pop(i - removals)
             removals += 1
         else:
-            data["ui"][i - removals].render()
+            data["ui"].ui_list[i - removals].render()
     # removes ui elements that need to be removed.
 
     pygame.display.flip()
@@ -94,9 +96,14 @@ data = {
     "room": Room(width * 2, height * 2),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instance_lists": InstanceLists(),
-    "ui": [Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
-        Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
-        Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))],
+    "ui": UIList(
+        [
+            Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
+            Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
+            Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
+        ]
+    ),
+    "effects": EffectList(),
     "score": 0,
     "tick_pause": 0
 }
@@ -176,8 +183,8 @@ while running:
 
         if instance.add_score > 0:
             score += instance.add_score
-            data["ui"].append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
-            for element in data["ui"]:
+            data["ui"].ui_list.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
+            for element in data["ui"].ui_list:
                 if element.name == "ScoreText":
                     element.set_text("Score: " + str(score) + "")
             instance.add_score = 0
@@ -223,7 +230,7 @@ while running:
             data["camera"].target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
             # smooths camera position to mouse and player position.
 
-            for element in data["ui"]:
+            for element in data["ui"].ui_list:
                 if element.name == "HealthBar":
                     element.stat = instance.health
                 if element.name == "HealthText":
@@ -300,12 +307,12 @@ while running:
     # renders screen overlay effects.
 
     removals = 0
-    for i in range(len(data["ui"])):
-        if data["ui"][i - removals].remove:
-            data["ui"].pop(i - removals)
+    for i in range(len(data["ui"].ui_list)):
+        if data["ui"].ui_list[i - removals].remove:
+            data["ui"].ui_list.pop(i - removals)
             removals += 1
         else:
-            data["ui"][i - removals].render()
+            data["ui"].ui_list[i - removals].render()
     # removes ui elements that need to be removed; else render the ui element.
 
     pygame.display.flip()
