@@ -95,7 +95,7 @@ tick_pause = 0
 data = {
     "room": Room(width * 2, height * 2),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
-    "instance_lists": InstanceLists(),
+    "instances": InstanceLists(),
     "ui": UIList(
         [
             Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
@@ -119,19 +119,19 @@ if os.path.exists(save_path):
             for row in csv_reader:
                 if row["instance"] == "Player":
                     _save_has_player = True
-                    data["instance_lists"].all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
+                    data["instances"].all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
                     data["camera"].x = float(row["x"]) - width / 2
                     data["camera"].y = float(row["y"]) - height / 2
                 # sets player position to saved position.
 
                 elif row["instance"] == "Enemy":
-                    data["instance_lists"].all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
+                    data["instances"].all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
 
                 elif row["instance"] == "ProjectileEnemy":
-                    data["instance_lists"].all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+                    data["instances"].all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
 
                 elif row["instance"] == "ChargerEnemy":
-                    data["instance_lists"].all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+                    data["instances"].all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
     except:
         print("Save file data is corrupted! Creating a new save file...")
 # if there is a save file, load the instances with their positions from there.
@@ -142,7 +142,7 @@ else:
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
-    data["instance_lists"].all_instances = [
+    data["instances"].all_instances = [
         Player(window, 0, 0, 48, 48, 100, 5), Enemy(window, data["room"].width / 4, 0, 48, 48, 100, 3, 10)
     ]
 # if the player was removed in the save, start from a clean slate.
@@ -169,15 +169,15 @@ while running:
     data["camera"].shake_decay()
     # multiplies camera shake attributes by its decay.
 
-    data["instance_lists"].append_queued()
+    data["instances"].append_queued()
     # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
     
-    for instance in data["instance_lists"].all_instances:
+    for instance in data["instances"].all_instances:
         if instance.can_pre_update:
             instance.pre_update(data)
     # runs pre-update for instances that have that priority.
 
-    for instance in data["instance_lists"].all_instances:
+    for instance in data["instances"].all_instances:
         instance.update(data)
     # updates each instance before doing anything.
 
@@ -192,36 +192,36 @@ while running:
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        data["instance_lists"].add_instances.append(ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+        data["instances"].add_instances.append(ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
         projectile_enemy_ticks = pygame.time.get_ticks()
-        data["instance_lists"].add_instances.append(ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+        data["instances"].add_instances.append(ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
-    data["instance_lists"].queue_removals()
+    data["instances"].queue_removals()
     # if an instance needs to be removed, its index will be appended to the remove instance list.
 
-    for instance in data["instance_lists"].all_instances:
+    for instance in data["instances"].all_instances:
         instance.tick() 
     # performs instances next action after updating.
 
         if instance.trail:
-            data["instance_lists"].add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
+            data["instances"].add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
         # if instance trail attribute is true, create an afterimage in its position.
 
         if hasattr(instance, "parried"):
             if instance.parried:
                 #tick_pause += 30
-                data["instance_lists"].add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
+                data["instances"].add_instances.append(TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0)))
 
                 if instance.type == "Projectile":
                     for i in range(5):
-                        data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
+                        data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
 
                 elif instance.type == "ChargerEnemy":
-                    data["instance_lists"].add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
+                    data["instances"].add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
 
             instance.parried = False
         # creates parry text.
@@ -239,52 +239,52 @@ while running:
 
             if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
                 instance.projectile_ticks = pygame.time.get_ticks()
-                data["instance_lists"].add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25))
+                data["instances"].add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25))
                 for i in range(3):
-                    data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 250))
+                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 250))
                 data["camera"].shake(7, 7)
             # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
             
             if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
                 instance.beam_ticks = pygame.time.get_ticks()
-                data["instance_lists"].add_instances.append(Beam(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15))
+                data["instances"].add_instances.append(Beam(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15))
                 for i in range(3):
-                    data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 150))
+                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 150))
                 data["camera"].shake(5, 5)
             # creates a beam instead.
 
             if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - instance.parry_ticks) > instance.parry_cooldown:
                 instance.parry_ticks = pygame.time.get_ticks()
-                data["instance_lists"].add_instances.append(Parry(window, instance.x, instance.y, 96, 96, "Player", 10))
+                data["instances"].add_instances.append(Parry(window, instance.x, instance.y, 96, 96, "Player", 10))
                 data["camera"].shake(10, 10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
             for i in range(5):
-                data["instance_lists"].add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
+                data["instances"].add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
         # create 5 particles on death. 
 
         elif instance.type == "ProjectileEnemy":
             if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
                 instance.cooldown_ticks = pygame.time.get_ticks()
-                data["instance_lists"].add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
+                data["instances"].add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
                 for i in range(3):
-                    data["instance_lists"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
+                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
             # if player is in range, fire a projectile at the player.
 
         elif instance.type == "ChargerEnemy":
             if instance.spawn_particle:
                 for i in range(3):
-                    data["instance_lists"].add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
+                    data["instances"].add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
             instance.spawn_particle = False
             # creates parry indicator particles.
 
         elif instance.type == "Beam":
             if instance.remove:
-                data["instance_lists"].add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
+                data["instances"].add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
             # creates a beam fading effect on its position.
 
-    data["instance_lists"].remove_queued()
+    data["instances"].remove_queued()
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
     
     data["camera"].random_shake()
@@ -293,7 +293,7 @@ while running:
     data["room"].draw(window, (200, 200, 200), data["camera"].x + data["camera"].shake_random_x, data["camera"].y + data["camera"].shake_random_y)
     # draws the room borders.
 
-    for instance in render_sort(data["instance_lists"].all_instances, data["camera"]):
+    for instance in render_sort(data["instances"].all_instances, data["camera"]):
         instance.render(data["camera"].x + data["camera"].shake_random_x, data["camera"].y + data["camera"].shake_random_y) 
     # renders all instances with camera attributes after ticking.
 
@@ -334,7 +334,7 @@ save_data = [
 ]
 # prepares program data for save after quitting, starts with column labels.
 
-for instance in data["instance_lists"].all_instances:
+for instance in data["instances"].all_instances:
     save_data.append([instance.type, int(instance.x), int(instance.y)])
 # adds player data to the save.
 

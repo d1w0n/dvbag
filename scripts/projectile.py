@@ -13,7 +13,7 @@ class Projectile(Instance):
 
     def update(self, data):
         self._room = data["room"]
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self.remove = True
@@ -46,7 +46,7 @@ class Parry(Instance):
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         self._has_target = False
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == self._target_instance:
                 self._mouse_dx = mouse_x + data["camera"].x - instance.x
                 self._mouse_dy = mouse_y + data["camera"].y - instance.y
@@ -90,7 +90,7 @@ class EnemyProjectile(Projectile):
     def update(self, data):
         if self.type == "EnemyProjectile":
             self._room = data["room"]
-            for instance in data["instance_lists"].all_instances:
+            for instance in data["instances"].all_instances:
                 if instance.type == "Player":
                     if self.get_collision(instance):
                         self.remove = True
@@ -137,7 +137,7 @@ class Beam(Instance):
             self.remove = True
             pass
         
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self._collision = True
@@ -147,7 +147,7 @@ class Beam(Instance):
 
         if not self._collision:
             while not self._collision:
-                for instance in data["instance_lists"].all_instances:
+                for instance in data["instances"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True
@@ -167,7 +167,7 @@ class Beam(Instance):
                 self.y -= self.velocity_y
                 self._collision = False
 
-                for instance in data["instance_lists"].all_instances:
+                for instance in data["instances"].all_instances:
                     if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                         if self.get_collision(instance):
                             self._collision = True

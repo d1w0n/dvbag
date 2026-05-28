@@ -24,7 +24,7 @@ class Enemy(Instance):
     def update(self, data):
         self._alpha_offset *= 0.8
 
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y
@@ -73,7 +73,7 @@ class ProjectileEnemy(Enemy):
     def update(self, data): 
         self._alpha_offset *= 0.8
 
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y
@@ -118,7 +118,7 @@ class ChargerEnemy(Enemy):
 
     def update(self, data):
         self._alpha_offset *= 0.8
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y

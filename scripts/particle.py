@@ -46,7 +46,7 @@ class EnemyParticle(Particle):
         self.set_sprite("assets/images/placeholder_green.png")
 
     def update(self, data):
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 if self.get_collision(instance):
                     self.remove = True

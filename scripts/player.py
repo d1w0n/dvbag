@@ -30,7 +30,7 @@ class Player(Instance):
     def update(self, data): 
         self._room = data["room"]
         
-        for instance in data["instance_lists"].all_instances:
+        for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
