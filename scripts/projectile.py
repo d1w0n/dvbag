@@ -8,6 +8,7 @@ pygame.init()
 class Projectile(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
+        self.parried = False
         self.damage = damage
         self.speed = speed
         self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
@@ -100,11 +101,14 @@ class EnemyProjectile(Projectile):
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
                         data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
+                        for i in range(5):
+                            data["instances"].add_ProjectileParticle(self._window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250)
+                        data["camera"].shake(20, 20)
+
                         self.type = "Projectile"
                         self.parried = True
                         self.damage = 100
-                        self.add_score += 25
-                        data["camera"].shake(20, 20)
+                        self.add_score += 20
                         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
                         self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + data["camera"].x) - self.x, (self.mouse_y + data["camera"].y) - self.y, self.speed * 2)
         

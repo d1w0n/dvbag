@@ -211,18 +211,6 @@ while running:
             data["instances"].add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
         # if instance trail attribute is true, create an afterimage in its position.
 
-        if hasattr(instance, "parried"):
-            if instance.parried:
-                if instance.type == "Projectile":
-                    for i in range(5):
-                        data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))
-
-                elif instance.type == "ChargerEnemy":
-                    data["instances"].add_instances.append(Particle(window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250))
-
-            instance.parried = False
-        # creates parry text.
-
         if instance.type == "Player":
             data["camera"].target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
             # smooths camera position to mouse and player position.

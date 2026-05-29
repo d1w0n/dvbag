@@ -41,8 +41,20 @@ class InstanceLists:
         del self._removals
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
 
+    def add_Player(self, *args):
+        self.add_instances.append(Player(*args))
+
+    def add_Enemy(self, *args):
+        self.add_instances.append(Enemy(*args))
+
     def add_TextDisplay(self, *args):
         self.add_instances.append(TextDisplay(*args))
+
+    def add_ProjectileParticle(self, *args):
+        self.add_instances.append(ProjectileParticle(*args))
+
+    def add_Particle(self, *args):
+        self.add_instances.append(Particle(*args))
 
 class UIList:
     def __init__(self, ui_list = []):
