@@ -1,6 +1,7 @@
 from scripts.instance import Instance
 import pygame
 import math
+import random
 
 pygame.init()
 
@@ -98,6 +99,7 @@ class EnemyProjectile(Projectile):
 
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
+                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
                         self.type = "Projectile"
                         self.parried = True
                         self.damage = 100

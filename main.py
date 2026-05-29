@@ -213,9 +213,6 @@ while running:
 
         if hasattr(instance, "parried"):
             if instance.parried:
-                #tick_pause += 30
-                data["instances"].add_TextDisplay(window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
-
                 if instance.type == "Projectile":
                     for i in range(5):
                         data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, random.randint(0, 360), 250))

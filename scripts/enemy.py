@@ -1,6 +1,7 @@
 from scripts.instance import Instance
 import pygame
 import math
+import random
 
 pygame.init()
 
@@ -135,6 +136,7 @@ class ChargerEnemy(Enemy):
 
             elif instance.type == "Parry" and self.phase == 2:
                 if self.get_collision(instance):
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
                     self.health = 0
                     self.parried = True
                     self.phase = 3
