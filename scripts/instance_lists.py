@@ -41,6 +41,9 @@ class InstanceLists:
         del self._removals
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
 
+    def add_TextDisplay(self, *args):
+        self.add_instances.append(TextDisplay(*args))
+
 class UIList:
     def __init__(self, ui_list = []):
         self.ui_list = ui_list
