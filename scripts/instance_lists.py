@@ -56,6 +56,9 @@ class InstanceLists:
     def add_Particle(self, *args):
         self.add_instances.append(Particle(*args))
 
+    def add_AfterImage(self, *args):
+        self.add_instances.append(AfterImage(*args))
+
 class UIList:
     def __init__(self, ui_list = []):
         self.ui_list = ui_list

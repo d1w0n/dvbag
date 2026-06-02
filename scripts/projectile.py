@@ -25,7 +25,7 @@ class Projectile(Instance):
             self.remove = True
         # if colliding with room bounds, remove itself.
 
-    def tick(self):
+    def tick(self, data):
         self.x += self.velocity_x
         self.y += self.velocity_y
         # change x and y by velocities.
@@ -67,7 +67,7 @@ class Parry(Instance):
         if (pygame.time.get_ticks() - self.start_ticks) > self._duration:
             self.remove = True
 
-    def tick(self):
+    def tick(self, data):
         self.x = self._target_x
         self.y = self._target_y
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
@@ -86,7 +86,6 @@ class EnemyProjectile(Projectile):
         super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
         self.type = "EnemyProjectile"
         self.parry_text = False
-        self.trail = True
         self.set_sprite("assets/images/enemyprojectile.png")
 
     def update(self, data):
@@ -118,6 +117,10 @@ class EnemyProjectile(Projectile):
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
         # if colliding with room bounds, remove itself.
+
+    def tick(self, data):
+        super().tick(data)
+        data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
 
 
@@ -188,7 +191,7 @@ class Beam(Instance):
     def update(self, data):
         pass
 
-    def tick(self):
+    def tick(self, data):
         pass
 
     def render(self, camera):

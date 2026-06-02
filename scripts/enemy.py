@@ -42,7 +42,7 @@ class Enemy(Instance):
             self.remove = True
             self.add_score += 50
                 
-    def tick(self):
+    def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
@@ -96,7 +96,7 @@ class ProjectileEnemy(Enemy):
             self.remove = True
             self.add_score += 50
 
-    def tick(self):
+    def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
         if not self.spawn_projectile:
@@ -131,7 +131,6 @@ class ChargerEnemy(Enemy):
 
                 elif self.phase == 2 and self.get_collision(instance):
                     self.phase = 3
-                    self.trail = False
                     self._phase_ticks = pygame.time.get_ticks()
 
             elif instance.type == "Parry" and self.phase == 2:
@@ -141,7 +140,6 @@ class ChargerEnemy(Enemy):
 
                     self.health = 0
                     self.phase = 3
-                    self.trail = False
                     self._phase_ticks = pygame.time.get_ticks()
                     self.add_score += 25
 
@@ -151,16 +149,15 @@ class ChargerEnemy(Enemy):
                     self._alpha_offset = 255
                     self.add_score += 5
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
+        # check for interactions with other instances.
 
         if self.phase == 1 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 2
-                self.trail = True
                 self._phase_ticks = pygame.time.get_ticks()
 
-        elif self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
-            self.phase = 3
-            self.trail = False
-            self._phase_ticks = pygame.time.get_ticks()
+        if self.phase == 2 and pygame.time.get_ticks() - self._phase_ticks > 500:
+                self.phase = 3
+                self._phase_ticks = pygame.time.get_ticks()
 
         elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
             self.phase = 0
@@ -169,7 +166,7 @@ class ChargerEnemy(Enemy):
             self.remove = True
             self.add_score += 50
                     
-    def tick(self):
+    def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
         if not self.phase == 1 and not self.phase == 3: 
@@ -177,5 +174,8 @@ class ChargerEnemy(Enemy):
             self.x += self.velocity_x
             self.y += self.velocity_y
         # moves towards the target position.
+
+        if self.phase == 2:
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))

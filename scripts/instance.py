@@ -31,7 +31,7 @@ class Instance(ABC):
         pass
 
     @abstractmethod
-    def tick(self):
+    def tick(self, data):
         pass
 
     @abstractmethod
@@ -65,10 +65,11 @@ class Instance(ABC):
     
     def set_sprite(self, file):
         self.spritepath = file
-        self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha() # side note: i hate this so much
+        self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha()
         self._sprite = pygame.transform.scale(self._sprite, (round(self.width), round(self.height)))
-
+    """
     def tint_surface(surface, color):
         tinted = surface.copy()
         tinted.fill(color, special_flags=pygame.BLEND_RGB_MULT)
         return tinted
+    """

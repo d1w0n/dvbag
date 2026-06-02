@@ -21,7 +21,7 @@ class Particle(Instance):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True
 
-    def tick(self):
+    def tick(self, data):
         self.velocity_x = self.speed * math.cos(math.radians(self.direction))
         self.velocity_y = self.speed * math.sin(math.radians(self.direction))
         self.x += self.velocity_x
@@ -78,7 +78,7 @@ class ParryFlash(Particle):
     def update(self, data):
         super().update(data)
 
-    def tick(self):
+    def tick(self, data):
         self.direction += self._rotation_speed
         self.height += 5
         self.set_sprite("assets/images/parryflash.png")
@@ -105,7 +105,7 @@ class AfterImage(Particle):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True
 
-    def tick(self):
+    def tick(self, data):
         self.width += self._size_change
         self.height += self._size_change
         self.set_sprite(self.spritepath)
@@ -146,7 +146,7 @@ class BeamFade(Particle):
         self._width_init = width
         self.always_render = True
 
-    def tick(self):
+    def tick(self, data):
         self.width = self._width_init - self._width_init * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)
 
     def render(self, camera):

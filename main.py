@@ -204,12 +204,8 @@ while running:
     # if an instance needs to be removed, its index will be appended to the remove instance list.
 
     for instance in data["instances"].all_instances:
-        instance.tick() 
+        instance.tick(data) 
     # performs instances next action after updating.
-
-        if instance.trail:
-            data["instances"].add_instances.append(AfterImage(window, instance.spritepath, instance.x, instance.y, instance.width, instance.height, 0, 250, 125, -1))
-        # if instance trail attribute is true, create an afterimage in its position.
 
         if instance.type == "Player":
             data["camera"].target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)

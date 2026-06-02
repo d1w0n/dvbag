@@ -28,8 +28,6 @@ class Player(Instance):
         self.parry_cooldown = 1000
     
     def update(self, data): 
-        self._room = data["room"]
-        
         for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
@@ -72,15 +70,15 @@ class Player(Instance):
         if self.health <= 0:
             self.remove = True
 
-    def tick(self):
+    def tick(self, data):
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
         # adds x and y by velocities.
 
-        if self.get_room_collision_x(self._room):
+        if self.get_room_collision_x(data["room"]):
             self.x -= self.velocity_x
-        if self.get_room_collision_y(self._room):
+        if self.get_room_collision_y(data["room"]):
             self.y -= self.velocity_y
         # if colliding with room bounds, revert x or y velocity change.
 
