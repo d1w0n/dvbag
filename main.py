@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 import config
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instance_lists import InstanceLists, UIList#, EffectList
+from scripts.instances_manager import InstanceLists, UIList#, EffectList
 
 pygame.init()
 
