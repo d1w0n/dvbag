@@ -4,7 +4,6 @@ from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
-from scripts.list_sort import render_sort
 
 from scripts.ui import Bar, Text, TextParticle
 
@@ -41,50 +40,48 @@ class InstanceLists:
         del self._removals
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
 
+    def render_sort(self, camera, *types): # TODO: make it sort based off the arguments in types.
+        render_list = [] 
+        
+        for instance in self.all_instances:
+            if not instance.get_out_of_view(camera) or hasattr(instance, "always_render"):
+                render_list.append(instance)
+                
+        return render_list
+    # sorts the instance list by specified order in parameters.
+    # also checks if the instances are on screen; if not, dont render, unless exeption that always renders.
+
     def add_Player(self, *args):
         self.add_instances.append(Player(*args))
-
     def add_Enemy(self, *args):
         self.add_instances.append(Enemy(*args))
-
     def add_TextDisplay(self, *args):
         self.add_instances.append(TextDisplay(*args))
-
     def add_ProjectileParticle(self, *args):
         self.add_instances.append(ProjectileParticle(*args))
-
     def add_Particle(self, *args):
         self.add_instances.append(Particle(*args))
-
     def add_AfterImage(self, *args):
         self.add_instances.append(AfterImage(*args))
-
     def add_EnemyParticle(self, *args):
         self.add_instances.append(EnemyParticle(*args))
-
     def add_Projectile(self, *args):
         self.add_instances.append(Projectile(*args))
-
     def add_Beam(self, *args):
         self.add_instances.append(Beam(*args))
-
     def add_Parry(self, *args):
         self.add_instances.append(Parry(*args))
-
     def add_ParryFlash(self, *args):
         self.add_instances.append(ParryFlash(*args))
-
     def add_ProjectileEnemy(self, *args):
         self.add_instances.append(ProjectileEnemy(*args))
-
     def add_ChargerEnemy(self, *args):
         self.add_instances.append(ChargerEnemy(*args))
-
     def add_EnemyProjectile(self, *args):
         self.add_instances.append(EnemyProjectile(*args))
-
     def add_BeamFade(self, *args):
         self.add_instances.append(BeamFade(*args))
+    # instance management methods chunk.
 
 class UIList:
     def __init__(self, ui_list = []):

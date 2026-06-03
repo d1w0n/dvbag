@@ -6,7 +6,6 @@ import random
 import csv
 import sys
 import os
-import math
 try:
     import pygame
 except ModuleNotFoundError:
@@ -16,6 +15,7 @@ except ModuleNotFoundError:
           3. Retry this program!" + "\n" * 2 + "Program Successfully Ended\n")
     sys.exit()
 
+import config
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.instance_lists import InstanceLists, UIList#, EffectList
@@ -26,8 +26,6 @@ from scripts.particle import Particle, EnemyParticle, ProjectileParticle, \
     ParryFlash, AfterImage, TextDisplay, BeamFade
 from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
-from scripts.list_sort import render_sort
-import config
 
 pygame.init()
 
@@ -217,7 +215,7 @@ while running:
     data["room"].draw(window, (200, 200, 200), data["camera"])
     # draws the room borders.
 
-    for instance in render_sort(data["instances"].all_instances, data["camera"]):
+    for instance in data["instances"].render_sort(data["camera"]):
         instance.render(data["camera"]) 
     # renders all instances with camera attributes after ticking.
 
