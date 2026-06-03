@@ -1,15 +1,14 @@
 import pygame
 
+import config
+
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
 
 from scripts.ui import Bar, Text, TextParticle
-
 from scripts.screen_effects import Effect
-
-import config
 
 pygame.init()
 
@@ -84,10 +83,11 @@ class InstanceLists:
     # instance management methods chunk.
 
 class UIList:
-    def __init__(self, ui_list = None):
+    def __init__(self, ui_list = None, effects = None):
         self.ui_list = ui_list if ui_list is not None else []
+        self.effects = effects if effects is not None else []
 
-    def render(self):
+    def ui_render(self):
         self._removals = 0
         for i in range(len(self.ui_list)):
             if self.ui_list[i - self._removals].remove:
@@ -95,22 +95,9 @@ class UIList:
                 self._removals += 1
             else:
                 self.ui_list[i - self._removals].render()
-        # removes ui elements that need to be removed; else render the ui element.
+    # removes ui elements that need to be removed; else render the ui element.
 
-    def add_Bar(self, *args):
-        self.ui_list.append(Bar(*args))
-    def add_Text(self, *args):
-        self.ui_list.append(Text(*args))
-    def add_TextParticle(self, *args):
-        self.ui_list.append(TextParticle(*args))
-    # instance management methods chunk.
-
-"""
-class EffectList:
-    def __init__(self, effect_list = []):
-        self.effect_list = effect_list
-
-    def render(self):
+    def effects_render(self):
         self._removals = 0
         for i in range(len(self.effects)):
             if self.effects[i - self._removals].remove:
@@ -118,4 +105,14 @@ class EffectList:
                 self._removals += 1
             else:
                 self.effects[i - self._removals].render()
-"""
+    # renders screen overlay effects.
+
+    def add_Bar(self, *args):
+        self.ui_list.append(Bar(*args))
+    def add_Text(self, *args):
+        self.ui_list.append(Text(*args))
+    def add_TextParticle(self, *args):
+        self.ui_list.append(TextParticle(*args))
+    def add_Effect(self, *args):
+        self.effects.append(Effect(*args))
+    # instance management methods chunk.

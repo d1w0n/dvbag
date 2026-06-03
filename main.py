@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 import config
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instances_manager import InstanceLists, UIList#, EffectList
+from scripts.instances_manager import InstanceLists, UIList
 
 pygame.init()
 
@@ -30,7 +30,6 @@ running = True
 clock = pygame.time.Clock()
 tickrate = 60
 removals = 0
-menu_running = True
 tick_pause = 0
 # variable initialization.
 
@@ -44,7 +43,7 @@ data["ui"].add_Text("Title", window, 0, 0, 96, "this is technically a menu", (0,
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 
-while menu_running and not config.MENU_SKIP:
+while not config.MENU_SKIP:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
         menu_running = False
@@ -55,9 +54,9 @@ while menu_running and not config.MENU_SKIP:
     window.fill((255, 255, 255))
 
     if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]:
-        menu_running = False
+        break
 
-    data["ui"].render()
+    data["ui"].ui_render()
     # removes ui elements that need to be removed.
 
     pygame.display.flip()
@@ -199,16 +198,10 @@ while running:
         instance.render(data["camera"]) 
     # renders all instances with camera attributes after ticking.
 
-    removals = 0
-    for i in range(len(data["camera"].effects)):
-        if data["camera"].effects[i - removals].remove:
-            data["camera"].effects.pop(i - removals)
-            removals += 1
-        else:
-            data["camera"].effects[i - removals].render()
+    data["ui"].effects_render()
     # renders screen overlay effects.
 
-    data["ui"].render()
+    data["ui"].ui_render()
     # removes ui elements that need to be removed; else render the ui element.
 
     pygame.display.flip()

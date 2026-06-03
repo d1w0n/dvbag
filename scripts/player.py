@@ -35,7 +35,7 @@ class Player(Instance):
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
                     data["camera"].shake(100, 100)
-                    data["camera"].add_effect("assets/images/red.png", 1000, 100)
+                    data["ui"].add_Effect(self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
 
             elif instance.type == "EnemyParticle":
                 if self.get_collision(instance):
