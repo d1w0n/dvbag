@@ -19,7 +19,6 @@ import config
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.instance_lists import InstanceLists, UIList#, EffectList
-from scripts.ui import Bar, Text, TextParticle
 
 pygame.init()
 
@@ -36,13 +35,12 @@ tick_pause = 0
 # variable initialization.
 
 data = {
-    "ui": UIList(
-        [
-            Text("Title", window, 0, 0, 96, "this is technically a menu", (0, 0, 0))
-        ]
-    )
+    "ui": UIList()
 }
 # initializes menu data.
+
+data["ui"].add_Text("Title", window, 0, 0, 96, "this is technically a menu", (0, 0, 0))
+# initialize menu ui elements.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 
@@ -85,19 +83,18 @@ data = {
     "room": Room(width * 2, height * 2),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists(),
-    "ui": UIList(
-        [
-            Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0)), 
-            Text("HealthText", window, 10, 60, 36, "", (0, 255, 0)),
-            Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
-        ]
-    ),
+    "ui": UIList(),
     "mouse_x": pygame.mouse.get_pos()[0],
     "mouse_y": pygame.mouse.get_pos()[1],
     "score": 0,
     "tick_pause": 0
 }
 # initialize main loop data.
+
+data["ui"].add_Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0))
+data["ui"].add_Text("HealthText", window, 10, 60, 36, "", (0, 255, 0))
+data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
+# initialize main loop ui elements.
 
 save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
 # get save file location.
@@ -142,7 +139,7 @@ print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 # prints successful load with elapsed time.
 
 while running:
-# main loop; instance management is in here.
+# main loop.
 
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
@@ -174,7 +171,7 @@ while running:
 
         if instance.add_score > 0:
             score += instance.add_score
-            data["ui"].ui_list.append(TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5)))
+            data["ui"].add_TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
             for element in data["ui"].ui_list:
                 if element.name == "ScoreText":
                     element.set_text("Score: " + str(score) + "")

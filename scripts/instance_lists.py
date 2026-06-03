@@ -14,8 +14,8 @@ import config
 pygame.init()
 
 class InstanceLists:
-    def __init__(self, all_instances = []):
-        self.all_instances = all_instances
+    def __init__(self, all_instances = None):
+        self.all_instances = all_instances if all_instances is not None else []
         self.add_instances = []
         self.remove_instances = []
 
@@ -84,8 +84,8 @@ class InstanceLists:
     # instance management methods chunk.
 
 class UIList:
-    def __init__(self, ui_list = []):
-        self.ui_list = ui_list
+    def __init__(self, ui_list = None):
+        self.ui_list = ui_list if ui_list is not None else []
 
     def render(self):
         self._removals = 0
@@ -96,6 +96,15 @@ class UIList:
             else:
                 self.ui_list[i - self._removals].render()
         # removes ui elements that need to be removed; else render the ui element.
+
+    def add_Bar(self, *args):
+        self.ui_list.append(Bar(*args))
+    def add_Text(self, *args):
+        self.ui_list.append(Text(*args))
+    def add_TextParticle(self, *args):
+        self.ui_list.append(TextParticle(*args))
+    # instance management methods chunk.
+
 """
 class EffectList:
     def __init__(self, effect_list = []):
