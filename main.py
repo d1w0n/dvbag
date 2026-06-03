@@ -59,13 +59,7 @@ while menu_running and not config.MENU_SKIP:
     if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]:
         menu_running = False
 
-    removals = 0
-    for i in range(len(data["ui"].ui_list)):
-        if data["ui"].ui_list[i - removals].remove:
-            data["ui"].ui_list.pop(i - removals)
-            removals += 1
-        else:
-            data["ui"].ui_list[i - removals].render()
+    data["ui"].render()
     # removes ui elements that need to be removed.
 
     pygame.display.flip()
@@ -139,10 +133,9 @@ else:
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
-    data["instances"].all_instances = []
+    data["instances"] = InstanceLists()
     data["instances"].add_Player(window, 0, 0, 48, 48, 100, 5)
     data["instances"].add_Enemy(window, data["room"].width / 4, 0, 48, 48, 100, 3, 10)
-    
 # if the player was removed in the save, start from a clean slate.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
