@@ -93,6 +93,8 @@ tick_pause = 0
 # main gameplay loop variables.
 
 data = {
+    "width": width,
+    "height": height,
     "room": Room(width * 2, height * 2),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists(),
@@ -103,7 +105,6 @@ data = {
             Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
         ]
     ),
-    #"effects": EffectList(),
     "score": 0,
     "tick_pause": 0
 }
@@ -206,64 +207,6 @@ while running:
     for instance in data["instances"].all_instances:
         instance.tick(data) 
     # performs instances next action after updating.
-
-        if instance.type == "Player":
-            data["camera"].target(instance.x - width / 2 + (mouse_x - width / 2) / 4, instance.y - height / 2 + (mouse_y - height / 2) / 4)
-            # smooths camera position to mouse and player position.
-
-            for element in data["ui"].ui_list:
-                if element.name == "HealthBar":
-                    element.stat = instance.health
-                if element.name == "HealthText":
-                    element.set_text("Health: " + str(instance.health) + "")
-            # updates ui elements correlated to player stats.
-
-            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - instance.projectile_ticks) > instance.projectile_cooldown:
-                instance.projectile_ticks = pygame.time.get_ticks()
-                data["instances"].add_instances.append(Projectile(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25))
-                for i in range(3):
-                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 250))
-                data["camera"].shake(7, 7)
-            # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
-            
-            if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - instance.beam_ticks) > instance.beam_cooldown:
-                instance.beam_ticks = pygame.time.get_ticks()
-                data["instances"].add_instances.append(Beam(window, instance.x, instance.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15))
-                for i in range(3):
-                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + random.randint(-45, 45), 150))
-                data["camera"].shake(5, 5)
-            # creates a beam instead.
-
-            if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - instance.parry_ticks) > instance.parry_cooldown:
-                instance.parry_ticks = pygame.time.get_ticks()
-                data["instances"].add_instances.append(Parry(window, instance.x, instance.y, 96, 96, "Player", 10))
-                data["camera"].shake(10, 10)
-            # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
-
-        elif (instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy") and instance.remove:
-            for i in range(5):
-                data["instances"].add_instances.append(EnemyParticle(window, instance.x, instance.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000))
-        # create 5 particles on death. 
-
-        elif instance.type == "ProjectileEnemy":
-            if instance.spawn_projectile and (pygame.time.get_ticks() - instance.cooldown_ticks) > instance.projectile_cooldown:
-                instance.cooldown_ticks = pygame.time.get_ticks()
-                data["instances"].add_instances.append(EnemyProjectile(window, instance.x, instance.y, 24, 24, instance.target_x, instance.target_y, 10, 10))
-                for i in range(3):
-                    data["instances"].add_instances.append(ProjectileParticle(window, instance.x, instance.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(instance.target_y - instance.y, instance.target_x - instance.x)) + random.randint(-45, 45), 250))
-            # if player is in range, fire a projectile at the player.
-
-        elif instance.type == "ChargerEnemy":
-            if instance.spawn_particle:
-                for i in range(3):
-                    data["instances"].add_instances.append(ParryFlash(window, instance.x, instance.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10)))
-            instance.spawn_particle = False
-            # creates parry indicator particles.
-
-        elif instance.type == "Beam":
-            if instance.remove:
-                data["instances"].add_instances.append(BeamFade(window, instance.x_init, instance.y_init, instance.x, instance.y, instance.width, instance.height, 50))
-            # creates a beam fading effect on its position.
 
     data["instances"].remove_queued()
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.

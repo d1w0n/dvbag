@@ -52,6 +52,11 @@ class Enemy(Instance):
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
 
+        if self.remove:
+            for i in range(5):
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+            # create 5 particles on death. 
+
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
         _rotated.set_alpha(self._alpha - self._alpha_offset)
@@ -106,6 +111,18 @@ class ProjectileEnemy(Enemy):
         # moves towards the target position.
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+
+        if self.spawn_projectile and (pygame.time.get_ticks() - self.cooldown_ticks) > self.projectile_cooldown:
+                self.cooldown_ticks = pygame.time.get_ticks()
+                data["instances"].add_EnemyProjectile(self._window, self.x, self.y, 24, 24, self.target_x, self.target_y, 10, 10)
+                for i in range(3):
+                    data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(self.target_y - self.y, self.target_x - self.x)) + random.randint(-45, 45), 250)
+            # if player is in range, fire a projectile at the player.
+
+        if self.remove:
+            for i in range(5):
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+            # create 5 particles on death. 
 
 
 
@@ -175,7 +192,18 @@ class ChargerEnemy(Enemy):
             self.y += self.velocity_y
         # moves towards the target position.
 
+        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+
         if self.phase == 2:
             data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
-        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+        if self.spawn_particle:
+            for i in range(3):
+                data["instances"].add_ParryFlash(self._window, self.x, self.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10))
+            self.spawn_particle = False
+            # creates parry indicator particles.
+
+        if self.remove:
+            for i in range(5):
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+            # create 5 particles on death. 

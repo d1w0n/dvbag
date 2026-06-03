@@ -59,6 +59,33 @@ class InstanceLists:
     def add_AfterImage(self, *args):
         self.add_instances.append(AfterImage(*args))
 
+    def add_EnemyParticle(self, *args):
+        self.add_instances.append(EnemyParticle(*args))
+
+    def add_Projectile(self, *args):
+        self.add_instances.append(Projectile(*args))
+
+    def add_Beam(self, *args):
+        self.add_instances.append(Beam(*args))
+
+    def add_Parry(self, *args):
+        self.add_instances.append(Parry(*args))
+
+    def add_ParryFlash(self, *args):
+        self.add_instances.append(ParryFlash(*args))
+
+    def add_ProjectileEnemy(self, *args):
+        self.add_instances.append(ProjectileEnemy(*args))
+
+    def add_ChargerEnemy(self, *args):
+        self.add_instances.append(ChargerEnemy(*args))
+
+    def add_EnemyProjectile(self, *args):
+        self.add_instances.append(EnemyProjectile(*args))
+
+    def add_BeamFade(self, *args):
+        self.add_instances.append(BeamFade(*args))
+
 class UIList:
     def __init__(self, ui_list = []):
         self.ui_list = ui_list

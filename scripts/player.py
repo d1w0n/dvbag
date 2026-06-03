@@ -1,6 +1,7 @@
 from scripts.instance import Instance
 import pygame
 import math
+import random
 
 pygame.init()
 
@@ -56,6 +57,7 @@ class Player(Instance):
             self.speed = 10
         else:
             self.speed = 5
+        # sprinting mechanic.
 
         if key[pygame.K_w]:
             self._dy = -self.speed
@@ -71,6 +73,8 @@ class Player(Instance):
             self.remove = True
 
     def tick(self, data):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
@@ -83,6 +87,41 @@ class Player(Instance):
         # if colliding with room bounds, revert x or y velocity change.
 
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
+        # determine sprite rotation angle.
+
+        if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
+            self.projectile_ticks = pygame.time.get_ticks()
+            data["instances"].add_Projectile(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
+            for i in range(3):
+                data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 250)
+            data["camera"].shake(7, 7)
+        # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
+        
+        if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.beam_ticks) > self.beam_cooldown:
+            self.beam_ticks = pygame.time.get_ticks()
+            data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15)
+            for i in range(3):
+                data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 150)
+            data["camera"].shake(5, 5)
+        # creates a beam instead.
+
+        if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
+            self.parry_ticks = pygame.time.get_ticks()
+            data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 10)
+            data["camera"].shake(10, 10)
+        # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
+        # smooths camera position to mouse and player position.
+
+        for element in data["ui"].ui_list:
+                if element.name == "HealthBar":
+                    element.stat = self.health
+
+                if element.name == "HealthText":
+                    element.set_text("Health: " + str(self.health) + "")
+        # updates ui elements correlated to player stats.
         
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)

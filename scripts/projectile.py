@@ -192,7 +192,9 @@ class Beam(Instance):
         pass
 
     def tick(self, data):
-        pass
+        if self.remove:
+            data["instances"].add_BeamFade(self._window, self.x_init, self.y_init, self.x, self.y, self.width, self.height, 50)
+            # creates a beam fading effect on its position.
 
     def render(self, camera):
         pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width)
