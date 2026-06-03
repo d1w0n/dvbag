@@ -107,7 +107,11 @@ class EnemyProjectile(Projectile):
                         self.type = "Projectile"
                         self.parried = True
                         self.damage = 100
-                        self.add_score += 20
+                        data["score"] += 20
+                        data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
+                        for element in data["ui"].ui_list:
+                            if element.name == "ScoreText":
+                                element.set_text("Score: " + str(data["score"]))
                         self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
                         self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + data["camera"].x) - self.x, (self.mouse_y + data["camera"].y) - self.y, self.speed * 2)
         

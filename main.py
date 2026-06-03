@@ -93,7 +93,7 @@ data = {
 
 data["ui"].add_Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0))
 data["ui"].add_Text("HealthText", window, 10, 60, 36, "", (0, 255, 0))
-data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
+data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
 
 save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
@@ -168,15 +168,6 @@ while running:
     for instance in data["instances"].all_instances:
         instance.update(data)
     # updates each instance before doing anything.
-
-        if instance.add_score > 0:
-            score += instance.add_score
-            data["ui"].add_TextParticle("ScoreParticle", window, random.randint(10, 150), height - 50, 24, "+" + str(instance.add_score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-            for element in data["ui"].ui_list:
-                if element.name == "ScoreText":
-                    element.set_text("Score: " + str(score) + "")
-            instance.add_score = 0
-        # adds instance add score to score and creates a text particle with score added.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
