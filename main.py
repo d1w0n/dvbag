@@ -19,12 +19,6 @@ import config
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.instance_lists import InstanceLists, UIList#, EffectList
-from scripts.player import Player
-from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
-from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, \
-    ParryFlash, AfterImage, TextDisplay, BeamFade
-from scripts.screen_effects import Effect
 from scripts.ui import Bar, Text, TextParticle
 
 pygame.init()
@@ -91,6 +85,7 @@ tick_pause = 0
 # main gameplay loop variables.
 
 data = {
+    "window": window,
     "width": width,
     "height": height,
     "room": Room(width * 2, height * 2),
@@ -103,6 +98,8 @@ data = {
             Text("ScoreText", window, 10, height - 50, 48, "", (0, 0, 0))
         ]
     ),
+    "mouse_x": pygame.mouse.get_pos()[0],
+    "mouse_y": pygame.mouse.get_pos()[1],
     "score": 0,
     "tick_pause": 0
 }
@@ -118,19 +115,20 @@ if os.path.exists(save_path):
             for row in csv_reader:
                 if row["instance"] == "Player":
                     _save_has_player = True
-                    data["instances"].all_instances.append(Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5))
+                    data["instances"].add_Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5)
                     data["camera"].x = float(row["x"]) - width / 2
                     data["camera"].y = float(row["y"]) - height / 2
                 # sets player position to saved position.
 
                 elif row["instance"] == "Enemy":
-                    data["instances"].all_instances.append(Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10))
+                    data["instances"].add_Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
 
                 elif row["instance"] == "ProjectileEnemy":
-                    data["instances"].all_instances.append(ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+                    data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
 
                 elif row["instance"] == "ChargerEnemy":
-                    data["instances"].all_instances.append(ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+                    data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
+
     except:
         print("Save file data is corrupted! Creating a new save file...")
 # if there is a save file, load the instances with their positions from there.
@@ -141,9 +139,10 @@ else:
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
-    data["instances"].all_instances = [
-        Player(window, 0, 0, 48, 48, 100, 5), Enemy(window, data["room"].width / 4, 0, 48, 48, 100, 3, 10)
-    ]
+    data["instances"].all_instances = []
+    data["instances"].add_Player(window, 0, 0, 48, 48, 100, 5)
+    data["instances"].add_Enemy(window, data["room"].width / 4, 0, 48, 48, 100, 3, 10)
+    
 # if the player was removed in the save, start from a clean slate.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
@@ -162,7 +161,7 @@ while running:
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
 
-    mouse_x, mouse_y = pygame.mouse.get_pos()
+    data["mouse_x"], data["mouse_y"] = pygame.mouse.get_pos()
     # gets the current position of the mouse cursor.
 
     data["camera"].shake_decay()
@@ -191,12 +190,12 @@ while running:
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
         enemy_ticks = pygame.time.get_ticks()
-        data["instances"].add_instances.append(ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200))
+        data["instances"].add_ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
     # every second, create an enemy instance at a random position in the room with random health and speed.
 
     if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
         projectile_enemy_ticks = pygame.time.get_ticks()
-        data["instances"].add_instances.append(ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000))
+        data["instances"].add_ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
     data["instances"].queue_removals()
