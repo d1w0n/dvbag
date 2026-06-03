@@ -23,7 +23,7 @@ for instance management, check scripts/instances_manager.py
 """
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instances_manager import InstanceLists, UIList
+from scripts.instance_managers import InstanceLists, UIList
 
 pygame.init()
 
