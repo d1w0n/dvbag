@@ -34,7 +34,7 @@ class Player(Instance):
                 if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
                     self._damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
-                    data["camera"].shake(100, 100)
+                    data["camera"].add_shake(100)
                     data["ui"].add_Effect(self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
 
             elif instance.type == "EnemyParticle":
@@ -94,7 +94,7 @@ class Player(Instance):
             data["instances"].add_Projectile(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
             for i in range(3):
                 data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 250)
-            data["camera"].shake(7, 7)
+            data["camera"].add_shake(7)
         # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
         
         if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.beam_ticks) > self.beam_cooldown:
@@ -102,13 +102,13 @@ class Player(Instance):
             data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15)
             for i in range(3):
                 data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 150)
-            data["camera"].shake(5, 5)
+            data["camera"].add_shake(5)
         # creates a beam instead.
 
         if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
             self.parry_ticks = pygame.time.get_ticks()
             data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 10)
-            data["camera"].shake(10, 10)
+            data["camera"].add_shake(10)
         # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         mouse_x, mouse_y = pygame.mouse.get_pos()

@@ -13,16 +13,15 @@ class Camera:
         
         self.target_x = 0
         self.target_y = 0
-        self.shake_x_abs = 0
-        self.shake_y_abs = 0
+        self.shake_amp = 0
+        self.shake_x = 0
+        self.shake_y = 0
 
-    def shake(self, x, y):
-        self.shake_x_abs += x
-        self.shake_y_abs += y
+    def add_shake(self, amplitude):
+        self.shake_amp += amplitude
 
     def shake_decay(self):
-        self.shake_x_abs *= self.decay
-        self.shake_y_abs *= self.decay
+        self.shake_amp *= self.decay
 
     def target(self, x, y):
         self.target_x = x
@@ -31,5 +30,5 @@ class Camera:
         self.y += (self.target_y - self.y) * self.smoothing
 
     def random_shake(self):
-        self.shake_x = random.randint(-round(self.shake_x_abs), round(self.shake_x_abs))
-        self.shake_y = random.randint(-round(self.shake_y_abs), round(self.shake_y_abs))
+        self.shake_x = random.randint(-round(self.shake_amp), round(self.shake_amp))
+        self.shake_y = random.randint(-round(self.shake_amp), round(self.shake_amp))
