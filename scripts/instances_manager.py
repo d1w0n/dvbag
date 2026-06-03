@@ -2,6 +2,9 @@ import pygame
 
 import config
 
+"""
+import new instance classes here, then add an add method for it in the instance management methods chunk.
+"""
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam
@@ -50,6 +53,10 @@ class InstanceLists:
     # sorts the instance list by specified order in parameters.
     # also checks if the instances are on screen; if not, dont render, unless exeption that always renders.
 
+    """
+    when creating a new instance class, add an add class method to the instance management methods chunk.
+    this is so instances can create new instances without having to import them as a way to deal with circular imports.
+    """
     def add_Player(self, *args):
         self.add_instances.append(Player(*args))
     def add_Enemy(self, *args):
