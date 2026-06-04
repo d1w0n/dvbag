@@ -48,10 +48,9 @@ data["ui"].add_Text("Title", window, 0, 0, 96, "this is technically a menu", (0,
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 
-while not config.MENU_SKIP:
+while not config.MENU_SKIP and running:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
-        menu_running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
