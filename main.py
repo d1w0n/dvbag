@@ -19,7 +19,7 @@ import config
 
 """
 instance management is no longer in main; it just handles the main game loops now.
-for instance management, check scripts/instances_manager.py
+for instance management, check scripts/instance_managers.py
 """
 from scripts.room import Room
 from scripts.camera import Camera
