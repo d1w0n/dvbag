@@ -80,21 +80,18 @@ tick_pause = 0
 # main gameplay loop variables.
 
 data = {
-    "window": window,
     "width": width,
     "height": height,
     "room": Room(width * 2, height * 2),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists(),
     "ui": UIList(),
-    "mouse_x": pygame.mouse.get_pos()[0],
-    "mouse_y": pygame.mouse.get_pos()[1],
     "score": 0,
     "tick_pause": 0
 }
 # initialize main loop data.
 
-data["ui"].add_Bar("HealthBar", window, 0, 0, width / 2, 50, (0, 255, 0))
+data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0))
 data["ui"].add_Text("HealthText", window, 10, 60, 36, "", (0, 255, 0))
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.

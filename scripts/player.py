@@ -17,6 +17,7 @@ class Player(Instance):
         self.velocity_x = 0
         self.velocity_y = 0
         self._color = (0, 0, 255)
+        
         self.projectile_ticks = 0
         self.projectile_cooldown = 100
         self._damage_cooldown = 1000
@@ -26,7 +27,7 @@ class Player(Instance):
         self.beam_ticks = 0
         self.beam_cooldown = 50
         self.parry_ticks = 0
-        self.parry_cooldown = 1000
+        self.parry_cooldown = 500
     
     def update(self, data): 
         for instance in data["instances"].all_instances:
@@ -53,11 +54,7 @@ class Player(Instance):
         self._dy = 0
         # reset target x and y.
 
-        if key[pygame.K_LSHIFT]:
-            self.speed = 10
-        else:
-            self.speed = 5
-        # sprinting mechanic.
+        self.speed = 8
 
         if key[pygame.K_w]:
             self._dy = -self.speed

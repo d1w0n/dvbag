@@ -15,12 +15,10 @@ class Instance(ABC):
         self.y = y
         self.width = width
         self.height = height
-        self._distance = 0
         self.set_sprite(sprite)
 
         self.remove = False
         self.can_pre_update = False
-        self.trail = False
 
     def pre_update(self, data):
         pass

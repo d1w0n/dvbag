@@ -59,6 +59,9 @@ class Parry(Instance):
 
             elif instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
+                    for instance in data["instances"].all_instances:
+                        if instance.type == "Player":
+                            instance.parry_ticks = instance.parry_cooldown
                     self.remove = True
         
         if not self._has_target:

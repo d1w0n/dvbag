@@ -223,7 +223,7 @@ class ChargerEnemy(Enemy):
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
 
         if self.phase == 2:
-            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
 
         if self.spawn_particle:
             for i in range(3):
