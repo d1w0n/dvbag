@@ -15,7 +15,10 @@ class Instance(ABC):
         self.y = y
         self.width = width
         self.height = height
-        self.set_sprite(sprite)
+        if isinstance(sprite, str):
+            self.set_sprite(sprite)
+        else:
+            self.set_sprite("assets/images/placeholder.png")
 
         self.remove = False
         self.can_pre_update = False

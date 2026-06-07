@@ -66,7 +66,7 @@ class Enemy(Instance):
 
         if self.remove:
             for i in range(5):
-                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(1, 360), random.randint(5, 10), 0.9, 3000)
             # create 5 particles on death. 
 
     def render(self, camera):
@@ -136,12 +136,12 @@ class ProjectileEnemy(Enemy):
                 self.cooldown_ticks = pygame.time.get_ticks()
                 data["instances"].add_EnemyProjectile(self._window, self.x, self.y, 24, 24, self.target_x, self.target_y, 10, 10)
                 for i in range(3):
-                    data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/enemyprojectile.png", 15, math.degrees(math.atan2(self.target_y - self.y, self.target_x - self.x)) + random.randint(-45, 45), 250)
+                    data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 12, 12, math.degrees(math.atan2(self.target_y - self.y, self.target_x - self.x)) + random.randint(-45, 45), 15, 1, 250)
             # if player is in range, fire a projectile at the player.
 
         if self.remove:
             for i in range(5):
-                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(1, 360), random.randint(5, 10), 0.9, 3000)
             # create 5 particles on death. 
 
 class ChargerEnemy(Enemy):
@@ -175,8 +175,8 @@ class ChargerEnemy(Enemy):
                     self.phase = 3
                     self._phase_ticks = pygame.time.get_ticks()
 
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
-                    data["instances"].add_Particle(self._window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250)
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 1000)
+                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
                     data["score"] += 25
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+25", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                     for element in data["ui"].ui_list:
@@ -239,5 +239,5 @@ class ChargerEnemy(Enemy):
 
         if self.remove:
             for i in range(5):
-                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
+                data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(1, 360), random.randint(5, 10), 0.9, 3000)
             # create 5 particles on death. 

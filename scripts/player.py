@@ -17,7 +17,7 @@ class Player(Instance):
         self.velocity_x = 0
         self.velocity_y = 0
         self._color = (0, 0, 255)
-        
+
         self.projectile_ticks = 0
         self.projectile_cooldown = 100
         self._damage_cooldown = 1000
@@ -90,7 +90,7 @@ class Player(Instance):
             self.projectile_ticks = pygame.time.get_ticks()
             data["instances"].add_Projectile(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
             for i in range(3):
-                data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/dot.png", 15, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 250)
+                data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
             data["camera"].add_shake(7)
         # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
         
@@ -98,7 +98,7 @@ class Player(Instance):
             self.beam_ticks = pygame.time.get_ticks()
             data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15)
             for i in range(3):
-                data["instances"].add_ProjectileParticle(self._window, self.x, self.y, 12, 12, "assets/images/magentadot.png", 20, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 150)
+                data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
             data["camera"].add_shake(5)
         # creates a beam instead.
 
