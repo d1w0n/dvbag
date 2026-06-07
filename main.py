@@ -106,7 +106,7 @@ if os.path.exists(save_path):
             for row in csv_reader:
                 if row["instance"] == "Player":
                     _save_has_player = True
-                    data["instances"].add_Player(window, float(row["x"]), float(row["y"]), 48, 48, 100, 5)
+                    data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 5)
                     data["camera"].x = float(row["x"]) - width / 2
                     data["camera"].y = float(row["y"]) - height / 2
                 # sets player position to saved position.
@@ -131,7 +131,7 @@ else:
 
 if not _save_has_player:
     data["instances"] = InstanceLists()
-    data["instances"].add_Player(window, 0, 0, 48, 48, 100, 5)
+    data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 5)
     data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
 

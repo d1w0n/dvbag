@@ -7,42 +7,58 @@ pygame.init()
 
 class Player(Instance):
 
-    def __init__(self, window, x, y, width, height, health: int, speed: int):
-        super().__init__("Player", "assets/images/placeholder.png", window, x, y, width, height)
+    def __init__(self, window, sprite, x, y, width, height, health, speed):
+        super().__init__("Player", sprite, window, x, y, width, height)
         self.health = health
         self.speed = speed
 
-        self._dx = 0
-        self._dy = 0
         self.velocity_x = 0
         self.velocity_y = 0
-        self._color = (0, 0, 255)
-
         self.projectile_ticks = 0
         self.projectile_cooldown = 100
-        self._damage_cooldown = 1000
-        self._damage_ticks = 0
-        self._mouse_dx = 0
-        self._mouse_dy = 0
+        self.damage_cooldown = 1000
+        self.damage_ticks = 0
         self.beam_ticks = 0
         self.beam_cooldown = 50
         self.parry_ticks = 0
         self.parry_cooldown = 500
+
+        self._dx = 0
+        self._dy = 0
+        self._mouse_dx = 0
+        self._mouse_dy = 0
     
     def update(self, data): 
         for instance in data["instances"].all_instances:
-            if instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy":
-                if self.get_collision(instance) and (pygame.time.get_ticks() - self._damage_ticks) > self._damage_cooldown:
-                    self._damage_ticks = pygame.time.get_ticks()
+            if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
+                if self.get_collision(instance):
+                    self.damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
+
                     data["camera"].add_shake(100)
                     data["ui"].add_Effect(self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
+
+                    for element in data["ui"].ui_list:
+                        if element.name == "HealthBar":
+                            element.stat = self.health
+
+                        if element.name == "HealthText":
+                            element.set_text("Health: " + str(self.health) + "")
+                    # updates ui elements correlated to player stats.
 
             elif instance.type == "EnemyParticle":
                 if self.get_collision(instance):
                     self.health += 5
                     if self.health > 100:
                         self.health = 100
+
+                    for element in data["ui"].ui_list:
+                        if element.name == "HealthBar":
+                            element.stat = self.health
+
+                        if element.name == "HealthText":
+                            element.set_text("Health: " + str(self.health) + "")
+                    # updates ui elements correlated to player stats.
         
         key = pygame.key.get_pressed()
 
@@ -52,10 +68,7 @@ class Player(Instance):
 
         self._dx = 0
         self._dy = 0
-        # reset target x and y.
-
-        self.speed = 8
-
+        
         if key[pygame.K_w]:
             self._dy = -self.speed
         if key[pygame.K_a]:
@@ -70,8 +83,6 @@ class Player(Instance):
             self.remove = True
 
     def tick(self, data):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
@@ -85,6 +96,8 @@ class Player(Instance):
 
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
         # determine sprite rotation angle.
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
         if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
             self.projectile_ticks = pygame.time.get_ticks()
@@ -108,17 +121,8 @@ class Player(Instance):
             data["camera"].add_shake(10)
         # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
-        mouse_x, mouse_y = pygame.mouse.get_pos()
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
-
-        for element in data["ui"].ui_list:
-                if element.name == "HealthBar":
-                    element.stat = self.health
-
-                if element.name == "HealthText":
-                    element.set_text("Health: " + str(self.health) + "")
-        # updates ui elements correlated to player stats.
         
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
