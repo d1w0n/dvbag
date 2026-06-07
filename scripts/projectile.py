@@ -83,20 +83,17 @@ class Parry(Projectile):
         self._window.blit(_rotated, _rect.topleft)
 
 class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, keep cleaning up from here
-    def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
+    def __init__(self, window, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
+        super().__init__(window, "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage, add_x_velocity, add_y_velocity)
         self.type = "EnemyProjectile"
-        self.parry_text = False
-        self.set_sprite("assets/images/enemyprojectile.png")
 
     def update(self, data):
         if self.type == "EnemyProjectile":
-            self._room = data["room"]
             for instance in data["instances"].all_instances:
                 if instance.type == "Player":
                     if self.get_collision(instance):
                         self.remove = True
-                    # if colliding with an enemy, remove itself.
+                    # if colliding with the player, remove itself.
 
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
@@ -113,81 +110,75 @@ class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, ke
                         for element in data["ui"].ui_list:
                             if element.name == "ScoreText":
                                 element.set_text("Score: " + str(data["score"]))
-                        self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-                        self.velocity_x, self.velocity_y = self.get_velocity((self.mouse_x + data["camera"].x) - self.x, (self.mouse_y + data["camera"].y) - self.y, self.speed * 2)
+                        self.speed *= 2
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        self.direction = -math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
         
         elif self.type == "Projectile":
             super().update(data)
-
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-            self.remove = True
-        # if colliding with room bounds, remove itself.
 
     def tick(self, data):
         super().tick(data)
         data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
-class Beam(Instance):
-    def __init__(self, window, x, y, width, height, target_x, target_y, damage: int):
-        super().__init__("Beam", "assets/images/placeholder.png", window, x, y, width, height)
-        self.speed = height if height <= width else width
-        self.damage = damage
-        self._dx = target_x - self.x
-        self._dy = target_y - self.y
-        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+class Beam(Projectile):
+    def __init__(self, window, x, y, width, height, direction, damage):
+        super().__init__(window, "assets/images/placeholder.png", x, y, width, height, direction, height if height <= width else width, 1, damage)
         self.x_init = self.x
         self.y_init = self.y
         self._collision = False
         self.can_pre_update = True
         self.always_render = True
 
+        self.velocity_x = self.speed * math.cos(math.radians(self.direction))
+        self.velocity_y = self.speed * math.sin(math.radians(self.direction))
+
     def pre_update(self, data):
-        self._room = data["room"]
         if self._collision:
             self.remove = True
             pass
         
         for instance in data["instances"].all_instances:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+            if instance.supertype == "Enemy":
                 if self.get_collision(instance):
                     self._collision = True
 
             if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                 self._collision = True
 
-        if not self._collision:
-            while not self._collision:
-                for instance in data["instances"].all_instances:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                        if self.get_collision(instance):
-                            self._collision = True
-                        # if colliding with an enemy, remove itself.
+        while not self._collision:
+            for instance in data["instances"].all_instances:
+                if instance.supertype == "Enemy":
+                    if self.get_collision(instance):
+                        self._collision = True
+                    # if colliding with an enemy, remove itself.
 
-                if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-                    self._collision = True
-                # if colliding with room bounds, remove itself.
-
-                self.x += self.velocity_x
-                self.y += self.velocity_y
-
-            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, 1)
-
-            while self._collision:
-                self.x -= self.velocity_x
-                self.y -= self.velocity_y
-                self._collision = False
-
-                for instance in data["instances"].all_instances:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                        if self.get_collision(instance):
-                            self._collision = True
-
-                if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-                    self._collision = True
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+                self._collision = True
+            # if colliding with room bounds, remove itself.
 
             self.x += self.velocity_x
             self.y += self.velocity_y
-            self._collision = True
+
+        self.velocity_x = math.cos(math.radians(self.direction))
+        self.velocity_y = math.sin(math.radians(self.direction))
+
+        while self._collision:
+            self.x -= self.velocity_x
+            self.y -= self.velocity_y
+            self._collision = False
+
+            for instance in data["instances"].all_instances:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                    if self.get_collision(instance):
+                        self._collision = True
+
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+                self._collision = True
+
+        self.x += self.velocity_x
+        self.y += self.velocity_y
+        self._collision = True
 
     def update(self, data):
         pass
