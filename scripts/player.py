@@ -101,7 +101,7 @@ class Player(Instance):
 
         if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
             self.projectile_ticks = pygame.time.get_ticks()
-            data["instances"].add_Projectile(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
+            data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
             for i in range(3):
                 data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
             data["camera"].add_shake(7)

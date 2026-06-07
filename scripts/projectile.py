@@ -6,15 +6,16 @@ import random
 pygame.init()
 
 class Projectile(Instance):
-    def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__("Projectile", "assets/images/placeholder.png", window, x, y, width, height)
-        self.parried = False
-        self.damage = damage
+    def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
+        super().__init__("Projectile", sprite, window, x, y, width, height)
+        self.direction = -direction
         self.speed = speed
-        self.velocity_x, self.velocity_y = self.get_velocity(target_x - self.x, target_y - self.y, self.speed)
+        self.drag = drag
+        self.damage = damage
+
+        self.parried = False
 
     def update(self, data):
-        self._room = data["room"]
         for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
@@ -26,22 +27,23 @@ class Projectile(Instance):
         # if colliding with room bounds, remove itself.
 
     def tick(self, data):
+        self.velocity_x = self.speed * math.cos(math.radians(self.direction))
+        self.velocity_y = self.speed * math.sin(math.radians(self.direction))
         self.x += self.velocity_x
         self.y += self.velocity_y
+        self.speed *= self.drag
         # change x and y by velocities.
 
     def render(self, camera):
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
-
-
-class Parry(Instance):
+class Parry(Projectile):
     def __init__(self, window, x, y, width, height, target_instance, damage):
-        super().__init__("Parry", "assets/images/placeholder.png", window, x, y, width, height)
-        self._target_instance = target_instance
-        self.damage = damage
+        super().__init__(window, "assets/images/placeholder.png", x, y, width, height, 0, 0, 0, damage)
+        self.target_instance = target_instance
+
         self.start_ticks = pygame.time.get_ticks()
-        self._duration = 250
+        self.duration = 250
         self._has_target = False
 
     def update(self, data):
@@ -49,7 +51,7 @@ class Parry(Instance):
 
         self._has_target = False
         for instance in data["instances"].all_instances:
-            if instance.type == self._target_instance:
+            if instance.type == self.target_instance:
                 self._mouse_dx = mouse_x + data["camera"].x - instance.x
                 self._mouse_dy = mouse_y + data["camera"].y - instance.y
                 self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2)
@@ -67,7 +69,7 @@ class Parry(Instance):
         if not self._has_target:
             self.remove = True
                 
-        if (pygame.time.get_ticks() - self.start_ticks) > self._duration:
+        if (pygame.time.get_ticks() - self.start_ticks) > self.duration:
             self.remove = True
 
     def tick(self, data):
@@ -80,11 +82,7 @@ class Parry(Instance):
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
-
-
-
-
-class EnemyProjectile(Projectile):
+class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, keep cleaning up from here
     def __init__(self, window, x, y, width, height, target_x, target_y, speed: int, damage: int, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__(window, x, y, width, height, target_x, target_y, speed, damage)
         self.type = "EnemyProjectile"
@@ -128,10 +126,6 @@ class EnemyProjectile(Projectile):
     def tick(self, data):
         super().tick(data)
         data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
-
-
-
-
 
 class Beam(Instance):
     def __init__(self, window, x, y, width, height, target_x, target_y, damage: int):
