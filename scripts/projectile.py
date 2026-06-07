@@ -102,7 +102,7 @@ class EnemyProjectile(Projectile):
 
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
-                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 1000)
+                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
                         for i in range(5):
                             data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
                         data["camera"].add_shake(20)

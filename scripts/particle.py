@@ -8,7 +8,7 @@ class Particle(Instance):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration):
         super().__init__("Particle", sprite, window, x, y, width, height)
         self.speed = speed
-        self.direction = direction
+        self.direction = -direction
         self.drag = drag
         self.duration = duration
 
@@ -100,8 +100,8 @@ class AfterImage(Particle):
             self._window.blit(_rotated, _rect.topleft)
 
 class TextDisplay(Particle):
-    def __init__(self, window, x, y, text = "", size = 12, color = (0, 0, 0), font = None, direction = 0, speed = 0, duration = 1000):
-        super().__init__(window, None, x, y, 0, 0, direction, 0, 0, duration)
+    def __init__(self, window, x, y, text = "", size = 12, color = (0, 0, 0), font = None, direction = 0, speed = 0, drag = 0, duration = 1000):
+        super().__init__(window, None, x, y, 0, 0, direction, speed, drag, duration)
         self.color = color
         self.font = pygame.font.Font(font, size)
         self.set_text(text)

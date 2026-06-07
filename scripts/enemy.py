@@ -175,7 +175,7 @@ class ChargerEnemy(Enemy):
                     self.phase = 3
                     self._phase_ticks = pygame.time.get_ticks()
 
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 1000)
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
                     data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
                     data["score"] += 25
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+25", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
