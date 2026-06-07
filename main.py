@@ -112,7 +112,7 @@ if os.path.exists(save_path):
                 # sets player position to saved position.
 
                 elif row["instance"] == "Enemy":
-                    data["instances"].add_Enemy(window, float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                    data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
 
                 elif row["instance"] == "ProjectileEnemy":
                     data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
@@ -132,7 +132,7 @@ else:
 if not _save_has_player:
     data["instances"] = InstanceLists()
     data["instances"].add_Player(window, 0, 0, 48, 48, 100, 5)
-    data["instances"].add_Enemy(window, data["room"].width / 4, 0, 48, 48, 100, 3, 10)
+    data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")

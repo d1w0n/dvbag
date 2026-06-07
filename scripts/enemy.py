@@ -7,12 +7,13 @@ pygame.init()
 
 class Enemy(Instance):
 
-    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int):
-        super().__init__("Enemy", "assets/images/placeholder_red.png", window, x, y, width, height)
+    def __init__(self, window, sprite, x, y, width, height, health, speed, damage):
+        super().__init__("Enemy", sprite, window, x, y, width, height)
         self.health = health
         self.speed = speed
         self.damage = damage
 
+        self.target_instance = "Player"
         self.target_x = 0
         self.target_y = 0
         self.velocity_x = 0
@@ -26,7 +27,7 @@ class Enemy(Instance):
         self._alpha_offset *= 0.8
 
         for instance in data["instances"].all_instances:
-            if instance.type == "Player":
+            if instance.type == self.target_instance:
                 self.target_x = instance.x
                 self.target_y = instance.y
                 # sets target position to go to the player.
@@ -35,6 +36,7 @@ class Enemy(Instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+
                     data["score"] += 5
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                     for element in data["ui"].ui_list:
@@ -44,6 +46,7 @@ class Enemy(Instance):
 
         if self.health <= 0:
             self.remove = True
+
             data["score"] += 50
             data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
             for element in data["ui"].ui_list:
@@ -53,12 +56,13 @@ class Enemy(Instance):
     def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
+
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
         self.x += self.velocity_x
         self.y += self.velocity_y
-        # moves towards the target position.
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+        # moves towards the target position and angle.
 
         if self.remove:
             for i in range(5):
@@ -71,18 +75,15 @@ class Enemy(Instance):
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
-
-
 class ProjectileEnemy(Enemy):
-    def __init__(self, window, x, y, width, height, health: int, speed: int, damage: int, range, cooldown = 1000):
-        super().__init__(window, x, y, width, height, health, speed, damage)
+    def __init__(self, window, x, y, width, height, health, speed, damage, range, cooldown = 1000):
+        super().__init__(window, "assets/images/placeholder_dark_red.png", x, y, width, height, health, speed, damage)
         self.range = range
 
         self.type = "ProjectileEnemy"
         self.spawn_projectile = False
         self.cooldown_ticks = 0
         self.projectile_cooldown = cooldown
-        self.set_sprite("assets/images/placeholder_dark_red.png")
     
     def update(self, data): 
         self._alpha_offset *= 0.8
@@ -102,6 +103,7 @@ class ProjectileEnemy(Enemy):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+
                     data["score"] += 5
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                     for element in data["ui"].ui_list:
@@ -111,6 +113,7 @@ class ProjectileEnemy(Enemy):
 
         if self.health <= 0:
             self.remove = True
+
             data["score"] += 50
             data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
             for element in data["ui"].ui_list:
@@ -120,13 +123,14 @@ class ProjectileEnemy(Enemy):
     def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
+
         if not self.spawn_projectile:
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
             self.x += self.velocity_x
             self.y += self.velocity_y
-        # moves towards the target position.
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+        # moves towards the target position and angle.
 
         if self.spawn_projectile and (pygame.time.get_ticks() - self.cooldown_ticks) > self.projectile_cooldown:
                 self.cooldown_ticks = pygame.time.get_ticks()
@@ -140,12 +144,11 @@ class ProjectileEnemy(Enemy):
                 data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(5, 10), random.randint(1, 360), 3000)
             # create 5 particles on death. 
 
-
-
 class ChargerEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range):
-        super().__init__(window, x, y, width, height, health, speed, damage)
+        super().__init__(window, "assets/images/placeholder_red.png", x, y, width, height, health, speed, damage)
         self.range = range
+
         self.type = "ChargerEnemy"
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
@@ -168,12 +171,12 @@ class ChargerEnemy(Enemy):
 
             elif instance.type == "Parry" and self.phase == 2:
                 if self.get_collision(instance):
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
-                    data["instances"].add_Particle(self._window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250)
-
                     self.health = 0
                     self.phase = 3
                     self._phase_ticks = pygame.time.get_ticks()
+
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, 5, random.randint(60, 120), 1000, 24, "+PARRY!", (0, 0, 0))
+                    data["instances"].add_Particle(self._window, instance.x, instance.y, 12, 12, random.randint(5, 10), random.randint(0, 360), 250)
                     data["score"] += 25
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+25", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                     for element in data["ui"].ui_list:
@@ -184,6 +187,7 @@ class ChargerEnemy(Enemy):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
+
                     data["score"] += 5
                     data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                     for element in data["ui"].ui_list:
@@ -196,7 +200,7 @@ class ChargerEnemy(Enemy):
                 self.phase = 2
                 self._phase_ticks = pygame.time.get_ticks()
 
-        if self.phase == 2 and pygame.time.get_ticks() - self._phase_ticks > 500:
+        elif self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 3
                 self._phase_ticks = pygame.time.get_ticks()
 
@@ -205,6 +209,7 @@ class ChargerEnemy(Enemy):
 
         if self.health <= 0:
             self.remove = True
+
             data["score"] += 50
             data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
             for element in data["ui"].ui_list:
@@ -214,13 +219,14 @@ class ChargerEnemy(Enemy):
     def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
+
         if not self.phase == 1 and not self.phase == 3: 
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 0 else self.speed * 2)
             self.x += self.velocity_x
             self.y += self.velocity_y
-        # moves towards the target position.
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+        # moves and looks towards the target position.
 
         if self.phase == 2:
             data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
