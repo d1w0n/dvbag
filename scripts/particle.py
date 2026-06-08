@@ -8,7 +8,7 @@ class Particle(Instance):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration):
         super().__init__("Particle", sprite, window, x, y, width, height)
         self.speed = speed
-        self.direction = -direction
+        self.direction = direction
         self.drag = drag
         self.duration = duration
 
@@ -68,6 +68,7 @@ class ParryFlash(Particle):
     def tick(self, data):
         self.direction += self._rotation_speed
         self.height += 5
+        self.set_sprite(self.spritepath)
 
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self.direction)

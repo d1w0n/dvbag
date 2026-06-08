@@ -134,7 +134,7 @@ class ProjectileEnemy(Enemy):
 
         if self.spawn_projectile and (pygame.time.get_ticks() - self.cooldown_ticks) > self.projectile_cooldown:
                 self.cooldown_ticks = pygame.time.get_ticks()
-                data["instances"].add_EnemyProjectile(self._window, self.x, self.y, 24, 24, self.target_x, self.target_y, 10, 10)
+                data["instances"].add_EnemyProjectile(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(self._dy, self._dx)), 10, 1, 10)
                 for i in range(3):
                     data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 12, 12, math.degrees(math.atan2(self.target_y - self.y, self.target_x - self.x)) + random.randint(-45, 45), 15, 1, 250)
             # if player is in range, fire a projectile at the player.

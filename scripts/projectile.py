@@ -8,7 +8,7 @@ pygame.init()
 class Projectile(Instance):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__("Projectile", sprite, window, x, y, width, height)
-        self.direction = -direction
+        self.direction = direction
         self.speed = speed
         self.drag = drag
         self.damage = damage
@@ -22,10 +22,6 @@ class Projectile(Instance):
                     self.remove = True
                 # if colliding with an enemy, remove itself.
 
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-            self.remove = True
-        # if colliding with room bounds, remove itself.
-
     def tick(self, data):
         self.velocity_x = self.speed * math.cos(math.radians(self.direction))
         self.velocity_y = self.speed * math.sin(math.radians(self.direction))
@@ -34,12 +30,16 @@ class Projectile(Instance):
         self.speed *= self.drag
         # change x and y by velocities.
 
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+            self.remove = True
+
     def render(self, camera):
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 class Parry(Projectile):
     def __init__(self, window, x, y, width, height, target_instance, damage):
         super().__init__(window, "assets/images/placeholder.png", x, y, width, height, 0, 0, 0, damage)
+        self.type = "Parry"
         self.target_instance = target_instance
 
         self.start_ticks = pygame.time.get_ticks()
@@ -97,22 +97,26 @@ class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, ke
 
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
+                        self.type = "Projectile"
+                        self.parried = True
+                        self.damage = 100
+                        self.speed *= 2
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
+                        # changes how the projectile behaves.
+
                         data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
                         for i in range(5):
                             data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
                         data["camera"].add_shake(20)
-
-                        self.type = "Projectile"
-                        self.parried = True
-                        self.damage = 100
+                        # visual effects.
+                        
                         data["score"] += 20
                         data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
                         for element in data["ui"].ui_list:
                             if element.name == "ScoreText":
                                 element.set_text("Score: " + str(data["score"]))
-                        self.speed *= 2
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        self.direction = -math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
+                        # score effects.
         
         elif self.type == "Projectile":
             super().update(data)
@@ -139,7 +143,7 @@ class Beam(Projectile):
             pass
         
         for instance in data["instances"].all_instances:
-            if instance.supertype == "Enemy":
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
                     self._collision = True
 
@@ -148,7 +152,7 @@ class Beam(Projectile):
 
         while not self._collision:
             for instance in data["instances"].all_instances:
-                if instance.supertype == "Enemy":
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                     if self.get_collision(instance):
                         self._collision = True
                     # if colliding with an enemy, remove itself.

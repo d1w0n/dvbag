@@ -2,6 +2,7 @@ from scripts.instance import Instance
 import pygame
 import math
 import random
+import config
 
 pygame.init()
 
@@ -79,7 +80,7 @@ class Player(Instance):
             self._dx = self.speed
         # player movement.
 
-        if self.health <= 0:
+        if self.health <= 0 and not config.IMMORTAL:
             self.remove = True
 
     def tick(self, data):
@@ -101,7 +102,7 @@ class Player(Instance):
 
         if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
             self.projectile_ticks = pygame.time.get_ticks()
-            data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 24, 25)
+            data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
             for i in range(3):
                 data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
             data["camera"].add_shake(7)
@@ -109,7 +110,7 @@ class Player(Instance):
         
         if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.beam_ticks) > self.beam_cooldown:
             self.beam_ticks = pygame.time.get_ticks()
-            data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, mouse_x + data["camera"].x, mouse_y + data["camera"].y, 15)
+            data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 15)
             for i in range(3):
                 data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
             data["camera"].add_shake(5)
