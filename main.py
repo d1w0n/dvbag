@@ -91,11 +91,6 @@ data = {
 }
 # initialize main loop data.
 
-data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0))
-data["ui"].add_Text("HealthText", window, 10, 60, 36, "", (0, 255, 0))
-data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
-# initialize main loop ui elements.
-
 save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
 # get save file location.
 
@@ -106,7 +101,7 @@ if os.path.exists(save_path):
             for row in csv_reader:
                 if row["instance"] == "Player":
                     _save_has_player = True
-                    data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 5)
+                    data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 8)
                     data["camera"].x = float(row["x"]) - width / 2
                     data["camera"].y = float(row["y"]) - height / 2
                 # sets player position to saved position.
@@ -131,9 +126,18 @@ else:
 
 if not _save_has_player:
     data["instances"] = InstanceLists()
-    data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 5)
+    data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 8)
     data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
+
+for instance in data["instances"].add_instances:
+    if instance.type == "Player":
+        data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0), instance.health)
+        data["ui"].add_Text("HealthText", window, 10, 60, 36, "Health: " + str(instance.health), (0, 255, 0))
+if config.IMMORTAL:
+    data["ui"].add_Text("ImmortalText", window, 10, 90, 36, "(IMMORTAL)", (0, 255, 0))
+data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
+# initialize main loop ui elements.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 # prints successful load with elapsed time.

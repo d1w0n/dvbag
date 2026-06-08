@@ -58,7 +58,7 @@ class Player(Instance):
                             element.stat = self.health
 
                         if element.name == "HealthText":
-                            element.set_text("Health: " + str(self.health) + "")
+                            element.set_text("Health: " + str(self.health))
                     # updates ui elements correlated to player stats.
         
         key = pygame.key.get_pressed()
