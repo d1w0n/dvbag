@@ -135,7 +135,9 @@ for instance in data["instances"].add_instances:
         data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0), instance.health)
         data["ui"].add_Text("HealthText", window, 10, 60, 36, "Health: " + str(instance.health), (0, 255, 0))
 if config.IMMORTAL:
-    data["ui"].add_Text("ImmortalText", window, 10, 90, 36, "(IMMORTAL)", (0, 255, 0))
+    for element in data["ui"].ui_list:
+        if element.name == "HealthText":
+            data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
 
