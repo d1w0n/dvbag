@@ -61,7 +61,6 @@ while not config.MENU_SKIP and running:
         break
 
     data["ui"].ui_render()
-    # removes ui elements that need to be removed.
 
     pygame.display.flip()
 
