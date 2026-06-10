@@ -151,7 +151,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    # checks for quit events and if the escape key is pressed to end the program.
+    # checks for quit events and if the escape key is pressed to end the program. 
 
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
