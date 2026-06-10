@@ -144,7 +144,7 @@ print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 # prints successful load with elapsed time.
 
 while running:
-# main loop.
+# main loop. 
 
     if pygame.key.get_pressed()[pygame.K_ESCAPE]:
         running = False
