@@ -11,6 +11,7 @@ class Player(Instance):
     def __init__(self, window, sprite, x, y, width, height, health, speed):
         super().__init__("Player", sprite, window, x, y, width, height)
         self.health = health
+        self.default_speed = speed
         self.speed = speed
 
         self.velocity_x = 0
@@ -23,6 +24,10 @@ class Player(Instance):
         self.beam_cooldown = 50
         self.parry_ticks = 0
         self.parry_cooldown = 500
+        self.dashing = False
+        self.dash_ticks = 0
+        self.dash_cooldown = 500
+        self.dash_duration = 250
 
         self._dx = 0
         self._dy = 0
@@ -70,6 +75,16 @@ class Player(Instance):
         self._dx = 0
         self._dy = 0
         
+        if key[pygame.K_LSHIFT] and not self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_cooldown:
+            self.dash_ticks = pygame.time.get_ticks()
+            self.dashing = True
+            self.speed = self.default_speed * 2
+
+        if self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_duration:
+            self.dash_ticks = pygame.time.get_ticks()
+            self.dashing = False
+            self.speed = self.default_speed
+    
         if key[pygame.K_w]:
             self._dy = -self.speed
         if key[pygame.K_a]:
@@ -124,6 +139,9 @@ class Player(Instance):
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
+
+        if self.dashing:
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
         
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
