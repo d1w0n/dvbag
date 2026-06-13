@@ -14,6 +14,8 @@ class Player(Instance):
         self.default_speed = speed
         self.speed = speed
 
+        self.invulnerable = False
+
         self.velocity_x = 0
         self.velocity_y = 0
         self.projectile_ticks = 0
@@ -36,7 +38,7 @@ class Player(Instance):
     
     def update(self, data): 
         for instance in data["instances"].all_instances:
-            if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
+            if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
                 if self.get_collision(instance):
                     self.damage_ticks = pygame.time.get_ticks()
                     self.health -= instance.damage
@@ -78,11 +80,13 @@ class Player(Instance):
         if key[pygame.K_LSHIFT] and not self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_cooldown:
             self.dash_ticks = pygame.time.get_ticks()
             self.dashing = True
+            self.invulnerable = True
             self.speed = self.default_speed * 2
 
         if self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_duration:
             self.dash_ticks = pygame.time.get_ticks()
             self.dashing = False
+            self.invulnerable = False
             self.speed = self.default_speed
     
         if key[pygame.K_w]:
