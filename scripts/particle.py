@@ -129,3 +129,5 @@ class BeamFade(Particle):
     def render(self, camera):
         pygame.draw.line(self._window, (255, 0, 255), (self._x_init - camera.x + camera.shake_x, self._y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width))
         pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width / 2))
+
+#class Smoke(Particle):
