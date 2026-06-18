@@ -82,7 +82,7 @@ class Parry(Projectile):
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
-class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, keep cleaning up from here
+class EnemyProjectile(Projectile):
     def __init__(self, window, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
         super().__init__(window, "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage, add_x_velocity, add_y_velocity)
         self.type = "EnemyProjectile"
@@ -91,7 +91,7 @@ class EnemyProjectile(Projectile): # TODO: you passed out at this stop point, ke
         if self.type == "EnemyProjectile":
             for instance in data["instances"].all_instances:
                 if instance.type == "Player":
-                    if self.get_collision(instance):
+                    if self.get_collision(instance) and not instance.invulnerable:
                         self.remove = True
                     # if colliding with the player, remove itself.
 
