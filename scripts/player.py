@@ -119,27 +119,28 @@ class Player(Instance):
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
-            self.projectile_ticks = pygame.time.get_ticks()
-            data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
-            for i in range(3):
-                data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
-            data["camera"].add_shake(7)
-        # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
-        
-        if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.beam_ticks) > self.beam_cooldown:
-            self.beam_ticks = pygame.time.get_ticks()
-            data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 15)
-            for i in range(3):
-                data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
-            data["camera"].add_shake(5)
-        # creates a beam instead.
+        if not self.invulnerable:
+            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.projectile_ticks) > self.projectile_cooldown:
+                self.projectile_ticks = pygame.time.get_ticks()
+                data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
+                for i in range(3):
+                    data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
+                data["camera"].add_shake(7)
+            # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
+            
+            if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.beam_ticks) > self.beam_cooldown:
+                self.beam_ticks = pygame.time.get_ticks()
+                data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 15)
+                for i in range(3):
+                    data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
+                data["camera"].add_shake(5)
+            # creates a beam instead.
 
-        if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
-            self.parry_ticks = pygame.time.get_ticks()
-            data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 10)
-            data["camera"].add_shake(10)
-        # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
+            if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
+                self.parry_ticks = pygame.time.get_ticks()
+                data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 10)
+                data["camera"].add_shake(10)
+            # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.

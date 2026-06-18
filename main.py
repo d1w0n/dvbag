@@ -59,7 +59,7 @@ while not config.MENU_SKIP and running:
 
     if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]:
         break
-
+    
     data["ui"].ui_render()
 
     pygame.display.flip()
