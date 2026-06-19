@@ -241,4 +241,5 @@ with open(save_path, mode="w", newline="") as save:
 print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)" + "\n" * 2 + "Program Successfully Ended\n")
 # prints successful save with elapsed time.
 
+pygame.quit()
 sys.exit()
