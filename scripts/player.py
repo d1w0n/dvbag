@@ -92,11 +92,17 @@ class Player(Instance):
             self.weapon = "Projectile"
             self.primary_cooldown = 100
             self.secondary_cooldown = 50
+            for element in data["ui"].ui_list:
+                if element.name == "WeaponText":
+                    element.set_text("weapon: " + self.weapon)
 
         elif key[pygame.K_2]:
             self.weapon = "Shotgun"
             self.primary_cooldown = 250
             self.secondary_cooldown = 100
+            for element in data["ui"].ui_list:
+                if element.name == "WeaponText":
+                    element.set_text("weapon: " + self.weapon)
     
         if key[pygame.K_w]:
             self._dy = -self.speed
@@ -156,7 +162,7 @@ class Player(Instance):
                 if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
                     self.primary_ticks = pygame.time.get_ticks()
                     for i in range(5):
-                        data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-15, 15), 24, 1, 25)
+                        data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-15, 15), 36, 1, 25)
                     for i in range(3):
                         data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
                     data["camera"].add_shake(7)
