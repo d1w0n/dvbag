@@ -21,6 +21,7 @@ class Instance(ABC):
             self.set_sprite("assets/images/placeholder.png")
 
         self.remove = False
+        self.invulnerable = False
         self.can_pre_update = False
 
     def pre_update(self, data):
