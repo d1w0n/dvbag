@@ -98,7 +98,7 @@ class Player(Instance):
 
         elif key[pygame.K_2]:
             self.weapon = "Shotgun"
-            self.primary_cooldown = 250
+            self.primary_cooldown = 200
             self.secondary_cooldown = 100
             for element in data["ui"].ui_list:
                 if element.name == "WeaponText":
