@@ -20,8 +20,11 @@ class Enemy(Instance):
         self.velocity_y = 0
         self._alpha = 255
         self._alpha_offset = 0
-        self.phase = 0
-        self.supertype = "Enemy"
+        self.phase = 1
+        self.PHASE_INFO = {
+            0: "Idle",
+            1: "Roaming"
+        }
 
     def update(self, data):
         self._alpha_offset *= 0.8
@@ -58,10 +61,11 @@ class Enemy(Instance):
         self._dy = self.target_y - self.y
 
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
-        self.x += self.velocity_x
-        self.y += self.velocity_y
+        if not self.phase == 0:
+            self.x += self.velocity_x
+            self.y += self.velocity_y
 
-        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+            self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves towards the target position and angle.
 
         if self.remove:
@@ -84,6 +88,12 @@ class ProjectileEnemy(Enemy):
         self.spawn_projectile = False
         self.cooldown_ticks = 0
         self.projectile_cooldown = cooldown
+
+        self.PHASE_INFO = {
+            0: "Idle",
+            1: "Roaming",
+            2: "Charging"
+        }
     
     def update(self, data): 
         self._alpha_offset *= 0.8
@@ -126,10 +136,12 @@ class ProjectileEnemy(Enemy):
 
         if not self.spawn_projectile:
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
-            self.x += self.velocity_x
-            self.y += self.velocity_y
+            if not self.phase == 0:
+                self.x += self.velocity_x
+                self.y += self.velocity_y
 
-        self._angle = -math.degrees(math.atan2(self._dy, self._dx))
+        if not self.phase == 0:
+            self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves towards the target position and angle.
 
         if self.spawn_projectile and (pygame.time.get_ticks() - self.cooldown_ticks) > self.projectile_cooldown:
@@ -153,6 +165,14 @@ class ChargerEnemy(Enemy):
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
 
+        self.PHASE_INFO = {
+            0: "Idle",
+            1: "Roaming",
+            2: "Preparing",
+            3: "Charging",
+            4: "Recovering"
+        }
+
     def update(self, data):
         self._alpha_offset *= 0.8
         for instance in data["instances"].all_instances:
@@ -160,19 +180,19 @@ class ChargerEnemy(Enemy):
                 self.target_x = instance.x
                 self.target_y = instance.y
 
-                if self.phase == 0 and self.get_instance_in_range(instance, self.range):
-                    self.phase = 1
+                if self.phase == 1 and self.get_instance_in_range(instance, self.range):
+                    self.phase = 2
                     self._phase_ticks = pygame.time.get_ticks()
                     self.spawn_particle = True
 
-                elif self.phase == 2 and self.get_collision(instance):
-                    self.phase = 3
+                elif self.phase == 3 and self.get_collision(instance):
+                    self.phase = 4
                     self._phase_ticks = pygame.time.get_ticks()
 
-            elif instance.type == "Parry" and self.phase == 2:
+            elif instance.type == "Parry" and self.phase == 3:
                 if self.get_collision(instance):
                     self.health = 0
-                    self.phase = 3
+                    self.phase = 4
                     self._phase_ticks = pygame.time.get_ticks()
 
                     data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
@@ -196,16 +216,16 @@ class ChargerEnemy(Enemy):
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
         # check for interactions with other instances.
 
-        if self.phase == 1 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
-                self.phase = 2
-                self._phase_ticks = pygame.time.get_ticks()
-
-        elif self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
+        if self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 3
                 self._phase_ticks = pygame.time.get_ticks()
 
         elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
-            self.phase = 0
+                self.phase = 4
+                self._phase_ticks = pygame.time.get_ticks()
+
+        elif self.phase == 4 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
+            self.phase = 1
 
         if self.health <= 0:
             self.remove = True
@@ -220,15 +240,15 @@ class ChargerEnemy(Enemy):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
 
-        if not self.phase == 1 and not self.phase == 3: 
-            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 0 else self.speed * 2)
+        if not self.phase == 2 and not self.phase == 4: 
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 1 else self.speed * 2)
             self.x += self.velocity_x
             self.y += self.velocity_y
 
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves and looks towards the target position.
 
-        if self.phase == 2:
+        if self.phase == 3:
             data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
 
         if self.spawn_particle:
