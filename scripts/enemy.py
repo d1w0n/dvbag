@@ -21,7 +21,8 @@ class Enemy(Instance):
         self._alpha = 255
         self._alpha_offset = 0
         self.phase = 1
-        self.PHASE_INFO = {
+        
+        self.phase_info = {
             0: "Idle",
             1: "Roaming"
         }
@@ -89,7 +90,7 @@ class ProjectileEnemy(Enemy):
         self.cooldown_ticks = 0
         self.projectile_cooldown = cooldown
 
-        self.PHASE_INFO = {
+        self.phase_info = {
             0: "Idle",
             1: "Roaming",
             2: "Charging"
@@ -165,7 +166,7 @@ class ChargerEnemy(Enemy):
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
 
-        self.PHASE_INFO = {
+        self.phase_info = {
             0: "Idle",
             1: "Roaming",
             2: "Preparing",

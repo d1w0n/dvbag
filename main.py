@@ -68,7 +68,7 @@ while not config.MENU_SKIP and running:
 # menu loop.
 
 _start_time = time.perf_counter()
-print("\nLoading save...")
+print("Loading save...")
 
 enemy_ticks = 0
 projectile_enemy_ticks = 0
@@ -115,11 +115,11 @@ if os.path.exists(save_path):
                     data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
 
     except:
-        print("Save file data is corrupted! Creating a new save file...")
+        print("\nSave file data is corrupted! Creating a new save file...\n")
 # if there is a save file, load the instances with their positions from there.
 
 else:
-    print("Save file not found. Creating a new save file...")
+    print("\nSave file not found. Creating a new save file...\n")
     open(save_path, mode="w", newline="")
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
@@ -241,7 +241,7 @@ with open(save_path, mode="w", newline="") as save:
     writer.writerows(save_data)
 # writes completed data to the save. (currently just acts as placeholder)
 
-print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)" + "\n" * 2 + "Program Successfully Ended\n")
+print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)\nProgram Successfully Ended\n")
 # prints successful save with elapsed time.
 
 pygame.quit()
