@@ -1,3 +1,3 @@
-Made with Python 3.13 (Microsoft Store) & Pygame
+made with python and pygame
 
 dvbag - diwons very basic arena game
