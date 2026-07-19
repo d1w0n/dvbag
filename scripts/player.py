@@ -162,20 +162,10 @@ class Player(Instance):
                 if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
                     self.primary_ticks = pygame.time.get_ticks()
                     for i in range(5):
-                        data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-15, 15), 36, 1, 25)
-                    for i in range(3):
-                        data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
-                    data["camera"].add_shake(7)
-                # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
-                
-                if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
-                    self.secondary_ticks = pygame.time.get_ticks()
-                    for i in range(5):
                         data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-30, 30), 15)
                     for i in range(3):
                         data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
                     data["camera"].add_shake(5)
-                # creates a beam instead.
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
