@@ -55,10 +55,8 @@ class Parry(Projectile):
             if instance.type == self.target_instance:
                 self._has_target = True
                 self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + self.angle_offset
-                self._target_x = (instance.width / 2) * math.cos(math.radians(self.direction))
-                self._target_y = (instance.width / 2) * math.sin(math.radians(self.direction))
-                self._target_x += instance.x
-                self._target_y += instance.y
+                self._target_x = (instance.width / 2) * math.cos(math.radians(self.direction)) + instance.x
+                self._target_y = (instance.width / 2) * math.sin(math.radians(self.direction)) + instance.y
                 
                 self.angle_offset = -60 - round(-120 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
 
