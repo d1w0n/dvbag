@@ -42,9 +42,10 @@ class Parry(Projectile):
         self.type = "Parry"
         self.target_instance = target_instance
 
-        self.start_ticks = pygame.time.get_ticks()
-        self.duration = 250
+        self._init_ticks = pygame.time.get_ticks()
+        self.duration = 200
         self._has_target = False
+        self.angle_offset = -60
 
     def update(self, data):
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -52,14 +53,16 @@ class Parry(Projectile):
         self._has_target = False
         for instance in data["instances"].all_instances:
             if instance.type == self.target_instance:
-                self._mouse_dx = mouse_x + data["camera"].x - instance.x
-                self._mouse_dy = mouse_y + data["camera"].y - instance.y
-                self._target_x, self._target_y = self.get_velocity(self._mouse_dx, self._mouse_dy, instance.width / 2)
+                self._has_target = True
+                self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + self.angle_offset
+                self._target_x = (instance.width / 2) * math.cos(math.radians(self.direction))
+                self._target_y = (instance.width / 2) * math.sin(math.radians(self.direction))
                 self._target_x += instance.x
                 self._target_y += instance.y
-                self._has_target = True
+                
+                self.angle_offset = -60 - round(-120 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
 
-            elif instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or instance.type == "ChargerEnemy":
+            elif instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or (instance.type == "ChargerEnemy" and instance.phase == 3):
                 if self.get_collision(instance):
                     for instance in data["instances"].all_instances:
                         if instance.type == "Player":
@@ -69,16 +72,15 @@ class Parry(Projectile):
         if not self._has_target:
             self.remove = True
                 
-        if (pygame.time.get_ticks() - self.start_ticks) > self.duration:
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True
 
     def tick(self, data):
         self.x = self._target_x
         self.y = self._target_y
-        self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
 
     def render(self, camera):
-        _rotated = pygame.transform.rotate(self._sprite, self._angle)
+        _rotated = pygame.transform.rotate(self._sprite, -self.direction)
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 

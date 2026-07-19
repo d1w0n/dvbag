@@ -93,7 +93,8 @@ class ProjectileEnemy(Enemy):
         self.phase_info = {
             0: "Idle",
             1: "Roaming",
-            2: "Charging"
+            2: "Preparing",
+            3: "Cooldown"
         }
     
     def update(self, data): 
@@ -245,7 +246,7 @@ class ChargerEnemy(Enemy):
             self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 1 else self.speed * 2)
             self.x += self.velocity_x
             self.y += self.velocity_y
-
+        
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves and looks towards the target position.
 
@@ -262,3 +263,7 @@ class ChargerEnemy(Enemy):
             for i in range(5):
                 data["instances"].add_EnemyParticle(self._window, self.x, self.y, 24, 24, random.randint(1, 360), random.randint(5, 10), 0.9, 3000)
             # create 5 particles on death. 
+
+class SniperEnemy(Enemy):
+    def __init__(self):
+        pass
