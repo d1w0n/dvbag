@@ -195,3 +195,29 @@ class Beam(Projectile):
     def render(self, camera):
         pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width)
         pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width / 2)
+
+class Explosion(Projectile):
+    def __init__(self, window, x, y, radius, duration, damage):
+        super().__init__(window, "assets/images/placeholder_red.png", x, y, radius, radius, 0, 0, 0, damage)
+        self.type = "Explosion"
+        self.radius = radius
+        self._init_radius = radius
+        self.duration = duration
+
+        self._init_ticks = pygame.time.get_ticks()
+
+    def update(self, data):
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
+            self.remove = True
+
+        self._new_size = self.radius + 5
+
+    def tick(self, data):
+        self.radius = self._new_size
+        self.width = self.radius
+        self.height = self.radius
+        self.set_sprite(self.spritepath)
+
+    def render(self, camera):
+        self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))

@@ -166,6 +166,11 @@ class Player(Instance):
                     for i in range(3):
                         data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
                     data["camera"].add_shake(5)
+                
+                if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
+                    self.secondary_ticks = pygame.time.get_ticks()
+                    data["instances"].add_Explosion(self._window, self.x, self.y, 96, 500, 100)
+                    data["camera"].add_shake(50)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
