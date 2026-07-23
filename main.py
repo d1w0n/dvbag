@@ -187,12 +187,12 @@ while running:
         data["instances"].add_ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
-    data["instances"].queue_removals()
-    # if an instance needs to be removed, its index will be appended to the remove instance list.
-
     for instance in data["instances"].all_instances:
         instance.tick(data) 
     # performs instances next action after updating.
+
+    data["instances"].queue_removals()
+    # if an instance needs to be removed, its index will be appended to the remove instance list.
 
     data["instances"].remove_queued()
     # removes instances that needs to be deleted from the instances list, then resets the remove instances list.

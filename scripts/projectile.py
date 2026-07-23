@@ -83,8 +83,8 @@ class Parry(Projectile):
         self._window.blit(_rotated, _rect.topleft)
 
 class EnemyProjectile(Projectile):
-    def __init__(self, window, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
-        super().__init__(window, "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage, add_x_velocity, add_y_velocity)
+    def __init__(self, window, x, y, width, height, direction, speed, drag, damage):
+        super().__init__(window, "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage)
         self.type = "EnemyProjectile"
 
     def update(self, data):
@@ -219,6 +219,7 @@ class BombProjectile(Projectile):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration, radius, damage):
         super().__init__(window, sprite, x, y, width, height, direction, speed, drag, 0)
         self.type = "BombProjectile"
+        self._init_speed = speed
         self.duration = duration
         self._explosion_radius = radius
         self._explosion_damage = damage
@@ -234,6 +235,9 @@ class BombProjectile(Projectile):
             elif instance.type == "Parry":
                 if self.get_collision(instance):
                     self.drag = 1
+                    self.speed = self._init_speed
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
 
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True

@@ -99,7 +99,7 @@ class Player(Instance):
         elif key[pygame.K_2]:
             self.weapon = "Shotgun"
             self.primary_cooldown = 200
-            self.secondary_cooldown = 100
+            self.secondary_cooldown = 1000
             for element in data["ui"].ui_list:
                 if element.name == "WeaponText":
                     element.set_text("weapon: " + self.weapon)
@@ -169,8 +169,8 @@ class Player(Instance):
                 
                 if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
                     self.secondary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Explosion(self._window, self.x, self.y, 96, 100)
-                    data["camera"].add_shake(50)
+                    data["instances"].add_BombProjectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 0.9, 1000, 96, 100)
+                    data["camera"].add_shake(25)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
