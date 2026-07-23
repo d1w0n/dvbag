@@ -6,7 +6,7 @@ import random
 pygame.init()
 
 class Projectile(Instance):
-    def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage, add_x_velocity = 0, add_y_velocity = 0):
+    def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage):
         super().__init__("Projectile", sprite, window, x, y, width, height)
         self.direction = direction
         self.speed = speed
@@ -202,7 +202,6 @@ class Explosion(Projectile):
         self.type = "Explosion"
         self.radius = radius
 
-        self._init_ticks = pygame.time.get_ticks()
         self._ticked = False
 
     def update(self, data):
@@ -216,5 +215,31 @@ class Explosion(Projectile):
         if self.remove:
             data["instances"].add_ExplosionFade(self._window, self.x, self.y, self.radius, 500)
 
-    def render(self, camera):
-        self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
+class BombProjectile(Projectile):
+    def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration, radius, damage):
+        super().__init__(window, sprite, x, y, width, height, direction, speed, drag, 0)
+        self.type = "BombProjectile"
+        self.duration = duration
+        self._explosion_radius = radius
+        self._explosion_damage = damage
+
+        self._init_ticks = pygame.time.get_ticks()
+
+    def update(self, data):
+        for instance in data["instances"].all_instances:
+            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                if self.get_collision(instance):
+                    self.remove = True
+
+            elif instance.type == "Parry":
+                if self.get_collision(instance):
+                    self.drag = 1
+
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
+            self.remove = True
+
+    def tick(self, data):
+        super().tick(data)
+
+        if self.remove:
+            data["instances"].add_Explosion(self._window, self.x, self.y, self._explosion_radius, self._explosion_damage)
