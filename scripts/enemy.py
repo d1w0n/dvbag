@@ -111,7 +111,7 @@ class ProjectileEnemy(Enemy):
                 else:
                     self.spawn_projectile = False
             
-            elif instance.type == "Projectile" or instance.type == "Beam":
+            elif instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion":
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -205,7 +205,7 @@ class ChargerEnemy(Enemy):
                         if element.name == "ScoreText":
                             element.set_text("Score: " + str(data["score"]))
 
-            elif instance.type == "Projectile" or instance.type == "Beam":
+            elif instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion":
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255

@@ -169,7 +169,7 @@ class Player(Instance):
                 
                 if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
                     self.secondary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Explosion(self._window, self.x, self.y, 96, 500, 100)
+                    data["instances"].add_Explosion(self._window, self.x, self.y, 96, 100)
                     data["camera"].add_shake(50)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)

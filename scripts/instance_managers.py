@@ -1,5 +1,4 @@
 import pygame
-
 import config
 
 """
@@ -8,7 +7,8 @@ import new instance classes here, then add an add method for it in the instance 
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
 from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam, Explosion
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, AfterImage, TextDisplay, BeamFade
+from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, \
+    AfterImage, TextDisplay, BeamFade, ExplosionFade
 
 from scripts.ui import Bar, Text, TextParticle
 from scripts.screen_effects import Effect
@@ -87,9 +87,13 @@ class InstanceLists:
         self.add_instances.append(EnemyProjectile(window, x, y, width, height, direction, speed, drag, damage, add_x_velocity, add_y_velocity))
     def add_BeamFade(self, window, x_init, y_init, x, y, width, height, duration):
         self.add_instances.append(BeamFade(window, x_init, y_init, x, y, width, height, duration))
-    def add_Explosion(self, window, x, y, radius, duration, damage):
-        self.add_instances.append(Explosion(window, x, y, radius, duration, damage))
-    # instance management methods chunk.
+    def add_Explosion(self, window, x, y, radius, damage):
+        self.add_instances.append(Explosion(window, x, y, radius, damage))
+    def add_ExplosionFade(self, window, x, y, radius, duration):
+        self.add_instances.append(ExplosionFade(window, x, y, radius, duration))
+    """
+    end of instance management methods chunk.
+    """
 
 class UIList:
     def __init__(self, ui_list = None, effects = None):
