@@ -21,6 +21,9 @@ class UI(ABC):
     def render(self, offset_x, offset_y):
         pass
 
+    def __str__(self):
+        return f"{self.name} at ({round(self.x, 2)}, {round(self.y, 2)})"
+
 class Bar(UI):
     def __init__(self, name, window, x, y, width, height, color, stat = 100):
         super().__init__("Bar", name, window, x, y, width, height, color)

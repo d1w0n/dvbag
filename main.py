@@ -36,6 +36,9 @@ clock = pygame.time.Clock()
 tickrate = 60
 removals = 0
 tick_pause = 0
+
+if config.DEBUG:
+    debug_ticks = 0
 # variable initialization.
 
 data = {
@@ -65,6 +68,7 @@ while not config.MENU_SKIP and running:
     pygame.display.flip()
 
     clock.tick(tickrate)
+
 # menu loop.
 
 _start_time = time.perf_counter()
@@ -191,12 +195,9 @@ while running:
         instance.tick(data) 
     # performs instances next action after updating.
 
-    data["instances"].queue_removals()
-    # if an instance needs to be removed, its index will be appended to the remove instance list.
-
-    data["instances"].remove_queued()
-    # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
-    
+    data["instances"].remove_instances()
+    # if an instance needs to be removed, it will be filtered out here.
+   
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
 
@@ -223,6 +224,11 @@ while running:
         clock.tick(tickrate)
         data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
+
+    if config.DEBUG:
+        if (pygame.time.get_ticks() - debug_ticks) > 5000:
+            debug_ticks = pygame.time.get_ticks()
+            print(f"\nUI: {data["ui"]}\n\nINSTANCES: {data["instances"]}")
 # end of main loop.
 
 _start_time = time.perf_counter()

@@ -39,6 +39,9 @@ class Instance(ABC):
     def render(self, camera):
         pass
 
+    def __str__(self):
+        return f"{self.type} at ({round(self.x, 2)}, {round(self.y, 2)})"
+
     def get_distance(self, dx, dy):
         return (dx ** 2 + dy ** 2) ** 0.5
     

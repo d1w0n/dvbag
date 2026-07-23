@@ -20,7 +20,6 @@ class InstanceLists:
     def __init__(self, all_instances = None):
         self.all_instances = all_instances if all_instances is not None else []
         self.add_instances = []
-        self.remove_instances = []
 
     def append_queued(self):
         for instance in self.add_instances:
@@ -28,20 +27,18 @@ class InstanceLists:
         self.add_instances = []
     # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
 
-    def queue_removals(self):
+    def remove_instances(self):
+        _remove_list = []
+        _remove_count = 0
+
         for i in range(len(self.all_instances)):
             if self.all_instances[i].remove:
-                self.remove_instances.append(i)
-    # if an instance needs to be removed, its index will be appended to the remove instance list.
+                _remove_list.append(i)
 
-    def remove_queued(self):
-        self._removals = 0
-        for index in self.remove_instances:
-            self.all_instances.pop(index - self._removals)
-            self._removals += 1
-        self.remove_instances = []
-        del self._removals
-    # removes instances that needs to be deleted from the instances list, then resets the remove instances list.
+        for index in _remove_list:
+            self.all_instances.pop(index - _remove_count)
+            _remove_count += 1
+    # if an instance needs to be removed, its index will be appended to the remove instances list and the all instances list will be popped from the remove instances list.
 
     def render_sort(self, camera, *types): # TODO: make it sort based off the arguments in types.
         render_list = [] 
@@ -53,6 +50,16 @@ class InstanceLists:
         return render_list
     # sorts the instance list by specified order in parameters.
     # also checks if the instances are on screen; if not, dont render, unless exeption that always renders.
+
+    def __str__(self):
+        _list = []
+        for instance in self.add_instances:
+            _list.append(str(instance))
+        for instance in self.all_instances:
+            _list.append(str(instance))
+
+        return str(_list).replace("[", "").replace("]", "").replace("\'", "")
+    # prints simplified list of instances in both lists.
 
     """
     when creating a new instance class, add an add class method to the instance management methods chunk.
@@ -123,6 +130,14 @@ class UIList:
                 self.effects[i - self._removals].render()
     # renders screen overlay effects.
 
+    def __str__(self):
+            _list = []
+            for element in self.ui_list:
+                _list.append(str(element))
+    
+            return str(_list).replace("[", "").replace("]", "").replace("\'", "")
+    # prints simplified list of ui elements.
+    
     """
     when creating a new ui element, add an add class method to the ui management methods chunk.
     this is so objects can create new ui without having to import them as a way to deal with circular imports.
