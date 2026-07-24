@@ -11,4 +11,3 @@ venv/
 dist/
 build/
 *.spec
-devlog.md
