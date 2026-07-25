@@ -134,39 +134,42 @@ class Beam(Projectile):
         self.velocity_y = self.speed * math.sin(math.radians(self.direction))
 
     def pre_update(self, data):
-        if self._collision:
-            self.remove = True
-            pass
-        
         for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
                 if self.get_collision(instance):
-                    self._collision = True
+                    self.remove = True
+                    pass
 
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-                self._collision = True
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+            self.remove = True
+            pass
+
+        # checks for spawn collision.
 
         while not self._collision:
-            for instance in data["instances"].all_instances:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self._collision = True
-                    # if colliding with an enemy, remove itself.
-
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
-                self._collision = True
-            # if colliding with room bounds, remove itself.
-
             self.x += self.velocity_x
             self.y += self.velocity_y
 
+            for instance in data["instances"].all_instances:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                    if self.get_collision(instance):
+                        self._collision = True
+
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+                self._collision = True
+        # if it didnt spawn on a hitbox, it will move forward until it hits one.
+
+        self.x -= self.velocity_x
+        self.y -= self.velocity_y
+        self._collision = False
+        
         self.velocity_x = math.cos(math.radians(self.direction))
         self.velocity_y = math.sin(math.radians(self.direction))
-
-        while self._collision:
-            self.x -= self.velocity_x
-            self.y -= self.velocity_y
-            self._collision = False
+        # upon hitting a hitbox, it will back out then set its step distance to one for precise positioning.
+        
+        while not self._collision:
+            self.x += self.velocity_x
+            self.y += self.velocity_y
 
             for instance in data["instances"].all_instances:
                 if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
@@ -176,9 +179,7 @@ class Beam(Projectile):
             if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                 self._collision = True
 
-        self.x += self.velocity_x
-        self.y += self.velocity_y
-        self._collision = True
+        self.remove = True
 
     def update(self, data):
         pass
@@ -189,8 +190,7 @@ class Beam(Projectile):
             # creates a beam fading effect on its position.
 
     def render(self, camera):
-        pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width)
-        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), self.width / 2)
+        pass
 
 class Explosion(Projectile):
     def __init__(self, window, x, y, radius, damage):
@@ -201,15 +201,14 @@ class Explosion(Projectile):
         self._ticked = False
 
     def update(self, data):
-        if self._ticked:
-            self.remove = True
-            
-        else:
-            self._ticked = True
+        self.remove = True
 
     def tick(self, data):
         if self.remove:
             data["instances"].add_ExplosionFade(self._window, self.x, self.y, self.radius, 500)
+
+    def render(self, camera):
+        pass
 
 class BombProjectile(Projectile):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration, radius, damage):
@@ -243,3 +242,4 @@ class BombProjectile(Projectile):
 
         if self.remove:
             data["instances"].add_Explosion(self._window, self.x, self.y, self._explosion_radius, self._explosion_damage)
+            data["camera"].add_shake(50)
