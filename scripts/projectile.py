@@ -97,13 +97,9 @@ class EnemyProjectile(Projectile):
 
                 elif instance.type == "Parry":
                     if self.get_collision(instance):
-                        self.type = "Projectile"
-                        self.parried = True
-                        self.damage = 100
-                        self.speed *= 2
+                        self.remove = True
                         mouse_x, mouse_y = pygame.mouse.get_pos()
-                        self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
-                        # changes how the projectile behaves.
+                        data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
 
                         data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
                         for i in range(5):
