@@ -139,12 +139,13 @@ class ExplosionFade(Particle):
         self.duration = duration
 
         self._init_ticks = pygame.time.get_ticks()
+        self._new_size = radius
 
     def update(self, data):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True
 
-        self._new_size = self.radius + 5
+        self._new_size += self._init_radius * 0.05
 
     def tick(self, data):
         self.radius = self._new_size
