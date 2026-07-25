@@ -88,35 +88,31 @@ class EnemyProjectile(Projectile):
         self.type = "EnemyProjectile"
 
     def update(self, data):
-        if self.type == "EnemyProjectile":
-            for instance in data["instances"].all_instances:
-                if instance.type == "Player":
-                    if self.get_collision(instance) and not instance.invulnerable:
-                        self.remove = True
-                    # if colliding with the player, remove itself.
+        for instance in data["instances"].all_instances:
+            if instance.type == "Player":
+                if self.get_collision(instance) and not instance.invulnerable:
+                    self.remove = True
+                # if colliding with the player, remove itself.
 
-                elif instance.type == "Parry":
-                    if self.get_collision(instance):
-                        self.remove = True
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
+            elif instance.type == "Parry":
+                if self.get_collision(instance):
+                    self.remove = True
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
 
-                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
-                        for i in range(5):
-                            data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
-                        data["camera"].add_shake(20)
-                        # visual effects.
-                        
-                        data["score"] += 20
-                        data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                        for element in data["ui"].ui_list:
-                            if element.name == "ScoreText":
-                                element.set_text("Score: " + str(data["score"]))
-                        # score effects.
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
+                    for i in range(5):
+                        data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
+                    data["camera"].add_shake(20)
+                    # visual effects.
+                    
+                    data["score"] += 20
+                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
+                    for element in data["ui"].ui_list:
+                        if element.name == "ScoreText":
+                            element.set_text("Score: " + str(data["score"]))
+                    # score effects.
         
-        elif self.type == "Projectile":
-            super().update(data)
-
     def tick(self, data):
         super().tick(data)
         data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
@@ -229,8 +225,8 @@ class BombProjectile(Projectile):
 
             elif instance.type == "Parry":
                 if self.get_collision(instance):
-                    self.drag = 1
-                    self.speed = self._init_speed
+                    self.drag = 1 # explosive hockey puck. :)
+                    self.speed = self._init_speed * 2
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
 
