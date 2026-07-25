@@ -34,6 +34,7 @@ class Player(Instance):
         self._dy = 0
         self._mouse_dx = 0
         self._mouse_dy = 0
+        self._angle = 0
     
     def update(self, data): 
         for instance in data["instances"].all_instances:

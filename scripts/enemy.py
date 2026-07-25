@@ -21,6 +21,7 @@ class Enemy(Instance):
         self._alpha = 255
         self._alpha_offset = 0
         self.phase = 1
+        self._angle = 0
         
         self.phase_info = {
             0: "Idle",
