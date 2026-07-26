@@ -32,40 +32,31 @@ class Projectile(Instance):
 
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
+            self.x -= self.velocity_x
+            self.y -= self.velocity_y
+            for i in range(3):
+                data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, self.direction + random.randint(-45, 45), 15, 1, 250)
 
     def render(self, camera):
         self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
-class Parry(Projectile):
-    def __init__(self, window, x, y, width, height, target_instance, damage):
+class Melee(Projectile):
+    def __init__(self, window, x, y, width, height, target_instance, duration, damage):
         super().__init__(window, "assets/images/placeholder.png", x, y, width, height, 0, 0, 0, damage)
-        self.type = "Parry"
+        self.type = "Melee"
         self.target_instance = target_instance
+        self.duration = duration
 
         self._init_ticks = pygame.time.get_ticks()
-        self.duration = 200
         self._has_target = False
-        self.angle_offset = -60
+        self.clockwise = random.randint(0, 1) == 1
+        self.angle_offset = -60 if self.clockwise else 60
+        self._angle_offset_init = self.angle_offset
 
     def update(self, data):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-
         self._has_target = False
         for instance in data["instances"].all_instances:
-            if instance.type == self.target_instance:
-                self._has_target = True
-                self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + self.angle_offset
-                self._target_x = (instance.width / 2) * math.cos(math.radians(self.direction)) + instance.x
-                self._target_y = (instance.width / 2) * math.sin(math.radians(self.direction)) + instance.y
-                
-                self.angle_offset = -60 - round(-120 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
-
-            elif instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or (instance.type == "ChargerEnemy" and instance.phase == 3):
-                if self.get_collision(instance):
-                    for instance in data["instances"].all_instances:
-                        if instance.type == "Player":
-                            instance.parry_ticks = instance.parry_cooldown
-                    self.remove = True
+            self.get_target(data, instance)
         
         if not self._has_target:
             self.remove = True
@@ -81,6 +72,30 @@ class Parry(Projectile):
         _rotated = pygame.transform.rotate(self._sprite, -self.direction)
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
+
+    def get_target(self, data, instance):
+        if instance.type == self.target_instance:
+            self._has_target = True
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + self.angle_offset
+            self._target_x = (self.width / 4) * math.cos(math.radians(self.direction)) + instance.x
+            self._target_y = (self.width / 4) * math.sin(math.radians(self.direction)) + instance.y
+            
+            self.angle_offset = self._angle_offset_init - round((self._angle_offset_init * 2) * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
+
+class Parry(Melee):
+    def __init__(self, window, x, y, width, height, target_instance, duration, damage):
+        super().__init__(window, x, y, width, height, target_instance, duration, damage)
+        self.type = "Parry"
+
+    def get_target(self, data, instance):
+        super().get_target(data, instance)
+        if instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or (instance.type == "ChargerEnemy" and instance.phase == 3):
+            if self.get_collision(instance):
+                for instance in data["instances"].all_instances:
+                    if instance.type == "Player":
+                        instance.parry_ticks = instance.parry_cooldown
+                self.remove = True
 
 class EnemyProjectile(Projectile):
     def __init__(self, window, x, y, width, height, direction, speed, drag, damage):
