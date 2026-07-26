@@ -104,6 +104,14 @@ class Player(Instance):
             for element in data["ui"].ui_list:
                 if element.name == "WeaponText":
                     element.set_text("weapon: " + self.weapon)
+
+        elif key[pygame.K_3]:
+            self.weapon = "Melee"
+            self.primary_cooldown = 200
+            self.secondary_cooldown = 500
+            for element in data["ui"].ui_list:
+                if element.name == "WeaponText":
+                    element.set_text("weapon: " + self.weapon)
     
         if key[pygame.K_w]:
             self._dy = -self.speed
@@ -138,7 +146,7 @@ class Player(Instance):
         if not self.invulnerable:
             if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
                 self.parry_ticks = pygame.time.get_ticks()
-                data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 10)
+                data["instances"].add_Parry(self._window, self.x, self.y, 96, 96, "Player", 200, 10)
                 data["camera"].add_shake(10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
@@ -172,6 +180,11 @@ class Player(Instance):
                     self.secondary_ticks = pygame.time.get_ticks()
                     data["instances"].add_BombProjectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 10, 0.9, 1000, 192, 100)
                     data["camera"].add_shake(25)
+
+            elif self.weapon == "Melee":
+                if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
+                    self.primary_ticks = pygame.time.get_ticks()
+                    data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 10)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
