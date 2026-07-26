@@ -13,8 +13,6 @@ class Projectile(Instance):
         self.drag = drag
         self.damage = damage
 
-        self.parried = False
-
     def update(self, data):
         for instance in data["instances"].all_instances:
             if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
