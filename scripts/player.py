@@ -184,7 +184,7 @@ class Player(Instance):
             elif self.weapon == "Melee":
                 if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
                     self.primary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 10)
+                    data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 50)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
         # smooths camera position to mouse and player position.
