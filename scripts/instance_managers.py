@@ -6,8 +6,8 @@ import new instance classes here, then add an add method for it in the instance 
 """
 from scripts.player import Player
 from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
-from scripts.projectile import Projectile, Parry, EnemyProjectile, Beam, Explosion, \
-    BombProjectile
+from scripts.projectile import Projectile, Melee, Parry, EnemyProjectile, Beam, \
+    Explosion, BombProjectile
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, \
     AfterImage, TextDisplay, BeamFade, ExplosionFade
 
@@ -83,6 +83,8 @@ class InstanceLists:
         self.add_instances.append(Projectile(*args))
     def add_Beam(self, *args):
         self.add_instances.append(Beam(*args))
+    def add_Melee(self, *args):
+        self.add_instances.append(Melee(*args))
     def add_Parry(self, *args):
         self.add_instances.append(Parry(*args))
     def add_ParryFlash(self, *args):
