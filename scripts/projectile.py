@@ -88,7 +88,7 @@ class Parry(Melee):
 
     def get_target(self, data, instance):
         super().get_target(data, instance)
-        if instance.type == "EnemyProjectile" or (instance.type == "Projectile" and instance.parried) or (instance.type == "ChargerEnemy" and instance.phase == 3):
+        if instance.type == "EnemyProjectile" or (instance.type == "ChargerEnemy" and instance.phase == 3):
             if self.get_collision(instance):
                 for instance in data["instances"].all_instances:
                     if instance.type == "Player":
