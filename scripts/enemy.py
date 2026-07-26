@@ -37,7 +37,7 @@ class Enemy(Instance):
                 self.target_y = instance.y
                 # sets target position to go to the player.
             
-            elif instance.type == "Projectile" or instance.type == "Beam":
+            elif self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -81,6 +81,9 @@ class Enemy(Instance):
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
+    def get_hazardous(self, instance):
+        return instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion" or instance.type == "Melee"
+
 class ProjectileEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range, cooldown = 1000):
         super().__init__(window, "assets/images/placeholder_dark_red.png", x, y, width, height, health, speed, damage)
@@ -112,7 +115,7 @@ class ProjectileEnemy(Enemy):
                 else:
                     self.spawn_projectile = False
             
-            elif instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion":
+            elif self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -206,7 +209,7 @@ class ChargerEnemy(Enemy):
                         if element.name == "ScoreText":
                             element.set_text("Score: " + str(data["score"]))
 
-            elif instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion":
+            elif self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
