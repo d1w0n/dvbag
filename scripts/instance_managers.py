@@ -11,8 +11,7 @@ from scripts.projectile import Projectile, Melee, Parry, EnemyProjectile, Beam, 
 from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, \
     AfterImage, TextDisplay, BeamFade, ExplosionFade
 
-from scripts.ui import Bar, Text, TextParticle
-from scripts.screen_effects import Effect
+from scripts.ui import Bar, Text, TextParticle, ScreenEffect
 
 pygame.init()
 
@@ -150,8 +149,8 @@ class UIList:
         self.ui_list.append(Text(*args))
     def add_TextParticle(self, *args):
         self.ui_list.append(TextParticle(*args))
-    def add_Effect(self, *args):
-        self.effects.append(Effect(*args))
+    def add_ScreenEffect(self, *args):
+        self.effects.append(ScreenEffect(*args))
     """
     end of ui management methods chunk.
     """
