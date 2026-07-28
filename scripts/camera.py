@@ -1,5 +1,4 @@
 import random
-from scripts.screen_effects import Effect
 
 class Camera:
     def __init__(self, window, x, y, width, height, smoothing, decay):
