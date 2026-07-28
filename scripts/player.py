@@ -44,7 +44,7 @@ class Player(Instance):
                     self.health -= instance.damage
 
                     data["camera"].add_shake(100)
-                    data["ui"].add_Effect(self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
+                    data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
 
                     for element in data["ui"].ui_list:
                         if element.name == "HealthBar":
