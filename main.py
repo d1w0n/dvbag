@@ -85,7 +85,7 @@ tick_pause = 0
 data = {
     "width": width,
     "height": height,
-    "room": Room(width * 2, height * 2),
+    "room": Room(width, height),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists(),
     "ui": UIList(),
