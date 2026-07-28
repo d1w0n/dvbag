@@ -6,7 +6,7 @@ from config import BASE_DIR
 pygame.init()
 
 class UI(ABC):
-    def __init__(self, type, name, window, x = 0, y = 0, width = 0, height = 0, color = (0, 0, 0)):
+    def __init__(self, type, name, window, x, y, width, height, color):
         self._window = window
         self.type = type
         self.name = name
@@ -62,3 +62,22 @@ class TextParticle(Text):
         self.y_velocity *= 0.9
         self._text_surface.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
         self._window.blit(self._text_surface, (self.x, self.y))
+
+class ScreenEffect(UI):
+    def __init__(self, name, window, sprite, width, height, duration, intensity):
+        super().__init__("ScreenEffect", name, window, 0, 0, width, height, (0, 0, 0))
+        self.duration = duration
+        self.intensity = intensity
+        self.sprite = pygame.image.load(os.path.join(BASE_DIR, *sprite.replace("\\", "/").split("/"))).convert_alpha()
+        self.sprite = pygame.transform.scale(self.sprite, (self.width, self.height))
+        self._init_ticks = pygame.time.get_ticks()
+        self._alpha = 255
+        self.remove = False
+
+    def render(self):
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
+            self.remove = True
+            pass
+
+        self.sprite.set_alpha(self.intensity - round(self.intensity * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        self._window.blit(self.sprite, (0, 0))
