@@ -168,6 +168,12 @@ while running:
 
     data["camera"].shake_decay()
     # multiplies camera shake attributes by its decay.
+
+    data["instances"].append_queued()
+        # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
+            
+    data["instances"].remove_instances()
+        # if an instance needs to be removed, it will be filtered out here.
     
     for instance in data["instances"].all_instances:
         if instance.can_pre_update:
@@ -192,11 +198,7 @@ while running:
         instance.tick(data) 
     # performs instances next action after updating.
 
-    data["instances"].append_queued()
-    # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
-        
-    data["instances"].remove_instances()
-    # if an instance needs to be removed, it will be filtered out here.
+    
    
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
