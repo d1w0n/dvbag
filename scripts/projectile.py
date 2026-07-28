@@ -199,7 +199,8 @@ class Beam(Projectile):
             # creates a beam fading effect on its position.
 
     def render(self, camera):
-        pass
+            pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width))
+            pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width / 2))
 
 class Explosion(Projectile):
     def __init__(self, window, x, y, radius, damage):
@@ -217,7 +218,7 @@ class Explosion(Projectile):
             data["instances"].add_ExplosionFade(self._window, self.x, self.y, self.radius, 500)
 
     def render(self, camera):
-        pass
+            self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 class BombProjectile(Projectile):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration, radius, damage):
