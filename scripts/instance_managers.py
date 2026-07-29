@@ -5,13 +5,15 @@ import config
 import new instance classes here, then add an add method for it in the instance management methods chunk.
 """
 from scripts.player import Player
-from scripts.enemy import Enemy, ProjectileEnemy, ChargerEnemy
-from scripts.projectile import Projectile, Melee, Parry, EnemyProjectile, Beam, \
+from scripts.enemies import Enemy, ProjectileEnemy, ChargerEnemy
+from scripts.projectiles import Projectile, Melee, Parry, EnemyProjectile, Beam, \
     Explosion, BombProjectile
-from scripts.particle import Particle, EnemyParticle, ProjectileParticle, ParryFlash, \
+from scripts.particles import Particle, EnemyParticle, ProjectileParticle, ParryFlash, \
     AfterImage, TextDisplay, BeamFade, ExplosionFade
 
 from scripts.ui import Bar, Text, TextParticle, ScreenEffect
+
+from scripts.objects import Object
 
 pygame.init()
 
