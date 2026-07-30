@@ -160,6 +160,14 @@ while running:
             running = False
     # checks for quit events and if the escape key is pressed to end the program. 
 
+    if pygame.key.get_pressed()[pygame.K_p]:
+        data["room"] = Room(width * 2, height) 
+        for instance in data["instances"].all_instances:
+            if instance.type == "Player":
+                instance.x = 0
+                instance.y = (data["room"].height / 2) - instance.height
+    # TODO temporary. implement ACTUAL room changing later
+
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
 
@@ -201,7 +209,7 @@ while running:
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
 
-    data["room"].draw(window, (200, 200, 200), data["camera"])
+    data["room"].render(window, (200, 200, 200), data["camera"])
     # draws the room borders.
 
     for instance in data["instances"].render_sort(data["camera"]):
