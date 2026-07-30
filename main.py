@@ -197,8 +197,6 @@ while running:
     for instance in data["instances"].all_instances:
         instance.tick(data) 
     # performs instances next action after updating.
-
-    
    
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
