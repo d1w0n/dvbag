@@ -2,12 +2,12 @@ import pygame
 
 pygame.init()
 
-class Room:
+class Room():
     def __init__(self, width, height):
         self.width = width
         self.height = height
 
-    def draw(self, window, color, camera):
+    def render(self, window, color, camera):
         pygame.draw.line(window, color, (-self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), (self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), 5)
         # top border.
 
