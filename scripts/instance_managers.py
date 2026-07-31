@@ -56,6 +56,7 @@ class InstanceLists:
         _list = []
         for instance in self.add_instances:
             _list.append(str(instance))
+
         for instance in self.all_instances:
             _list.append(str(instance))
 
@@ -155,4 +156,50 @@ class UIList:
         self.effects.append(ScreenEffect(*args))
     """
     end of ui management methods chunk.
+    """
+
+class ObjectList:
+    def __init__(self, object_list = None):
+        self.object_list = object_list if object_list is not None else []
+        self.add_objects = []
+
+    def append_objects(self):
+        for object in self.add_objects:
+            self.add_objects.append(object)
+        self.add_objects = []
+
+    def remove_objects(self):
+        _remove_list = []
+        _remove_count = 0
+
+        for i in range(len(self.object_list)):
+            if self.object_list[i].remove:
+                _remove_list.append(i)
+
+        for index in _remove_list:
+            self.object_list.pop(index - _remove_count)
+            _remove_count += 1
+
+    def render_objects(self, camera):
+        for object in self.object_list:
+            object.render(camera)
+    # TODO implement objects not rendering if off camera (like how instances do)
+
+    def __str__(self):
+        _list = []
+        for object in self.add_objects:
+            _list.append(str(object))
+
+        for object in self.add_objects:
+            _list.append(str(object))
+
+        return str(_list).replace("[", "").replace("]", "").replace("\'", "")
+
+    """
+    object management chunk ig bro
+    """
+    def add_Object(self, *args):
+        self.add_objects.append(Object(*args))
+    """
+    end of chunk
     """
