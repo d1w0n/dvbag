@@ -23,7 +23,7 @@ for instance management, check scripts/instance_managers.py
 """
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instance_managers import InstanceLists, UIList
+from scripts.instance_managers import InstanceLists, UIList, ObjectList
 
 pygame.init()
 
@@ -89,6 +89,7 @@ data = {
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists(),
     "ui": UIList(),
+    "objects": ObjectList(), # TODO implement object management into main loop.
     "score": 0,
     "tick_pause": 0
 }
@@ -167,6 +168,7 @@ while running:
                 instance.x = 0
                 instance.y = (data["room"].height / 2) - instance.height
     # TODO temporary. implement ACTUAL room changing later
+    # TODO also make it spawn an object in the center
 
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
