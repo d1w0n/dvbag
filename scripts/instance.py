@@ -8,7 +8,7 @@ pygame.init()
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, type, sprite = "assets/images/placeholder.png", window = 0, x = 0, y = 0, width = 32, height = 32):
+    def __init__(self, type, sprite, window, x, y, width, height):
         self.type = type
         self._window = window
         self.x = x
@@ -17,8 +17,6 @@ class Instance(ABC):
         self.height = height
         if isinstance(sprite, str):
             self.set_sprite(sprite)
-        else:
-            self.set_sprite("assets/images/placeholder.png")
 
         self.remove = False
         self.invulnerable = False

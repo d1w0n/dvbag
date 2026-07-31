@@ -108,7 +108,7 @@ class TextDisplay(Particle):
         self.set_text(text)
     
     def render(self, camera):
-        self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
+        self._text_surface.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
         self._window.blit(self._text_surface, (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
 
     def set_text(self, text):
