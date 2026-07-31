@@ -1,17 +1,12 @@
 # TODO create object classes. should function similar to room borders.
-from abc import ABC, abstractmethod
+from scripts.instance import Instance
 import pygame
 
 pygame.init()
 
-class Object(ABC):
+class Object(Instance):
     def __init__(self, type, window, x, y, width, height, color):
-        self.type = type
-        self._window = window
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+        super().__init__(type, "assets/images/placeholder.png", window, x, y, width, height)
         self.color = color
 
         self.remove = False
@@ -23,4 +18,7 @@ class Object(ABC):
         pass
 
     def render(self, camera):
-        pass
+        pygame.draw.line(self._window, self.color, (-self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), (self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), 5)
+        pygame.draw.line(self._window, self.color, (self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), (self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), 5)
+        pygame.draw.line(self._window, self.color, (self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), (-self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), 5)
+        pygame.draw.line(self._window, self.color, (-self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), (-self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), 5)
