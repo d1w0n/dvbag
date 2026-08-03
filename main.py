@@ -163,12 +163,12 @@ while running:
 
     if pygame.key.get_pressed()[pygame.K_p]:
         data["room"] = Room(width * 2, height) 
+        data["objects"].add_Object(window, 0, 0, 48, 48, (200, 200, 200))
         for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 instance.x = 0
                 instance.y = (data["room"].height / 2) - instance.height
     # TODO temporary. implement ACTUAL room changing later
-    # TODO also make it spawn an object in the center
 
     window.fill((255, 255, 255))
     # fills the window with white color to clear previous frames.
@@ -180,10 +180,14 @@ while running:
     # multiplies camera shake attributes by its decay.
 
     data["instances"].append_queued()
-        # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
+    # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
+
+    data["objects"].append_objects()
             
     data["instances"].remove_instances()
-        # if an instance needs to be removed, it will be filtered out here.
+    # if an instance needs to be removed, it will be filtered out here.
+
+    data["objects"].remove_objects()
     
     for instance in data["instances"].all_instances:
         if instance.can_pre_update:
@@ -212,6 +216,7 @@ while running:
     # assign camera shake to dedicated random integer attributes for instance rendering.
 
     data["room"].render(window, (200, 200, 200), data["camera"])
+    data["objects"].render_objects(data["camera"])
     # draws the room borders.
 
     for instance in data["instances"].render_sort(data["camera"]):

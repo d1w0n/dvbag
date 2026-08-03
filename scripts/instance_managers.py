@@ -165,7 +165,7 @@ class ObjectList:
 
     def append_objects(self):
         for object in self.add_objects:
-            self.add_objects.append(object)
+            self.object_list.append(object)
         self.add_objects = []
 
     def remove_objects(self):

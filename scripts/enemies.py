@@ -28,7 +28,7 @@ class Enemy(Instance):
             1: "Roaming"
         }
 
-    def update(self, data):
+    def update(self, data): # TODO currently, enemies ignore room borders because current ai only moves towards the player. this will cause issues when adding enemies with smarter ai (like being able to dodge attacks.) implement enemies having to do room border checks.
         self._alpha_offset *= 0.8
 
         for instance in data["instances"].all_instances:

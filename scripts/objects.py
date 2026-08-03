@@ -5,8 +5,8 @@ import pygame
 pygame.init()
 
 class Object(Instance):
-    def __init__(self, type, window, x, y, width, height, color):
-        super().__init__(type, "assets/images/placeholder.png", window, x, y, width, height)
+    def __init__(self, window, x, y, width, height, color):
+        super().__init__("Object", None, window, x, y, width, height)
         self.color = color
 
         self.remove = False
