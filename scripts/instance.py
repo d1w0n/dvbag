@@ -56,10 +56,10 @@ class Instance(ABC):
     def get_room_collision_y(self, room):
         return self.y + self.height / 2 > room.height / 2 or self.y - self.height / 2 < -room.height / 2
 
-    def get_object_collision(self, object_list):
+    def get_object_collision(self, object_list): # TODO finish and implement.
         for object in object_list:
             pass
-        
+
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \
         self.x + self.width / 2 - camera.x + camera.shake_x < 0 or \
