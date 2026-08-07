@@ -1,10 +1,9 @@
 # TODO create object classes. should function similar to room borders.
-from scripts.instance import Instance
 import pygame
 
 pygame.init()
 
-class Object(Instance):
+class Object:
     def __init__(self, window, x, y, width, height, color):
         super().__init__("Object", None, window, x, y, width, height)
         self.color = color
