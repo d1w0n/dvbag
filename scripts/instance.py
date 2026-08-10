@@ -60,6 +60,8 @@ class Instance(ABC):
         for object in object_list:
             pass
 
+        return False
+
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \
         self.x + self.width / 2 - camera.x + camera.shake_x < 0 or \

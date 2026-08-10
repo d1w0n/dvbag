@@ -13,7 +13,7 @@ from scripts.particles import Particle, EnemyParticle, ProjectileParticle, Parry
 
 from scripts.ui import Bar, Text, TextParticle, ScreenEffect
 
-from scripts.objects import Object
+from scripts.objects import Wall
 
 pygame.init()
 
@@ -198,8 +198,8 @@ class ObjectList:
     """
     object management chunk ig bro
     """
-    def add_Object(self, *args):
-        self.add_objects.append(Object(*args))
+    def add_Wall(self, *args):
+        self.add_objects.append(Wall(*args))
     """
     end of chunk
     """

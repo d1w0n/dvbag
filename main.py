@@ -163,7 +163,7 @@ while running:
 
     if pygame.key.get_pressed()[pygame.K_p]:
         data["room"] = Room(width * 2, height) 
-        data["objects"].add_Object(window, 0, 0, 48, 48, (200, 200, 200))
+        data["objects"].add_Wall(window, 0, 0, 48, 48)
         for instance in data["instances"].all_instances:
             if instance.type == "Player":
                 instance.x = 0

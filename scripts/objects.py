@@ -1,11 +1,16 @@
 # TODO create object classes. should function similar to room borders.
+from abc import ABC
 import pygame
 
 pygame.init()
 
-class Object:
+class Object(ABC):
     def __init__(self, window, x, y, width, height, color):
-        super().__init__("Object", None, window, x, y, width, height)
+        self._window = window
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self.color = color
 
         self.remove = False
@@ -21,3 +26,7 @@ class Object:
         pygame.draw.line(self._window, self.color, (self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), (self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), 5)
         pygame.draw.line(self._window, self.color, (self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), (-self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), 5)
         pygame.draw.line(self._window, self.color, (-self.width / 2 - camera.x + camera.shake_x, self.height / 2 - camera.y + camera.shake_y), (-self.width / 2 - camera.x + camera.shake_x, -self.height / 2 - camera.y + camera.shake_y), 5)
+
+class Wall(Object):
+    def __init__(self, window, x, y, width, height):
+        super().__init__(window, x, y, width, height, (200, 200, 200))
