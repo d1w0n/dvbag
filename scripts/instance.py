@@ -50,15 +50,16 @@ class Instance(ABC):
         _distance = self.get_distance(self.x - other.x, self.y - other.y)
         return _distance <= self.width / 2 + other.width / 2 or _distance <= self.height / 2 + other.height / 2
     
-    def get_room_collision_x(self, room): # TODO room collision should also include specific objects. also make this a single check not for x and y.
-        return self.x + self.width / 2 > room.width / 2 or self.x - self.width / 2 < -room.width / 2
+    def get_room_collision_x(self, room):
+            return (self.x + self.width / 2 > room.width / 2 or self.x - self.width / 2 < -room.width / 2)
     
     def get_room_collision_y(self, room):
-        return self.y + self.height / 2 > room.height / 2 or self.y - self.height / 2 < -room.height / 2
+            return (self.y + self.height / 2 > room.height / 2 or self.y - self.height / 2 < -room.height / 2)
 
-    def get_object_collision(self, object_list): # TODO finish and implement.
+    def get_object_collision(self, object_list):
         for object in object_list:
-            pass
+            if (self.x + self.width / 2 > object.x - object.width / 2 or self.x - self.width / 2 < object.x + object.width / 2) and (self.y + self.height / 2 > object.y - object.height / 2 or self.y - self.height / 2 < object.y + object.height / 2):
+                return True
 
         return False
 
