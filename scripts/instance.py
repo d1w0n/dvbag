@@ -58,10 +58,14 @@ class Instance(ABC):
 
     def get_object_collision(self, object_list):
         for object in object_list:
-            if (self.x + self.width / 2 > object.x - object.width / 2 or self.x - self.width / 2 < object.x + object.width / 2) and (self.y + self.height / 2 > object.y - object.height / 2 or self.y - self.height / 2 < object.y + object.height / 2):
+            if (self.x - self.width / 2 < object.x + object.width / 2) and \
+            (self.x + self.width / 2 > object.x - object.width / 2) and \
+            (self.y  - self.width / 2 < object.y + object.height / 2) and \
+            (self.y + self.height / 2 > object.y - object.height / 2):
                 return True
-
-        return False
+            
+        return 
+    # TODO this causes movement on all axes to become limited. find a fix.
 
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \
