@@ -28,6 +28,17 @@ class Enemy(Instance):
             1: "Roaming"
         }
 
+    def get_hazardous(self, instance):
+        return instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion" or instance.type == "Melee"
+
+    def add_score(self, data, score):
+        data["score"] += score
+        data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+" + str(score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
+
+        for element in data["ui"].ui_list:
+            if element.name == "ScoreText":
+                element.set_text("Score: " + str(data["score"]))
+
     def update(self, data): # TODO currently, enemies ignore room borders because current ai only moves towards the player. this will cause issues when adding enemies with smarter ai (like being able to dodge attacks.) implement enemies having to do room border checks.
         self._alpha_offset *= 0.8
 
@@ -42,22 +53,14 @@ class Enemy(Instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
 
-                    data["score"] += 5
-                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                    for element in data["ui"].ui_list:
-                        if element.name == "ScoreText":
-                            element.set_text("Score: " + str(data["score"]))
+                    self.add_score(data, 5)
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.health <= 0:
             self.remove = True
 
-            data["score"] += 50
-            data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-            for element in data["ui"].ui_list:
-                if element.name == "ScoreText":
-                    element.set_text("Score: " + str(data["score"]))
-                
+            self.add_score(data, 50)
+            
     def tick(self, data):
         self._dx = self.target_x - self.x
         self._dy = self.target_y - self.y
@@ -80,9 +83,6 @@ class Enemy(Instance):
         _rotated.set_alpha(self._alpha - self._alpha_offset)
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
-
-    def get_hazardous(self, instance):
-        return instance.type == "Projectile" or instance.type == "Beam" or instance.type == "Explosion" or instance.type == "Melee"
 
 class ProjectileEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range, cooldown = 1000):
@@ -120,21 +120,13 @@ class ProjectileEnemy(Enemy):
                     self.health -= instance.damage
                     self._alpha_offset = 255
 
-                    data["score"] += 5
-                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                    for element in data["ui"].ui_list:
-                        if element.name == "ScoreText":
-                            element.set_text("Score: " + str(data["score"]))
+                    self.add_score(data, 5)
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
 
         if self.health <= 0:
             self.remove = True
 
-            data["score"] += 50
-            data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-            for element in data["ui"].ui_list:
-                if element.name == "ScoreText":
-                    element.set_text("Score: " + str(data["score"]))
+            self.add_score(data, 50)
 
     def tick(self, data):
         self._dx = self.target_x - self.x
@@ -203,22 +195,15 @@ class ChargerEnemy(Enemy):
 
                     data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
                     data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
-                    data["score"] += 25
-                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+25", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                    for element in data["ui"].ui_list:
-                        if element.name == "ScoreText":
-                            element.set_text("Score: " + str(data["score"]))
+
+                    self.add_score(data, 25)
 
             elif self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
 
-                    data["score"] += 5
-                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+5", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                    for element in data["ui"].ui_list:
-                        if element.name == "ScoreText":
-                            element.set_text("Score: " + str(data["score"]))
+                    self.add_score(data, 5)
                 # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
         # check for interactions with other instances.
 
@@ -236,11 +221,7 @@ class ChargerEnemy(Enemy):
         if self.health <= 0:
             self.remove = True
 
-            data["score"] += 50
-            data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+50", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-            for element in data["ui"].ui_list:
-                if element.name == "ScoreText":
-                    element.set_text("Score: " + str(data["score"]))
+            self.add_score(data, 50)
                     
     def tick(self, data):
         self._dx = self.target_x - self.x
