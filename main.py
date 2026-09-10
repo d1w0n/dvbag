@@ -209,8 +209,13 @@ while running:
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
     for instance in data["instances"].all_instances:
-        instance.tick(data) 
-    # performs instances next action after updating.
+        instance.tick(data)
+        # performs instances next action after updating.
+
+        if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"):
+            instance.render(data["camera"])
+        # renders instances in view with camera attributes after ticking.
+    # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
    
     data["camera"].random_shake()
     # assign camera shake to dedicated random integer attributes for instance rendering.
@@ -218,10 +223,6 @@ while running:
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
     # draws the room borders.
-
-    for instance in data["instances"].render_sort(data["camera"]):
-        instance.render(data["camera"]) 
-    # renders all instances with camera attributes after ticking.
 
     data["ui"].effects_render()
     # renders screen overlay effects.
