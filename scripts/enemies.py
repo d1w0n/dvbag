@@ -8,7 +8,7 @@ pygame.init()
 class Enemy(Instance):
 
     def __init__(self, window, sprite, x, y, width, height, health, speed, damage):
-        super().__init__("Enemy", sprite, window, x, y, width, height)
+        super().__init__("Enemy", "Enemy", sprite, window, x, y, width, height)
         self.health = health
         self.speed = speed
         self.damage = damage
@@ -42,13 +42,14 @@ class Enemy(Instance):
     def update(self, data): # TODO currently, enemies ignore room borders because current ai only moves towards the player. this will cause issues when adding enemies with smarter ai (like being able to dodge attacks.) implement enemies having to do room border checks.
         self._alpha_offset *= 0.8
 
-        for instance in data["instances"].all_instances:
+        for instance in data["instances"].all_instances[self.target_instance]:
             if instance.type == self.target_instance:
                 self.target_x = instance.x
                 self.target_y = instance.y
                 # sets target position to go to the player.
             
-            elif self.get_hazardous(instance):
+        for instance in data["instances"].all_instances["Projectile"]:
+            if self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -80,7 +81,7 @@ class Enemy(Instance):
 
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)
-        _rotated.set_alpha(self._alpha - self._alpha_offset)
+        _rotated.set_alpha(int(self._alpha - self._alpha_offset))
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
@@ -104,7 +105,7 @@ class ProjectileEnemy(Enemy):
     def update(self, data): 
         self._alpha_offset *= 0.8
 
-        for instance in data["instances"].all_instances:
+        for instance in data["instances"].all_instances["Player"]:
             if instance.type == "Player":
                 self.target_x = instance.x
                 self.target_y = instance.y
@@ -114,8 +115,9 @@ class ProjectileEnemy(Enemy):
                     self.spawn_projectile = True
                 else:
                     self.spawn_projectile = False
-            
-            elif self.get_hazardous(instance):
+
+        for instance in data["instances"].all_instances["Projectile"]:
+            if self.get_hazardous(instance):
                 if self.get_collision(instance):
                     self.health -= instance.damage
                     self._alpha_offset = 255
@@ -173,39 +175,40 @@ class ChargerEnemy(Enemy):
 
     def update(self, data):
         self._alpha_offset *= 0.8
-        for instance in data["instances"].all_instances:
-            if instance.type == "Player":
-                self.target_x = instance.x
-                self.target_y = instance.y
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Player":
+                    self.target_x = instance.x
+                    self.target_y = instance.y
 
-                if self.phase == 1 and self.get_instance_in_range(instance, self.range):
-                    self.phase = 2
-                    self._phase_ticks = pygame.time.get_ticks()
-                    self.spawn_particle = True
+                    if self.phase == 1 and self.get_instance_in_range(instance, self.range):
+                        self.phase = 2
+                        self._phase_ticks = pygame.time.get_ticks()
+                        self.spawn_particle = True
 
-                elif self.phase == 3 and self.get_collision(instance):
-                    self.phase = 4
-                    self._phase_ticks = pygame.time.get_ticks()
+                    elif self.phase == 3 and self.get_collision(instance):
+                        self.phase = 4
+                        self._phase_ticks = pygame.time.get_ticks()
 
-            elif instance.type == "Parry" and self.phase == 3:
-                if self.get_collision(instance):
-                    self.health = 0
-                    self.phase = 4
-                    self._phase_ticks = pygame.time.get_ticks()
+                elif instance.type == "Parry" and self.phase == 3:
+                    if self.get_collision(instance):
+                        self.health = 0
+                        self.phase = 4
+                        self._phase_ticks = pygame.time.get_ticks()
 
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
-                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
+                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
+                        data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
 
-                    self.add_score(data, 25)
+                        self.add_score(data, 25)
 
-            elif self.get_hazardous(instance):
-                if self.get_collision(instance):
-                    self.health -= instance.damage
-                    self._alpha_offset = 255
+                elif self.get_hazardous(instance):
+                    if self.get_collision(instance):
+                        self.health -= instance.damage
+                        self._alpha_offset = 255
 
-                    self.add_score(data, 5)
-                # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
-        # check for interactions with other instances.
+                        self.add_score(data, 5)
+                    # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
+            # check for interactions with other instances.
 
         if self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 3

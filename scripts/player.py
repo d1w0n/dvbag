@@ -9,7 +9,7 @@ pygame.init()
 class Player(Instance):
 
     def __init__(self, window, sprite, x, y, width, height, health, speed):
-        super().__init__("Player", sprite, window, x, y, width, height)
+        super().__init__("Player", "Player", sprite, window, x, y, width, height)
         self.health = health
         self.default_speed = speed
         self.speed = speed
@@ -37,36 +37,37 @@ class Player(Instance):
         self._angle = 0
     
     def update(self, data): 
-        for instance in data["instances"].all_instances:
-            if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
-                if self.get_collision(instance):
-                    self.damage_ticks = pygame.time.get_ticks()
-                    self.health -= instance.damage
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
+                    if self.get_collision(instance):
+                        self.damage_ticks = pygame.time.get_ticks()
+                        self.health -= instance.damage
 
-                    data["camera"].add_shake(100)
-                    data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
+                        data["camera"].add_shake(100)
+                        data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
 
-                    for element in data["ui"].ui_list:
-                        if element.name == "HealthBar":
-                            element.stat = self.health
+                        for element in data["ui"].ui_list:
+                            if element.name == "HealthBar":
+                                element.stat = self.health
 
-                        if element.name == "HealthText":
-                            element.set_text("Health: " + str(self.health) + "")
-                    # updates ui elements correlated to player stats.
+                            if element.name == "HealthText":
+                                element.set_text("Health: " + str(self.health) + "")
+                        # updates ui elements correlated to player stats.
 
-            elif instance.type == "EnemyParticle":
-                if self.get_collision(instance):
-                    self.health += 5
-                    if self.health > 100:
-                        self.health = 100
+                elif instance.type == "EnemyParticle":
+                    if self.get_collision(instance):
+                        self.health += 5
+                        if self.health > 100:
+                            self.health = 100
 
-                    for element in data["ui"].ui_list:
-                        if element.name == "HealthBar":
-                            element.stat = self.health
+                        for element in data["ui"].ui_list:
+                            if element.name == "HealthBar":
+                                element.stat = self.health
 
-                        if element.name == "HealthText":
-                            element.set_text("Health: " + str(self.health))
-                    # updates ui elements correlated to player stats.
+                            if element.name == "HealthText":
+                                element.set_text("Health: " + str(self.health))
+                        # updates ui elements correlated to player stats.
         
         key = pygame.key.get_pressed()
 

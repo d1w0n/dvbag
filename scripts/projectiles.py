@@ -7,18 +7,19 @@ pygame.init()
 
 class Projectile(Instance):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage):
-        super().__init__("Projectile", sprite, window, x, y, width, height)
+        super().__init__("Projectile", "Projectile", sprite, window, x, y, width, height)
         self.direction = direction
         self.speed = speed
         self.drag = drag
         self.damage = damage
 
     def update(self, data):
-        for instance in data["instances"].all_instances:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                if self.get_collision(instance):
-                    self.remove = True
-                # if colliding with an enemy, remove itself.
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                    if self.get_collision(instance):
+                        self.remove = True
+                    # if colliding with an enemy, remove itself.
 
     def tick(self, data):
         self.velocity_x = self.speed * math.cos(math.radians(self.direction))
@@ -53,8 +54,9 @@ class Melee(Projectile):
 
     def update(self, data):
         self._has_target = False
-        for instance in data["instances"].all_instances:
-            self.get_target(data, instance)
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                self.get_target(data, instance)
         
         if not self._has_target:
             self.remove = True
@@ -90,9 +92,10 @@ class Parry(Melee):
         super().get_target(data, instance)
         if instance.type == "EnemyProjectile" or (instance.type == "ChargerEnemy" and instance.phase == 3):
             if self.get_collision(instance):
-                for instance in data["instances"].all_instances:
-                    if instance.type == "Player":
-                        instance.parry_ticks = instance.parry_cooldown
+                for supertype in data["instances"].all_instances.keys():
+                    for instance in data["instances"].all_instances[supertype]:
+                        if instance.type == "Player":
+                            instance.parry_ticks = instance.parry_cooldown
                 self.remove = True
 
 class EnemyProjectile(Projectile):
@@ -101,30 +104,31 @@ class EnemyProjectile(Projectile):
         self.type = "EnemyProjectile"
 
     def update(self, data):
-        for instance in data["instances"].all_instances:
-            if instance.type == "Player":
-                if self.get_collision(instance) and not instance.invulnerable:
-                    self.remove = True
-                # if colliding with the player, remove itself.
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Player":
+                    if self.get_collision(instance) and not instance.invulnerable:
+                        self.remove = True
+                    # if colliding with the player, remove itself.
 
-            elif instance.type == "Parry":
-                if self.get_collision(instance):
-                    self.remove = True
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
+                elif instance.type == "Parry":
+                    if self.get_collision(instance):
+                        self.remove = True
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
 
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
-                    for i in range(5):
-                        data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
-                    data["camera"].add_shake(20)
-                    # visual effects.
-                    
-                    data["score"] += 20
-                    data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                    for element in data["ui"].ui_list:
-                        if element.name == "ScoreText":
-                            element.set_text("Score: " + str(data["score"]))
-                    # score effects.
+                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
+                        for i in range(5):
+                            data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
+                        data["camera"].add_shake(20)
+                        # visual effects.
+                        
+                        data["score"] += 20
+                        data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
+                        for element in data["ui"].ui_list:
+                            if element.name == "ScoreText":
+                                element.set_text("Score: " + str(data["score"]))
+                        # score effects.
         
     def tick(self, data):
         super().tick(data)
@@ -143,11 +147,12 @@ class Beam(Projectile):
         self.velocity_y = self.speed * math.sin(math.radians(self.direction))
 
     def pre_update(self, data):
-        for instance in data["instances"].all_instances:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                if self.get_collision(instance):
-                    self.remove = True
-                    pass
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                    if self.get_collision(instance):
+                        self.remove = True
+                        pass
 
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
@@ -159,10 +164,11 @@ class Beam(Projectile):
             self.x += self.velocity_x
             self.y += self.velocity_y
 
-            for instance in data["instances"].all_instances:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self._collision = True
+            for supertype in data["instances"].all_instances.keys():
+                for instance in data["instances"].all_instances[supertype]:
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                        if self.get_collision(instance):
+                            self._collision = True
 
             if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                 self._collision = True
@@ -180,10 +186,11 @@ class Beam(Projectile):
             self.x += self.velocity_x
             self.y += self.velocity_y
 
-            for instance in data["instances"].all_instances:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self._collision = True
+            for supertype in data["instances"].all_instances.keys():
+                for instance in data["instances"].all_instances[supertype]:
+                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                        if self.get_collision(instance):
+                            self._collision = True
 
             if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
                 self._collision = True
@@ -232,17 +239,18 @@ class BombProjectile(Projectile):
         self._init_ticks = pygame.time.get_ticks()
 
     def update(self, data):
-        for instance in data["instances"].all_instances:
-            if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                if self.get_collision(instance):
-                    self.remove = True
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
+                    if self.get_collision(instance):
+                        self.remove = True
 
-            elif instance.type == "Parry":
-                if self.get_collision(instance):
-                    self.drag = 1 # explosive hockey puck. :)
-                    self.speed = self._init_speed * 2
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
+                elif instance.type == "Parry":
+                    if self.get_collision(instance):
+                        self.drag = 1 # explosive hockey puck. :)
+                        self.speed = self._init_speed * 2
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
 
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
             self.remove = True

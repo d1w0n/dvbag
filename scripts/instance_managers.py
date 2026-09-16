@@ -18,47 +18,45 @@ from scripts.objects import Wall
 pygame.init()
 
 class InstanceLists:
-    def __init__(self, all_instances = None):
-        self.all_instances = all_instances if all_instances is not None else []
+    def __init__(self, *args):
+        self.all_instances = {}
         self.add_instances = []
+        for supertype in args:
+            self.all_instances[supertype] = []
 
     def append_queued(self):
         for instance in self.add_instances:
-            self.all_instances.append(instance)
+            try:
+                self.all_instances[instance.supertype].append(instance)
+
+            except KeyError:
+                raise KeyError("Appended instance supertype was not defined in InstanceLists initialization. (instance supertype: " + instance.supertype + ")")
+            
         self.add_instances = []
-    # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
+    # adds queued instances to the instance lists, then clears the add_instances list.
 
     def remove_instances(self):
-        _remove_list = []
-        _remove_count = 0
 
-        for i in range(len(self.all_instances)):
-            if self.all_instances[i].remove:
-                _remove_list.append(i)
+        for supertype in self.all_instances.keys():
+            _remove_list = []
+            for i in range(len(self.all_instances[supertype])):
+                if self.all_instances[supertype][i].remove:
+                    _remove_list.append(i)
 
-        for index in _remove_list:
-            self.all_instances.pop(index - _remove_count)
-            _remove_count += 1
+            _remove_count = 0
+            for index in _remove_list:
+                self.all_instances[supertype].pop(index - _remove_count)
+                _remove_count += 1
     # if an instance needs to be removed, its index will be appended to the remove instances list and the all instances list will be popped from the remove instances list.
-
-    def render_sort(self, camera, *types): # TODO: make it sort based off the arguments in types.
-        render_list = [] 
-        
-        for instance in self.all_instances:
-            if not instance.get_out_of_view(camera) or hasattr(instance, "always_render"):
-                render_list.append(instance)
-                
-        return render_list
-    # sorts the instance list by specified order in parameters.
-    # also checks if the instances are on screen; if not, dont render, unless exeption that always renders.
 
     def __str__(self):
         _list = []
         for instance in self.add_instances:
             _list.append(str(instance))
 
-        for instance in self.all_instances:
-            _list.append(str(instance))
+        for supertype in self.all_instances.keys():
+            for instance in self.all_instances[supertype]:
+                _list.append(str(instance))
 
         return str(_list).replace("[", "").replace("]", "").replace("\'", "")
     # prints simplified list of instances in both lists.

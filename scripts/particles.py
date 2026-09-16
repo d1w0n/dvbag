@@ -6,7 +6,7 @@ pygame.init()
 
 class Particle(Instance):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration):
-        super().__init__("Particle", sprite, window, x, y, width, height)
+        super().__init__("Particle", "Particle", sprite, window, x, y, width, height)
         self.speed = speed
         self.direction = direction
         self.drag = drag
@@ -42,10 +42,11 @@ class EnemyParticle(Particle):
         self.type = "EnemyParticle"
 
     def update(self, data):
-        for instance in data["instances"].all_instances:
-            if instance.type == "Player":
-                if self.get_collision(instance):
-                    self.remove = True
+        for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                if instance.type == "Player":
+                    if self.get_collision(instance):
+                        self.remove = True
 
         super().update(data)
 

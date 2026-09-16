@@ -16,11 +16,6 @@ except ModuleNotFoundError:
     sys.exit()
 
 import config
-
-"""
-instance management is no longer in main; it just handles the main game loops now.
-for instance management, check scripts/instance_managers.py
-"""
 from scripts.room import Room
 from scripts.camera import Camera
 from scripts.instance_managers import InstanceLists, UIList, ObjectList
@@ -87,9 +82,12 @@ data = {
     "height": height,
     "room": Room(width * 1.5, width * 1.5),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
-    "instances": InstanceLists(),
+    "instances": InstanceLists("Particle", 
+                               "Projectile", 
+                               "Enemy", 
+                               "Player"), # dictionary keys.
     "ui": UIList(),
-    "objects": ObjectList(), # TODO implement object management into main loop.
+    "objects": ObjectList(),
     "score": 0,
     "tick_pause": 0
 }
@@ -129,7 +127,7 @@ else:
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
-    data["instances"] = InstanceLists()
+    data["instances"] = InstanceLists("Particle", "Projectile", "Enemy", "Player")
     data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 8)
     data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
@@ -164,7 +162,7 @@ while running:
     if pygame.key.get_pressed()[pygame.K_p]:
         data["room"] = Room(width * 2, height) 
         data["objects"].add_Wall(window, 0, 0, 48, 48)
-        for instance in data["instances"].all_instances:
+        for instance in data["instances"].all_instances["Player"]:
             if instance.type == "Player":
                 instance.x = 0
                 instance.y = (data["room"].height / 2) - instance.height
@@ -188,14 +186,16 @@ while running:
     # if an instance needs to be removed, it will be filtered out here.
 
     data["objects"].remove_objects()
-    
-    for instance in data["instances"].all_instances:
-        if instance.can_pre_update:
-            instance.pre_update(data)
+
+    for supertype in data["instances"].all_instances.keys():
+        for instance in data["instances"].all_instances[supertype]:
+            if instance.can_pre_update:
+                instance.pre_update(data)
     # runs pre-update for instances that have that priority.
 
-    for instance in data["instances"].all_instances:
-        instance.update(data)
+    for supertype in data["instances"].all_instances.keys():
+            for instance in data["instances"].all_instances[supertype]:
+                instance.update(data)
     # updates each instance before doing anything.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
@@ -208,12 +208,13 @@ while running:
         data["instances"].add_ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
     # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
-    for instance in data["instances"].all_instances:
-        instance.tick(data)
+    for supertype in data["instances"].all_instances.keys():
+        for instance in data["instances"].all_instances[supertype]:
+            instance.tick(data)
         # performs instances next action after updating.
 
-        if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"):
-            instance.render(data["camera"])
+            if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"):
+                instance.render(data["camera"])
         # renders instances in view with camera attributes after ticking.
     # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
    
@@ -242,7 +243,7 @@ while running:
     # pauses main loop for tick pause duration.
 
     if config.DEBUG:
-        if (pygame.time.get_ticks() - debug_ticks) > 5000:
+        if (pygame.time.get_ticks() - debug_ticks) > 5000: # type: ignore
             debug_ticks = pygame.time.get_ticks()
             print(f"\nUI: {data["ui"]}\n\nINSTANCES: {data["instances"]}")
 # end of main loop.
@@ -254,8 +255,9 @@ save_data = [
 ]
 # prepares program data for save after quitting, starts with column labels.
 
-for instance in data["instances"].all_instances:
-    save_data.append([instance.type, int(instance.x), int(instance.y)])
+for supertype in data["instances"].all_instances.keys():
+        for instance in data["instances"].all_instances[supertype]:
+            save_data.append([instance.type, str(int(instance.x)), str(int(instance.y))])
 # adds player data to the save.
 
 with open(save_path, mode="w", newline="") as save:

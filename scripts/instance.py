@@ -8,7 +8,8 @@ pygame.init()
 class Instance(ABC):
 
     @abstractmethod
-    def __init__(self, type, sprite, window, x, y, width, height):
+    def __init__(self, supertype, type, sprite, window, x, y, width, height):
+        self.supertype = supertype
         self.type = type
         self._window = window
         self.x = x
