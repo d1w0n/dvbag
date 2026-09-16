@@ -175,40 +175,40 @@ class ChargerEnemy(Enemy):
 
     def update(self, data):
         self._alpha_offset *= 0.8
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Player":
-                    self.target_x = instance.x
-                    self.target_y = instance.y
+        for instance in data["instances"].all_instances["Player"]:
+            if instance.type == "Player":
+                self.target_x = instance.x
+                self.target_y = instance.y
 
-                    if self.phase == 1 and self.get_instance_in_range(instance, self.range):
-                        self.phase = 2
-                        self._phase_ticks = pygame.time.get_ticks()
-                        self.spawn_particle = True
+                if self.phase == 1 and self.get_instance_in_range(instance, self.range):
+                    self.phase = 2
+                    self._phase_ticks = pygame.time.get_ticks()
+                    self.spawn_particle = True
 
-                    elif self.phase == 3 and self.get_collision(instance):
-                        self.phase = 4
-                        self._phase_ticks = pygame.time.get_ticks()
+                elif self.phase == 3 and self.get_collision(instance):
+                    self.phase = 4
+                    self._phase_ticks = pygame.time.get_ticks()
 
-                elif instance.type == "Parry" and self.phase == 3:
-                    if self.get_collision(instance):
-                        self.health = 0
-                        self.phase = 4
-                        self._phase_ticks = pygame.time.get_ticks()
+        for instance in data["instances"].all_instances["Projectile"]:
+            if instance.type == "Parry" and self.phase == 3:
+                if self.get_collision(instance):
+                    self.health = 0
+                    self.phase = 4
+                    self._phase_ticks = pygame.time.get_ticks()
 
-                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
-                        data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
+                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
+                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
 
-                        self.add_score(data, 25)
+                    self.add_score(data, 25)
 
-                elif self.get_hazardous(instance):
-                    if self.get_collision(instance):
-                        self.health -= instance.damage
-                        self._alpha_offset = 255
+            elif self.get_hazardous(instance):
+                if self.get_collision(instance):
+                    self.health -= instance.damage
+                    self._alpha_offset = 255
 
-                        self.add_score(data, 5)
-                    # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
-            # check for interactions with other instances.
+                    self.add_score(data, 5)
+                # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
+        # check for interactions with other instances.
 
         if self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) > 500:
                 self.phase = 3
