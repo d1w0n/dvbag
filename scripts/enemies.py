@@ -48,10 +48,10 @@ class Enemy(Instance):
                 self.target_y = instance.y
                 # sets target position to go to the player.
             
-        for instance in data["instances"].all_instances["Projectile"]:
-            if self.get_hazardous(instance):
-                if self.get_collision(instance):
-                    self.health -= instance.damage
+        for projectile in data["instances"].all_instances["Projectile"]:
+            if self.get_hazardous(projectile):
+                if self.get_collision(projectile):
+                    self.health -= projectile.damage
                     self._alpha_offset = 255
 
                     self.add_score(data, 5)
@@ -105,21 +105,21 @@ class ProjectileEnemy(Enemy):
     def update(self, data): 
         self._alpha_offset *= 0.8
 
-        for instance in data["instances"].all_instances["Player"]:
-            if instance.type == "Player":
-                self.target_x = instance.x
-                self.target_y = instance.y
+        for player in data["instances"].all_instances["Player"]:
+            if player.type == "Player":
+                self.target_x = player.x
+                self.target_y = player.y
                 # sets target position to go to the player.
 
-                if self.get_instance_in_range(instance, self.range):
+                if self.get_instance_in_range(player, self.range):
                     self.spawn_projectile = True
                 else:
                     self.spawn_projectile = False
 
-        for instance in data["instances"].all_instances["Projectile"]:
-            if self.get_hazardous(instance):
-                if self.get_collision(instance):
-                    self.health -= instance.damage
+        for projectile in data["instances"].all_instances["Projectile"]:
+            if self.get_hazardous(projectile):
+                if self.get_collision(projectile):
+                    self.health -= projectile.damage
                     self._alpha_offset = 255
 
                     self.add_score(data, 5)
@@ -175,35 +175,35 @@ class ChargerEnemy(Enemy):
 
     def update(self, data):
         self._alpha_offset *= 0.8
-        for instance in data["instances"].all_instances["Player"]:
-            if instance.type == "Player":
-                self.target_x = instance.x
-                self.target_y = instance.y
+        for player in data["instances"].all_instances["Player"]:
+            if player.type == "Player":
+                self.target_x = player.x
+                self.target_y = player.y
 
-                if self.phase == 1 and self.get_instance_in_range(instance, self.range):
+                if self.phase == 1 and self.get_instance_in_range(player, self.range):
                     self.phase = 2
                     self._phase_ticks = pygame.time.get_ticks()
                     self.spawn_particle = True
 
-                elif self.phase == 3 and self.get_collision(instance):
+                elif self.phase == 3 and self.get_collision(player):
                     self.phase = 4
                     self._phase_ticks = pygame.time.get_ticks()
 
-        for instance in data["instances"].all_instances["Projectile"]:
-            if instance.type == "Parry" and self.phase == 3:
-                if self.get_collision(instance):
+        for projectile in data["instances"].all_instances["Projectile"]:
+            if projectile.type == "Parry" and self.phase == 3:
+                if self.get_collision(projectile):
                     self.health = 0
                     self.phase = 4
                     self._phase_ticks = pygame.time.get_ticks()
 
-                    data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
-                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", instance.x, instance.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
+                    data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
+                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
 
                     self.add_score(data, 25)
 
-            elif self.get_hazardous(instance):
-                if self.get_collision(instance):
-                    self.health -= instance.damage
+            elif self.get_hazardous(projectile):
+                if self.get_collision(projectile):
+                    self.health -= projectile.damage
                     self._alpha_offset = 255
 
                     self.add_score(data, 5)

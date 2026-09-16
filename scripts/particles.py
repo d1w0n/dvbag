@@ -42,11 +42,10 @@ class EnemyParticle(Particle):
         self.type = "EnemyParticle"
 
     def update(self, data):
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Player":
-                    if self.get_collision(instance):
-                        self.remove = True
+        for player in data["instances"].all_instances["Player"]:
+            if player.type == "Player":
+                if self.get_collision(player):
+                    self.remove = True
 
         super().update(data)
 
