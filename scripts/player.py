@@ -29,55 +29,52 @@ class Player(Instance):
         self.dash_ticks = 0
         self.dash_cooldown = 500
         self.dash_duration = 250
-
-        self._dx = 0
-        self._dy = 0
-        self._mouse_dx = 0
-        self._mouse_dy = 0
         self._angle = 0
-    
+
+    def update_health_ui(self, ui_list):
+        for element in ui_list:
+            if element.name == "HealthBar":
+                element.stat = self.health
+
+            if element.name == "HealthText":
+                element.set_text("Health: " + str(self.health) + "")
+
+    def recieve_damage(self, damage, data):
+        self.damage_ticks = pygame.time.get_ticks()
+        self.health -= damage
+
+        data["camera"].add_shake(100)
+        data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
+
+        self.update_health_ui(data["ui"].ui_list)
+        
     def update(self, data): 
         self.nearby = data["instances"].get_nearby(self.x, self.y)
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
-                    if self.get_collision(instance):
-                        self.damage_ticks = pygame.time.get_ticks()
-                        self.health -= instance.damage
+        if not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:
+            for enemy in self.nearby["Enemy"]:
+                if enemy.type not in ("Enemy", "ChargerEnemy"):
+                    continue
 
-                        data["camera"].add_shake(100)
-                        data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
+                if self.get_collision(enemy):
+                    self.recieve_damage(enemy.damage, data)
 
-                        for element in data["ui"].ui_list:
-                            if element.name == "HealthBar":
-                                element.stat = self.health
+            for projectile in self.nearby["Projectile"]:
+                if not projectile.type == "EnemyProjectile":
+                    continue
+                
+                if self.get_collision(projectile):
+                    self.recieve_damage(projectile.damage, data)
 
-                            if element.name == "HealthText":
-                                element.set_text("Health: " + str(self.health) + "")
-                        # updates ui elements correlated to player stats.
-
-                elif instance.type == "EnemyParticle":
-                    if self.get_collision(instance):
-                        self.health += 5
-                        if self.health > 100:
-                            self.health = 100
-
-                        for element in data["ui"].ui_list:
-                            if element.name == "HealthBar":
-                                element.stat = self.health
-
-                            if element.name == "HealthText":
-                                element.set_text("Health: " + str(self.health))
-                        # updates ui elements correlated to player stats.
-        
+        if self.health < 100:
+            for particle in self.nearby["Particle"]:
+                if not particle.type == "EnemyParticle":
+                    continue
+            
+                self.health += 5
+                if self.health > 100: self.health = 100
+                self.update_health_ui(data["ui"].ui_list)
+                    
         key = pygame.key.get_pressed()
-
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        self._mouse_dx = mouse_x - (self.x - data["camera"].x)
-        self._mouse_dy = mouse_y - (self.y - data["camera"].y)
-
-        self._dx = 0
-        self._dy = 0
         
         if key[pygame.K_LSHIFT] and not self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_cooldown:
             self.dash_ticks = pygame.time.get_ticks()
@@ -114,7 +111,10 @@ class Player(Instance):
             for element in data["ui"].ui_list:
                 if element.name == "WeaponText":
                     element.set_text("weapon: " + self.weapon)
-    
+
+        self._dx = 0
+        self._dy = 0
+
         if key[pygame.K_w]:
             self._dy = -self.speed
         if key[pygame.K_a]:
@@ -143,10 +143,11 @@ class Player(Instance):
             self.y -= self.velocity_y
         # if colliding with room bounds, revert x or y velocity change.
 
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        self._mouse_dx = mouse_x - (self.x - data["camera"].x)
+        self._mouse_dy = mouse_y - (self.y - data["camera"].y)
         self._angle = -math.degrees(math.atan2(self._mouse_dy, self._mouse_dx))
         # determine sprite rotation angle.
-
-        mouse_x, mouse_y = pygame.mouse.get_pos()
 
         if not self.invulnerable:
             if pygame.key.get_pressed()[pygame.K_f] and (pygame.time.get_ticks() - self.parry_ticks) > self.parry_cooldown:
