@@ -37,6 +37,7 @@ class Player(Instance):
         self._angle = 0
     
     def update(self, data): 
+        self.nearby = data["instances"].get_nearby(self.x, self.y)
         for supertype in data["instances"].all_instances.keys():
             for instance in data["instances"].all_instances[supertype]:
                 if (instance.type == "Enemy" or instance.type == "EnemyProjectile" or instance.type == "ChargerEnemy") and not self.invulnerable and (pygame.time.get_ticks() - self.damage_ticks) > self.damage_cooldown:

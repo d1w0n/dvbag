@@ -187,6 +187,8 @@ while running:
 
     data["objects"].remove_objects()
 
+    data["instances"].create_grid()
+
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
             if instance.can_pre_update:

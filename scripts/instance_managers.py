@@ -1,5 +1,6 @@
 import pygame
 import config
+import math
 
 """
 import new instance classes here, then add an add method for it in the instance management methods chunk.
@@ -21,6 +22,8 @@ class InstanceLists:
     def __init__(self, *args):
         self.all_instances = {}
         self.add_instances = []
+        self.grid = {}
+
         for supertype in args:
             self.all_instances[supertype] = []
 
@@ -49,6 +52,36 @@ class InstanceLists:
                 _remove_count += 1
     # if an instance needs to be removed, its index will be appended to the remove instances list and the all instances list will be popped from the remove instances list.
 
+    def create_grid(self):
+        self.grid = {}
+        for supertype in self.all_instances.keys():
+            for instance in self.all_instances[supertype]:
+                box = (math.floor(instance.x / 64), math.floor(instance.y / 64))
+
+                if box not in self.grid:
+                    self.grid[box] = []
+
+                self.grid[box].append(instance)
+
+    def get_grid(self, x, y) -> list:
+        return self.grid[(math.floor(x / 64), math.floor(y / 64))]
+
+    def get_nearby(self, x, y) -> dict:
+        _box_x = math.floor(x / 64)
+        _box_y = math.floor(y / 64)
+        
+        _nearby = {}
+        for supertype in self.all_instances.keys():
+            _nearby[supertype] = []
+            
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if (_box_x + dx, _box_y + dy) in self.grid:
+                    for instance in self.grid[(_box_x + dx, _box_y + dy)]:
+                        _nearby[instance.supertype].append(instance)
+
+        return _nearby
+            
     def __str__(self):
         _list = []
         for instance in self.add_instances:
