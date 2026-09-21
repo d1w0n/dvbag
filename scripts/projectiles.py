@@ -1,3 +1,4 @@
+# TODO refactor everything.
 from scripts.instance import Instance
 import pygame
 import math
