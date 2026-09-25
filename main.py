@@ -109,7 +109,7 @@ if os.path.exists(save_path):
                 # sets player position to saved position.
 
                 elif row["instance"] == "Enemy":
-                    data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                    data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
 
                 elif row["instance"] == "ProjectileEnemy":
                     data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
@@ -129,7 +129,7 @@ else:
 if not _save_has_player:
     data["instances"] = InstanceLists("Particle", "Projectile", "Enemy", "Player")
     data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 8)
-    data["instances"].add_Enemy(window, "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
+    data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
 
 for instance in data["instances"].add_instances:
@@ -187,17 +187,17 @@ while running:
 
     data["objects"].remove_objects()
 
+    for supertype in data["instances"].all_instances.keys():
+        for instance in data["instances"].all_instances[supertype]:
+            if not instance.can_pre_update: continue
+            instance.pre_update(data)
+        # runs pre-update for instances that have that priority.
+
     data["instances"].create_grid()
 
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
-            if instance.can_pre_update:
-                instance.pre_update(data)
-    # runs pre-update for instances that have that priority.
-
-    for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                instance.update(data)
+            instance.update(data)
     # updates each instance before doing anything.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
@@ -215,8 +215,8 @@ while running:
             instance.tick(data)
         # performs instances next action after updating.
 
-            if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"):
-                instance.render(data["camera"])
+            if instance.get_out_of_view(data["camera"]) and not hasattr(instance, "always_render"): continue
+            instance.render(data["camera"])
         # renders instances in view with camera attributes after ticking.
     # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
    
