@@ -1,4 +1,3 @@
-# TODO refactor everything.
 from scripts.instance import Instance
 import pygame
 import math
@@ -13,7 +12,6 @@ class Enemy(Instance):
         self.health = health
         self.speed = speed
         self.damage = damage
-
         self.target_instance = "Player"
         self.target_x = 0
         self.target_y = 0
@@ -23,15 +21,11 @@ class Enemy(Instance):
         self._alpha_offset = 0
         self._phase = 1
         self._angle = 0
-        
         self.phase_info = {
             0: "Idle",
-            1: "Roaming"
-        }
+            1: "Roaming"}
 
-    def get_hazards(self, instance):
-        return instance.type in ("Projectile", "Beam", "Explosion", "Melee")
-
+    def get_hazards(self, instance): return instance.type in ("Projectile", "Beam", "Explosion", "Melee")
     def add_score(self, data, score):
         data["score"] += score
         data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+" + str(score), (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
@@ -46,8 +40,7 @@ class Enemy(Instance):
     def update(self, data): # TODO currently, enemies ignore room borders because current ai only moves towards the player. this will cause issues when adding enemies with smarter ai (like being able to dodge attacks.) implement enemies having to do room border checks.
         self._alpha_offset *= 0.8
         for target in data["instances"].all_instances[self.target_instance]:
-            if not target.type == self.target_instance: continue
-            self.target_x, self.target_y = target.x, target.y
+            if target.type == self.target_instance: self.target_x, self.target_y = target.x, target.y
 
         self.nearby = data["instances"].get_nearby(self.x, self.y)
         for projectile in self.nearby["Projectile"]:
@@ -82,17 +75,14 @@ class ProjectileEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range, cooldown):
         super().__init__(window, "ProjectileEnemy", "assets/images/placeholder_dark_red.png", x, y, width, height, health, speed, damage)
         self.range = range
-
         self.spawn_projectile = False
         self.cooldown_ticks = 0
         self.projectile_cooldown = cooldown
-
         self.phase_info = {
             0: "Idle",
             1: "Roaming",
             2: "Preparing",
-            3: "Cooldown"
-        }
+            3: "Cooldown"}
     
     def update(self, data): 
         self._alpha_offset *= 0.8
@@ -135,38 +125,30 @@ class ChargerEnemy(Enemy):
     def __init__(self, window, x, y, width, height, health, speed, damage, range):
         super().__init__(window, "ChargerEnemy", "assets/images/placeholder_red.png", x, y, width, height, health, speed, damage)
         self.range = range
-
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
-
         self.phase_info = {
             0: "Idle",
             1: "Roaming",
             2: "Preparing",
             3: "Charging",
-            4: "Recovering"
-        }
+            4: "Recovering"}
 
-    @property
-    def phase(self):
-        return self._phase
-
+    @property 
+    def phase(self): return self._phase
     @phase.setter
     def phase(self, phasenumber: int):
         self._phase = phasenumber
         self._phase_ticks = pygame.time.get_ticks()
+        if phasenumber == 2: self.spawn_particle = True
 
     def update(self, data):
         self._alpha_offset *= 0.8
         for target in data["instances"].all_instances[self.target_instance]:
             if not target.type == self.target_instance: continue
             self.target_x, self.target_y = target.x, target.y
-            if self.phase == 1 and self.get_instance_in_range(target, self.range):
-                self.phase = 2
-                self.spawn_particle = True
-
-            if not (self.phase == 3 and self.get_collision(target)): continue
-            self.phase = 4
+            if self.phase == 1 and self.get_instance_in_range(target, self.range): self.phase = 2
+            if self.phase == 3 and self.get_collision(target): self.phase = 4
 
         self.nearby = data["instances"].get_nearby(self.x, self.y)
         for projectile in self.nearby["Projectile"]:
@@ -186,7 +168,7 @@ class ChargerEnemy(Enemy):
         if self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 3
         elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 4
         elif self.phase == 4 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 1
-        if self.health <= 0:
+        if self.health <= 0: 
             self.remove = True
             self.add_score(data, 50)
                     
@@ -211,5 +193,4 @@ class ChargerEnemy(Enemy):
             # create 5 particles on death. 
 
 class SniperEnemy(Enemy):
-    def __init__(self):
-        pass
+    def __init__(self): pass

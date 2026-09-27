@@ -133,7 +133,7 @@ class Player(Instance):
             if self.weapon == "Projectile":
                 if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
                     self.primary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Projectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
+                    data["instances"].add_Projectile(self._window, "Projectile", "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
                     for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
                     data["camera"].add_shake(7)
                 # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.

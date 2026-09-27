@@ -1,4 +1,3 @@
-# TODO refactor everything.
 from scripts.instance import Instance
 import pygame
 import math
@@ -7,20 +6,18 @@ import random
 pygame.init()
 
 class Projectile(Instance):
-    def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, damage):
-        super().__init__("Projectile", "Projectile", sprite, window, x, y, width, height)
+    def __init__(self, window, type, sprite, x, y, width, height, direction, speed, drag, damage):
+        super().__init__("Projectile", type, sprite, window, x, y, width, height)
         self.direction = direction
         self.speed = speed
         self.drag = drag
         self.damage = damage
 
     def update(self, data):
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self.remove = True
-                    # if colliding with an enemy, remove itself.
+        self.nearby = data["instances"].get_nearby(self.x, self.y)
+        for enemy in self.nearby["Enemy"]:
+            if self.get_collision(enemy): self.remove = True
+            # if colliding with an enemy, remove itself.
 
     def tick(self, data):
         self.velocity_x = self.speed * math.cos(math.radians(self.direction))
@@ -30,23 +27,19 @@ class Projectile(Instance):
         self.speed *= self.drag
         # change x and y by velocities.
 
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): 
             self.remove = True
             self.x -= self.velocity_x
             self.y -= self.velocity_y
-            for i in range(3):
-                data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, self.direction + random.randint(-45, 45), 15, 1, 250)
+            for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, self.direction + random.randint(-45, 45), 15, 1, 250)
 
-    def render(self, camera):
-        self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
+    def render(self, camera): self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 class Melee(Projectile):
     def __init__(self, window, x, y, width, height, target_instance, duration, damage):
-        super().__init__(window, "assets/images/placeholder.png", x, y, width, height, 0, 0, 0, damage)
-        self.type = "Melee"
+        super().__init__(window, "Melee", "assets/images/placeholder.png", x, y, width, height, 0, 0, 0, damage)
         self.target_instance = target_instance
         self.duration = duration
-
         self._init_ticks = pygame.time.get_ticks()
         self._has_target = False
         self.clockwise = random.randint(0, 1) == 1
@@ -55,33 +48,23 @@ class Melee(Projectile):
 
     def update(self, data):
         self._has_target = False
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                self.get_target(data, instance)
-        
-        if not self._has_target:
-            self.remove = True
-                
-        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
-            self.remove = True
+        self.get_target(data, data["instances"].all_instances[self.target_instance])
+        if not self._has_target: self.remove = True    
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
 
-    def tick(self, data):
-        self.x = self._target_x
-        self.y = self._target_y
-
+    def tick(self, data): self.x, self.y = self._target_x, self._target_y
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, -self.direction)
         _rect = _rotated.get_rect(center=(self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y))
         self._window.blit(_rotated, _rect.topleft)
 
-    def get_target(self, data, instance):
-        if instance.type == self.target_instance:
+    def get_target(self, data, target_list):
+        for target in target_list:
+            if not target.type == self.target_instance: continue
             self._has_target = True
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - instance.y, mouse_x + data["camera"].x - instance.x)) + self.angle_offset
-            self._target_x = (self.width / 4) * math.cos(math.radians(self.direction)) + instance.x
-            self._target_y = (self.width / 4) * math.sin(math.radians(self.direction)) + instance.y
-            
+            self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - target.y, mouse_x + data["camera"].x - target.x)) + self.angle_offset
+            self._target_x, self._target_y = (self.width / 4) * math.cos(math.radians(self.direction)) + target.x, (self.width / 4) * math.sin(math.radians(self.direction)) + target.y
             self.angle_offset = self._angle_offset_init - round((self._angle_offset_init * 2) * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
 
 class Parry(Melee):
@@ -89,71 +72,67 @@ class Parry(Melee):
         super().__init__(window, x, y, width, height, target_instance, duration, damage)
         self.type = "Parry"
 
-    def get_target(self, data, instance):
-        super().get_target(data, instance)
-        if instance.type == "EnemyProjectile" or (instance.type == "ChargerEnemy" and instance.phase == 3):
-            if self.get_collision(instance):
-                for supertype in data["instances"].all_instances.keys():
-                    for instance in data["instances"].all_instances[supertype]:
-                        if instance.type == "Player":
-                            instance.parry_ticks = instance.parry_cooldown
-                self.remove = True
+    def get_target(self, data, target_list):
+        for target in target_list:
+            if not target.type == self.target_instance: continue
+            self._has_target = True
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - target.y, mouse_x + data["camera"].x - target.x)) + self.angle_offset
+            self._target_x, self._target_y = (self.width / 4) * math.cos(math.radians(self.direction)) + target.x, (self.width / 4) * math.sin(math.radians(self.direction)) + target.y
+            self.angle_offset = self._angle_offset_init - round((self._angle_offset_init * 2) * ((pygame.time.get_ticks() - self._init_ticks) / self.duration))
+            if not (target.type == "EnemyProjectile" or (target.type == "ChargerEnemy" and target.phase == 3)): continue
+            if not self.get_collision(target): continue
+            if target.type == self.target_instance: target.parry_ticks = target.parry_cooldown
+            self.remove = True
 
 class EnemyProjectile(Projectile):
-    def __init__(self, window, x, y, width, height, direction, speed, drag, damage):
-        super().__init__(window, "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage)
-        self.type = "EnemyProjectile"
-
+    def __init__(self, window, x, y, width, height, direction, speed, drag, damage): super().__init__(window, "EnemyProjectile", "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage)
     def update(self, data):
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Player":
-                    if self.get_collision(instance) and not instance.invulnerable:
-                        self.remove = True
-                    # if colliding with the player, remove itself.
+        self.nearby = data["instances"].get_nearby(self.x, self.y)
+        for player in self.nearby["Player"]:
+            if not player.type == "Player": continue
+            if self.get_collision(player) and not player.invulnerable: self.remove = True
+            # if colliding with the player, remove itself.
 
-                elif instance.type == "Parry":
-                    if self.get_collision(instance):
-                        self.remove = True
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        data["instances"].add_Projectile(self._window, "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
-
-                        data["instances"].add_TextDisplay(self._window, instance.x, instance.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
-                        for i in range(5):
-                            data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", instance.x, instance.y, 12, 12, random.randint(0, 360), 15, 1, 250)
-                        data["camera"].add_shake(20)
-                        # visual effects.
-                        
-                        data["score"] += 20
-                        data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-                        for element in data["ui"].ui_list:
-                            if element.name == "ScoreText":
-                                element.set_text("Score: " + str(data["score"]))
-                        # score effects.
-        
+        for projectile in self.nearby["Projectile"]:
+            if not projectile.type == "Parry": continue
+            if not self.get_collision(projectile): continue
+            self.remove = True
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            data["instances"].add_Projectile(self._window, "Projectile", "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
+            data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
+            for _ in range(5): data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), 15, 1, 250)
+            data["camera"].add_shake(20)
+            # visual effects.
+            
+            data["score"] += 20
+            data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
+            for element in data["ui"].ui_list:
+                if element.name == "ScoreText": element.set_text("Score: " + str(data["score"]))
+            # score effects.
+    
     def tick(self, data):
         super().tick(data)
         data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
 class Beam(Projectile):
     def __init__(self, window, x, y, width, height, direction, damage):
-        super().__init__(window, "assets/images/placeholder.png", x, y, width, height, direction, height if height <= width else width, 1, damage)
+        super().__init__(window, "Beam", "assets/images/placeholder.png", x, y, width, height, direction, height if height <= width else width, 1, damage)
         self.x_init = self.x
         self.y_init = self.y
         self._collision = False
         self.can_pre_update = True
         self.always_render = True
-
         self.velocity_x = self.speed * math.cos(math.radians(self.direction))
         self.velocity_y = self.speed * math.sin(math.radians(self.direction))
 
     def pre_update(self, data):
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self.remove = True
-                        pass
+        self.nearby = data["instances"].get_nearby(self.x, self.y)
+        for enemy in self.nearby["Enemy"]:
+            if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
+            if not self.get_collision(enemy): continue
+            self.remove = True
+            pass
 
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
             self.remove = True
@@ -164,21 +143,19 @@ class Beam(Projectile):
         while not self._collision:
             self.x += self.velocity_x
             self.y += self.velocity_y
-
-            for supertype in data["instances"].all_instances.keys():
-                for instance in data["instances"].all_instances[supertype]:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                        if self.get_collision(instance):
-                            self._collision = True
-
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+            self.nearby = data["instances"].get_nearby(self.x, self.y)
+            for enemy in self.nearby["Enemy"]:
+                if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
+                if not self.get_collision(enemy): continue
                 self._collision = True
+                break
+
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): self._collision = True
         # if it didnt spawn on a hitbox, it will move forward until it hits one.
 
         self.x -= self.velocity_x
         self.y -= self.velocity_y
         self._collision = False
-        
         self.velocity_x = math.cos(math.radians(self.direction))
         self.velocity_y = math.sin(math.radians(self.direction))
         # upon hitting a hitbox, it will back out then set its step distance to one for precise positioning.
@@ -186,79 +163,65 @@ class Beam(Projectile):
         while not self._collision:
             self.x += self.velocity_x
             self.y += self.velocity_y
-
-            for supertype in data["instances"].all_instances.keys():
-                for instance in data["instances"].all_instances[supertype]:
-                    if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                        if self.get_collision(instance):
-                            self._collision = True
-
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+            self.nearby = data["instances"].get_nearby(self.x, self.y)
+            for enemy in self.nearby["Enemy"]:
+                if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
+                if not self.get_collision(enemy): continue
                 self._collision = True
+                break
+
+            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): self._collision = True
 
         self.remove = True
 
-    def update(self, data):
-        pass
-
+    def update(self, data): pass
     def tick(self, data):
-        if self.remove:
-            data["instances"].add_BeamFade(self._window, self.x_init, self.y_init, self.x, self.y, self.width, self.height, 50)
-            # creates a beam fading effect on its position.
+        if self.remove: data["instances"].add_BeamFade(self._window, self.x_init, self.y_init, self.x, self.y, self.width, self.height, 50)
+        # creates a beam fading effect on its position.
 
     def render(self, camera):
-            pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width))
-            pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width / 2))
+        pygame.draw.line(self._window, (255, 0, 255), (self.x_init - camera.x + camera.shake_x, self.y_init - camera.y + camera.shake_y), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width))
+        pygame.draw.circle(self._window, (255, 0, 255), (self.x - camera.x + camera.shake_x, self.y - camera.y + camera.shake_y), round(self.width / 2))
 
 class Explosion(Projectile):
     def __init__(self, window, x, y, radius, damage):
-        super().__init__(window, "assets/images/placeholder_red.png", x, y, radius, radius, 0, 0, 0, damage)
-        self.type = "Explosion"
+        super().__init__(window, "Explosion", "assets/images/placeholder_red.png", x, y, radius, radius, 0, 0, 0, damage)
         self.radius = radius
-
         self._ticked = False
 
-    def update(self, data):
-        self.remove = True
-
+    def update(self, data): self.remove = True
     def tick(self, data):
-        if self.remove:
-            data["instances"].add_ExplosionFade(self._window, self.x, self.y, self.radius, 500)
+        if self.remove: data["instances"].add_ExplosionFade(self._window, self.x, self.y, self.radius, 500)
 
-    def render(self, camera):
-            self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
+    def render(self, camera): self._window.blit(self._sprite, (self.x - self.width / 2 - camera.x + camera.shake_x, self.y - self.height / 2 - camera.y + camera.shake_y))
 
 class BombProjectile(Projectile):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration, radius, damage):
-        super().__init__(window, sprite, x, y, width, height, direction, speed, drag, 0)
-        self.type = "BombProjectile"
+        super().__init__(window, "BombProjectile", sprite, x, y, width, height, direction, speed, drag, 0)
         self._init_speed = speed
         self.duration = duration
         self._explosion_radius = radius
         self._explosion_damage = damage
-
         self._init_ticks = pygame.time.get_ticks()
 
     def update(self, data):
-        for supertype in data["instances"].all_instances.keys():
-            for instance in data["instances"].all_instances[supertype]:
-                if instance.type == "Enemy" or instance.type == "ProjectileEnemy" or instance.type == "ChargerEnemy":
-                    if self.get_collision(instance):
-                        self.remove = True
+        self.nearby = data["instances"].get_nearby(self.x, self.y)
+        for enemy in self.nearby["Enemy"]:
+            if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
+            if self.get_collision(enemy): self.remove = True
 
-                elif instance.type == "Parry":
-                    if self.get_collision(instance):
-                        self.drag = 1 # explosive hockey puck. :)
-                        self.speed = self._init_speed * 2
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
+        for projectile in self.nearby["Projectile"]:
+            if not projectile.type == "Parry": continue
+            if not self.get_collision(projectile): continue
+            self.drag = 1 # explosive hockey puck. :)
+            self.speed = self._init_speed * 2
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
 
-        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
-            self.remove = True
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
 
     def tick(self, data):
         super().tick(data)
-
         if self.remove:
             data["instances"].add_Explosion(self._window, self.x, self.y, self._explosion_radius, self._explosion_damage)
             data["camera"].add_shake(50)

@@ -6,8 +6,7 @@ import random
 import csv
 import sys
 import os
-try:
-    import pygame
+try: import pygame
 except ModuleNotFoundError:
     print("\nPygame is not installed. Please install Pygame! Instructions below.\n \
           1. Open the terminal\n \
@@ -31,9 +30,7 @@ clock = pygame.time.Clock()
 tickrate = 60
 removals = 0
 tick_pause = 0
-
-if config.DEBUG:
-    debug_ticks = 0
+if config.DEBUG: debug_ticks = 0
 # variable initialization.
 
 data = {
@@ -47,23 +44,15 @@ data["ui"].add_Text("Title", window, 0, 0, 96, "this is technically a menu", (0,
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 
 while not config.MENU_SKIP and running:
-    if pygame.key.get_pressed()[pygame.K_ESCAPE]:
-        running = False
+    if pygame.key.get_pressed()[pygame.K_ESCAPE]: running = False
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        if event.type == pygame.QUIT: running = False
 
     window.fill((255, 255, 255))
-
-    if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]:
-        break
-    
+    if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]: break
     data["ui"].ui_render()
-
     pygame.display.flip()
-
     clock.tick(tickrate)
-
 # menu loop.
 
 _start_time = time.perf_counter()
@@ -71,7 +60,6 @@ print("Loading save...")
 
 enemy_ticks = 0
 projectile_enemy_ticks = 0
-
 _save_has_player = False
 score = 0
 tick_pause = 0
@@ -108,17 +96,11 @@ if os.path.exists(save_path):
                     data["camera"].y = float(row["y"]) - height / 2
                 # sets player position to saved position.
 
-                elif row["instance"] == "Enemy":
-                    data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                elif row["instance"] == "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                elif row["instance"] == "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
+                elif row["instance"] == "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
 
-                elif row["instance"] == "ProjectileEnemy":
-                    data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
-
-                elif row["instance"] == "ChargerEnemy":
-                    data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
-
-    except:
-        print("\nSave file data is corrupted! Creating a new save file...\n")
+    except: print("\nSave file data is corrupted! Creating a new save file...\n")
 # if there is a save file, load the instances with their positions from there.
 
 else:
@@ -140,8 +122,7 @@ for instance in data["instances"].add_instances:
 
 if config.IMMORTAL:
     for element in data["ui"].ui_list:
-        if element.name == "HealthText":
-            data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
+        if element.name == "HealthText": data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
 
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
@@ -152,20 +133,18 @@ print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
 while running:
 # main loop. 
 
-    if pygame.key.get_pressed()[pygame.K_ESCAPE]:
-        running = False
+    if pygame.key.get_pressed()[pygame.K_ESCAPE]: running = False
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        if event.type == pygame.QUIT: running = False
     # checks for quit events and if the escape key is pressed to end the program. 
 
     if pygame.key.get_pressed()[pygame.K_p]:
         data["room"] = Room(width * 2, height) 
         data["objects"].add_Wall(window, 0, 0, 48, 48)
         for instance in data["instances"].all_instances["Player"]:
-            if instance.type == "Player":
-                instance.x = 0
-                instance.y = (data["room"].height / 2) - instance.height
+            if not instance.type == "Player": continue
+            instance.x = 0
+            instance.y = (data["room"].height / 2) - instance.height
     # TODO temporary. implement ACTUAL room changing later
 
     window.fill((255, 255, 255))
@@ -189,15 +168,13 @@ while running:
 
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
-            if not instance.can_pre_update: continue
-            instance.pre_update(data)
+            if instance.can_pre_update: instance.pre_update(data)
         # runs pre-update for instances that have that priority.
 
     data["instances"].create_grid()
 
     for supertype in data["instances"].all_instances.keys():
-        for instance in data["instances"].all_instances[supertype]:
-            instance.update(data)
+        for instance in data["instances"].all_instances[supertype]: instance.update(data)
     # updates each instance before doing anything.
 
     if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
@@ -213,10 +190,9 @@ while running:
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
             instance.tick(data)
-        # performs instances next action after updating.
+            # performs instances next action after updating.
 
-            if instance.get_out_of_view(data["camera"]) and not hasattr(instance, "always_render"): continue
-            instance.render(data["camera"])
+            if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"): instance.render(data["camera"])
         # renders instances in view with camera attributes after ticking.
     # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
    
@@ -258,8 +234,7 @@ save_data = [
 # prepares program data for save after quitting, starts with column labels.
 
 for supertype in data["instances"].all_instances.keys():
-        for instance in data["instances"].all_instances[supertype]:
-            save_data.append([instance.type, str(int(instance.x)), str(int(instance.y))])
+        for instance in data["instances"].all_instances[supertype]: save_data.append([instance.type, str(int(instance.x)), str(int(instance.y))])
 # adds player data to the save.
 
 with open(save_path, mode="w", newline="") as save:
