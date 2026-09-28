@@ -41,7 +41,7 @@ class Player(Instance):
         self.health -= damage
         data["camera"].add_shake(100)
         data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
-        self.update_health_ui(data["ui"].ui_list)
+        self.update_health_ui(data["ui"].ui["ui"])
         
     def update(self, data): 
         self.nearby = data["instances"].get_nearby(self.x, self.y)
@@ -57,9 +57,10 @@ class Player(Instance):
         if self.health < 100:
             for particle in self.nearby["Particle"]:
                 if not particle.type == "EnemyParticle": continue
+                if not self.get_collision(particle): continue
                 self.health += 5
                 if self.health > 100: self.health = 100
-                self.update_health_ui(data["ui"].ui_list)
+                self.update_health_ui(data["ui"].ui["ui"])
                     
         key = pygame.key.get_pressed()
         if key[pygame.K_LSHIFT] and not self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_cooldown:
@@ -78,21 +79,21 @@ class Player(Instance):
             self.weapon = "Projectile"
             self.primary_cooldown = 100
             self.secondary_cooldown = 50
-            for element in data["ui"].ui_list:
+            for element in data["ui"].ui["ui"]:
                 if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
 
         elif key[pygame.K_2]:
             self.weapon = "Shotgun"
             self.primary_cooldown = 200
             self.secondary_cooldown = 1000
-            for element in data["ui"].ui_list:
+            for element in data["ui"].ui["ui"]:
                 if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
 
         elif key[pygame.K_3]:
             self.weapon = "Melee"
             self.primary_cooldown = 200
             self.secondary_cooldown = 500
-            for element in data["ui"].ui_list:
+            for element in data["ui"].ui["ui"]:
                 if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
 
         self._dx, self._dy = 0, 0

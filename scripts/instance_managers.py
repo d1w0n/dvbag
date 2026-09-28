@@ -105,33 +105,26 @@ class InstanceLists:
     """
 
 class UIList:
-    def __init__(self, ui_list = None, effects = None):
-        self.ui_list = ui_list if ui_list is not None else []
-        self.effects = effects if effects is not None else []
+    def __init__(self, *args):
+        self.ui = {}
+        for supertype in args: self.ui[supertype] = []
 
     def ui_render(self):
-        self._removals = 0
-        for i in range(len(self.ui_list)):
-            if self.ui_list[i - self._removals].remove:
-                self.ui_list.pop(i - self._removals)
-                self._removals += 1
+        for supertype in self.ui.keys():
+            self._removals = 0
+            for i in range(len(self.ui[supertype])):
+                if self.ui[supertype][i - self._removals].remove:
+                    self.ui[supertype].pop(i - self._removals)
+                    self._removals += 1
 
-            else: self.ui_list[i - self._removals].render()
+                else: self.ui[supertype][i - self._removals].render()
     # removes ui elements that need to be removed; else render the ui element.
 
-    def effects_render(self):
-        self._removals = 0
-        for i in range(len(self.effects)):
-            if self.effects[i - self._removals].remove:
-                self.effects.pop(i - self._removals)
-                self._removals += 1
-
-            else: self.effects[i - self._removals].render()
-    # renders screen overlay effects.
-
+    def add_element(self, element): self.ui[element.supertype].append(element)
     def __str__(self):
         _list = []
-        for element in self.ui_list: _list.append(str(element))
+        for supertype in self.ui.keys():
+            for element in self.ui[supertype]: _list.append(str(element))
 
         return str(_list).replace("[", "").replace("]", "").replace("\'", "")
     # prints simplified list of ui elements.
@@ -140,10 +133,10 @@ class UIList:
     when creating a new ui element, add an add class method to the ui management methods chunk.
     this is so objects can create new ui without having to import them as a way to deal with circular imports.
     """
-    def add_Bar(self, *args): self.ui_list.append(Bar(*args))
-    def add_Text(self, *args): self.ui_list.append(Text(*args))
-    def add_TextParticle(self, *args): self.ui_list.append(TextParticle(*args))
-    def add_ScreenEffect(self, *args): self.effects.append(ScreenEffect(*args))
+    def add_Bar(self, *args): self.add_element(Bar(*args))
+    def add_Text(self, *args): self.add_element(Text(*args))
+    def add_TextParticle(self, *args): self.add_element(TextParticle(*args))
+    def add_ScreenEffect(self, *args): self.add_element(ScreenEffect(*args))
     """
     end of ui management methods chunk.
     """

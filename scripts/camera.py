@@ -9,19 +9,14 @@ class Camera:
         self.height = height
         self.smoothing = smoothing
         self.decay = decay
-        
         self.target_x = 0
         self.target_y = 0
         self.shake_amp = 0
         self.shake_x = 0
         self.shake_y = 0
 
-    def add_shake(self, amplitude):
-        self.shake_amp += amplitude
-
-    def shake_decay(self):
-        self.shake_amp *= self.decay
-
+    def add_shake(self, amplitude): self.shake_amp += amplitude
+    def shake_decay(self): self.shake_amp *= self.decay
     def target(self, x, y):
         self.target_x = x
         self.target_y = y

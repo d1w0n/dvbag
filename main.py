@@ -34,7 +34,7 @@ if config.DEBUG: debug_ticks = 0
 # variable initialization.
 
 data = {
-    "ui": UIList()
+    "ui": UIList("ScreenEffect", "ui")
 }
 # initializes menu data.
 
@@ -71,7 +71,7 @@ data = {
     "room": Room(width * 1.5, width * 1.5),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # dictionary keys.
-    "ui": UIList(),
+    "ui": UIList("ScreenEffect", "ui"),
     "objects": ObjectList(),
     "score": 0,
     "tick_pause": 0
@@ -118,7 +118,7 @@ for instance in data["instances"].add_instances:
         data["ui"].add_Text("WeaponText", window, width - 250, height - 50, 36, "weapon: " + instance.weapon, (255, 0, 0))
 
 if config.IMMORTAL:
-    for element in data["ui"].ui_list:
+    for element in data["ui"].ui["ui"]:
         if element.name == "HealthText": data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
 
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
@@ -199,9 +199,6 @@ while running:
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
     # draws the room borders.
-
-    data["ui"].effects_render()
-    # renders screen overlay effects.
 
     data["ui"].ui_render()
     # removes ui elements that need to be removed; else render the ui element.

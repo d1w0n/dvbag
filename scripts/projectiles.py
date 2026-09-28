@@ -107,7 +107,7 @@ class EnemyProjectile(Projectile):
             
             data["score"] += 20
             data["ui"].add_TextParticle("ScoreParticle", self._window, random.randint(10, 150), data["height"] - 50, 24, "+20", (0, 0, 0), None, 1000, random.randint(-1, 1), random.randint(-10, -5))
-            for element in data["ui"].ui_list:
+            for element in data["ui"].ui["ui"]:
                 if element.name == "ScoreText": element.set_text("Score: " + str(data["score"]))
             # score effects.
     

@@ -15,22 +15,19 @@ class UI(ABC):
         self.width = width
         self.height = height
         self.color = color
+        self.supertype = "ui"
         self.remove = False
 
     @abstractmethod
-    def render(self, offset_x, offset_y):
-        pass
-
-    def __str__(self):
-        return f"{self.name} at ({round(self.x, 2)}, {round(self.y, 2)})"
+    def render(self): pass
+    def __str__(self): return f"{self.name} at ({round(self.x, 2)}, {round(self.y, 2)})"
 
 class Bar(UI):
     def __init__(self, name, window, x, y, width, height, color, stat = 100):
         super().__init__("Bar", name, window, x, y, width, height, color)
         self.stat = stat
 
-    def render(self):
-        pygame.draw.line(self._window, self.color, (self.x, self.y + self.height / 2), (self.x + self.width * (self.stat / 100), self.y + self.height / 2), self.height)
+    def render(self): pygame.draw.line(self._window, self.color, (self.x, self.y + self.height / 2), (self.x + self.width * (self.stat / 100), self.y + self.height / 2), self.height)
 
 class Text(UI):
     def __init__(self, name, window, x, y, size, text, color, font = None):
@@ -38,11 +35,8 @@ class Text(UI):
         self.font = pygame.font.Font(font, size)
         self._text_surface = self.font.render(text, True, self.color)
 
-    def render(self):
-        self._window.blit(self._text_surface, (self.x, self.y))
-
-    def set_text(self, text: str):
-        self._text_surface = self.font.render(text, True, self.color)
+    def render(self): self._window.blit(self._text_surface, (self.x, self.y))
+    def set_text(self, text: str): self._text_surface = self.font.render(text, True, self.color)
 
 class TextParticle(Text):
     def __init__(self, name, window, x, y, size, text, color, font = None, duration = 0, x_velocity = 0, y_velocity = 0):
@@ -53,9 +47,7 @@ class TextParticle(Text):
         self.y_velocity = y_velocity
 
     def render(self):
-        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
-            self.remove = True
-            pass
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
         self.x += self.x_velocity
         self.y += self.y_velocity
         self.x_velocity *= 0.9
@@ -72,12 +64,10 @@ class ScreenEffect(UI):
         self.sprite = pygame.transform.scale(self.sprite, (self.width, self.height))
         self._init_ticks = pygame.time.get_ticks()
         self._alpha = 255
+        self.supertype = "ScreenEffect"
         self.remove = False
 
     def render(self):
-        if (pygame.time.get_ticks() - self._init_ticks) > self.duration:
-            self.remove = True
-            pass
-
+        if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
         self.sprite.set_alpha(self.intensity - round(self.intensity * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
         self._window.blit(self.sprite, (0, 0))
