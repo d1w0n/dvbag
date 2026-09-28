@@ -158,7 +158,7 @@ class ChargerEnemy(Enemy):
                     self.health = 0
                     self.phase = 4
                     data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
-                    data["instances"].add_Particle(self._window, "assets/images/placeholder.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
+                    data["instances"].add_Particle(self._window, "Particle", "assets/images/placeholder.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
 
             if not self.get_hazards(projectile): continue
             if self.get_collision(projectile): self.recieve_damage(projectile.damage, 5, data)
