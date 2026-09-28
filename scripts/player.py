@@ -113,7 +113,7 @@ class Player(Instance):
 
         if self.get_room_collision_x(data["room"]): self.x -= self.velocity_x
         if self.get_room_collision_y(data["room"]): self.y -= self.velocity_y
-        if self.get_object_collision(data["objects"].object_list):
+        if self.get_object_collision(data["objects"].object_list[True]):
             self.x -= self.velocity_x
             self.y -= self.velocity_y
         # if colliding with room bounds, revert x or y velocity change.

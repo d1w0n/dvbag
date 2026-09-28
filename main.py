@@ -72,7 +72,7 @@ data = {
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # dictionary keys.
     "ui": UIList("ScreenEffect", "ui"),
-    "objects": ObjectList(),
+    "objects": ObjectList(True, False),
     "score": 0,
     "tick_pause": 0
 }
@@ -112,10 +112,10 @@ if not _save_has_player:
 # if the player was removed in the save, start from a clean slate.
 
 for instance in data["instances"].add_instances:
-    if instance.type == "Player":
-        data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0), instance.health)
-        data["ui"].add_Text("HealthText", window, 10, 60, 36, "Health: " + str(instance.health), (0, 255, 0))
-        data["ui"].add_Text("WeaponText", window, width - 250, height - 50, 36, "weapon: " + instance.weapon, (255, 0, 0))
+    if not instance.type == "Player": continue
+    data["ui"].add_Bar("HealthBar", window, 0, 0, width, 50, (0, 255, 0), instance.health)
+    data["ui"].add_Text("HealthText", window, 10, 60, 36, "Health: " + str(instance.health), (0, 255, 0))
+    data["ui"].add_Text("WeaponText", window, width - 250, height - 50, 36, "weapon: " + instance.weapon, (255, 0, 0))
 
 if config.IMMORTAL:
     for element in data["ui"].ui["ui"]:

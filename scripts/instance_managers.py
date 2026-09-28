@@ -111,13 +111,13 @@ class UIList:
 
     def ui_render(self):
         for supertype in self.ui.keys():
-            self._removals = 0
-            for i in range(len(self.ui[supertype])):
-                if self.ui[supertype][i - self._removals].remove:
-                    self.ui[supertype].pop(i - self._removals)
-                    self._removals += 1
-
-                else: self.ui[supertype][i - self._removals].render()
+            _remove_list = []
+            for i in range(len(self.ui[supertype])): _remove_list.append(i) if self.ui[supertype][i].remove else self.ui[supertype][i].render()
+            _remove_count = 0
+            for index in _remove_list:
+                self.ui[supertype].pop(index - _remove_count)
+                _remove_count += 1
+                
     # removes ui elements that need to be removed; else render the ui element.
 
     def add_element(self, element): self.ui[element.supertype].append(element)
@@ -142,26 +142,29 @@ class UIList:
     """
 
 class ObjectList:
-    def __init__(self, object_list = None):
-        self.object_list = object_list if object_list is not None else []
+    def __init__(self, *args):
+        self.object_list = {}
         self.add_objects = []
+        for static in args: self.object_list[static] = []
 
     def append_objects(self):
-        for object in self.add_objects: self.object_list.append(object)
+        for object in self.add_objects: self.object_list[object.static].append(object)
         self.add_objects = []
 
     def remove_objects(self):
-        _remove_list = []
-        _remove_count = 0
-        for i in range(len(self.object_list)):
-            if self.object_list[i].remove: _remove_list.append(i)
+        for static in self.object_list.keys():
+            _remove_list = []
+            for i in range(len(self.object_list[static])):
+                if self.object_list[static][i].remove: _remove_list.append(i)
 
-        for index in _remove_list:
-            self.object_list.pop(index - _remove_count)
-            _remove_count += 1
+            _remove_count = 0
+            for index in _remove_list:
+                self.object_list[static].pop(index - _remove_count)
+                _remove_count += 1
 
     def render_objects(self, camera):
-        for object in self.object_list: object.render(camera)
+        for static in self.object_list.keys():
+            for object in self.object_list[static]: object.render(camera)
     # TODO implement objects not rendering if off camera (like how instances do)
 
     def __str__(self):
