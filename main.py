@@ -70,10 +70,7 @@ data = {
     "height": height,
     "room": Room(width * 1.5, width * 1.5),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
-    "instances": InstanceLists("Particle", 
-                               "Projectile", 
-                               "Enemy", 
-                               "Player"), # dictionary keys.
+    "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # dictionary keys.
     "ui": UIList(),
     "objects": ObjectList(),
     "score": 0,
