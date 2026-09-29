@@ -6,12 +6,13 @@ import random
 pygame.init()
 
 class Projectile(Instance):
-    def __init__(self, window, type, sprite, x, y, width, height, direction, speed, drag, damage):
+    def __init__(self, window, type, sprite, x, y, width, height, direction, speed, drag, damage, trail = False):
         super().__init__("Projectile", type, sprite, window, x, y, width, height)
         self.direction = direction
         self.speed = speed
         self.drag = drag
         self.damage = damage
+        self.trail = trail
 
     def update(self, data):
         self.nearby = data["instances"].get_nearby(self.x, self.y)
@@ -26,7 +27,8 @@ class Projectile(Instance):
         self.y += self.velocity_y
         self.speed *= self.drag
         # change x and y by velocities.
-
+        
+        if self.trail: data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): 
             self.remove = True
             self.x -= self.velocity_x
@@ -86,7 +88,7 @@ class Parry(Melee):
             self.remove = True
 
 class EnemyProjectile(Projectile):
-    def __init__(self, window, x, y, width, height, direction, speed, drag, damage): super().__init__(window, "EnemyProjectile", "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage)
+    def __init__(self, window, x, y, width, height, direction, speed, drag, damage): super().__init__(window, "EnemyProjectile", "assets/images/enemyprojectile.png", x, y, width, height, direction, speed, drag, damage, True)
     def update(self, data):
         self.nearby = data["instances"].get_nearby(self.x, self.y)
         for player in self.nearby["Player"]:
@@ -99,7 +101,7 @@ class EnemyProjectile(Projectile):
             if not self.get_collision(projectile): continue
             self.remove = True
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            data["instances"].add_Projectile(self._window, "Projectile", "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100)
+            data["instances"].add_Projectile(self._window, "Projectile", "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100, True)
             data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
             for _ in range(5): data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), 15, 1, 250)
             data["camera"].add_shake(20)
@@ -113,7 +115,6 @@ class EnemyProjectile(Projectile):
     
     def tick(self, data):
         super().tick(data)
-        data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
 
 class Beam(Projectile):
     def __init__(self, window, x, y, width, height, direction, damage):

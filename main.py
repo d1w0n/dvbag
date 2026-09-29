@@ -20,7 +20,6 @@ from scripts.camera import Camera
 from scripts.instance_managers import InstanceLists, UIList, ObjectList
 
 pygame.init()
-
 width, height = 800, 600
 window = pygame.display.set_mode([width, height])
 # creates a window with the specified width and height.
@@ -42,7 +41,6 @@ data["ui"].add_Text("Title", window, 0, 0, 96, "this is technically a menu", (0,
 # initialize menu ui elements.
 
 print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
-
 while not config.MENU_SKIP and running:
     if pygame.key.get_pressed()[pygame.K_ESCAPE]: running = False
     for event in pygame.event.get():
@@ -57,7 +55,6 @@ while not config.MENU_SKIP and running:
 
 _start_time = time.perf_counter()
 print("Loading save...")
-
 enemy_ticks = 0
 projectile_enemy_ticks = 0
 _save_has_player = False
@@ -70,17 +67,15 @@ data = {
     "height": height,
     "room": Room(width * 1.5, width * 1.5),
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
-    "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # dictionary keys.
-    "ui": UIList("ScreenEffect", "ui"),
-    "objects": ObjectList(True, False),
+    "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # instance supertypes.
+    "ui": UIList("ScreenEffect", "ui"), # element supertypes.
+    "objects": ObjectList(True, False), # static objects.
     "score": 0,
     "tick_pause": 0
 }
 # initialize main loop data.
 
-save_path = os.path.join(config.BASE_DIR, "saves", "save.csv")
-# get save file location.
-
+save_path = os.path.join(config.BASE_DIR, "saves", "save.csv") # get save file location.
 if os.path.exists(save_path):
     try:
         with open(save_path, "r") as save:
@@ -124,12 +119,9 @@ if config.IMMORTAL:
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
 
-print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)")
-# prints successful load with elapsed time.
+print("Loaded. (" + str(time.perf_counter() - _start_time) + " seconds)") # prints successful load with elapsed time.
 
-while running:
-# main loop. 
-
+while running: # main loop. 
     if pygame.key.get_pressed()[pygame.K_ESCAPE]: running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT: running = False
@@ -144,23 +136,12 @@ while running:
             instance.y = (data["room"].height / 2) - instance.height
     # TODO temporary. implement ACTUAL room changing later
 
-    window.fill((255, 255, 255))
-    # fills the window with white color to clear previous frames.
-
-    data["mouse_x"], data["mouse_y"] = pygame.mouse.get_pos()
-    # gets the current position of the mouse cursor.
-
-    data["camera"].shake_decay()
-    # multiplies camera shake attributes by its decay.
-
-    data["instances"].append_queued()
-    # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
-
+    window.fill((255, 255, 255)) # fills the window with white color to clear previous frames.
+    data["mouse_x"], data["mouse_y"] = pygame.mouse.get_pos() # gets the current position of the mouse cursor.
+    data["camera"].shake_decay() # multiplies camera shake attributes by its decay.
+    data["instances"].append_queued() # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
     data["objects"].append_objects()
-            
-    data["instances"].remove_instances()
-    # if an instance needs to be removed, it will be filtered out here.
-
+    data["instances"].remove_instances() # if an instance needs to be removed, it will be filtered out here.
     data["objects"].remove_objects()
 
     for supertype in data["instances"].all_instances.keys():
@@ -169,7 +150,6 @@ while running:
         # runs pre-update for instances that have that priority.
 
     data["instances"].create_grid()
-
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]: instance.update(data)
     # updates each instance before doing anything.
@@ -186,28 +166,17 @@ while running:
 
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
-            instance.tick(data)
-            # performs instances next action after updating.
-
+            instance.tick(data) # performs instances next action after updating.
             if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"): instance.render(data["camera"])
         # renders instances in view with camera attributes after ticking.
     # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
    
-    data["camera"].random_shake()
-    # assign camera shake to dedicated random integer attributes for instance rendering.
-
+    data["camera"].random_shake() # assign camera shake to dedicated random integer attributes for instance rendering.
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
-    # draws the room borders.
-
-    data["ui"].ui_render()
-    # removes ui elements that need to be removed; else render the ui element.
-
-    pygame.display.flip()
-    # updates the display after rendering all instances.
-
-    clock.tick(tickrate)
-    # updates main loop at set tickrate.
+    data["ui"].ui_render() # removes ui elements that need to be removed; else render the ui element.
+    pygame.display.flip() # updates the display after rendering all instances.
+    clock.tick(tickrate) # updates main loop at set tickrate.
 
     while data["tick_pause"] > 0:
         clock.tick(tickrate)
@@ -236,8 +205,6 @@ with open(save_path, mode="w", newline="") as save:
     writer.writerows(save_data)
 # writes completed data to the save. (currently just acts as placeholder)
 
-print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)\nProgram Successfully Ended\n")
-# prints successful save with elapsed time.
-
+print("Saved. (" + str(time.perf_counter() - _start_time) + " seconds)\nProgram Successfully Ended\n") # prints successful save with elapsed time.
 pygame.quit()
 sys.exit()
