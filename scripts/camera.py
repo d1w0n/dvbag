@@ -14,6 +14,7 @@ class Camera:
         self.shake_amp = 0
         self.shake_x = 0
         self.shake_y = 0
+    # TODO create a dictionary of different decay values, so it can be slower & faster
 
     def add_shake(self, amplitude): self.shake_amp += amplitude
     def shake_decay(self): self.shake_amp *= self.decay

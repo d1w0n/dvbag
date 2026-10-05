@@ -6,7 +6,6 @@ import random
 pygame.init()
 
 class Enemy(Instance):
-
     def __init__(self, window, type, sprite, x, y, width, height, health, speed, damage):
         super().__init__("Enemy", type, sprite, window, x, y, width, height)
         self.health = health
@@ -159,6 +158,7 @@ class ChargerEnemy(Enemy):
                     self.phase = 4
                     data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 5, 0.9, 1000)
                     data["instances"].add_Particle(self._window, "Particle", "assets/images/placeholder.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), random.randint(5, 10), 0.9, 250)
+                    for _ in range(5): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, random.randint(1, 360), 15, 1, 250)                          
 
             if not self.get_hazards(projectile): continue
             if self.get_collision(projectile): self.recieve_damage(projectile.damage, 5, data)
@@ -193,4 +193,9 @@ class ChargerEnemy(Enemy):
             # create 5 particles on death. 
 
 class SniperEnemy(Enemy):
-    def __init__(self): pass
+    def __init__(self, window, x, y, width, height, health, speed, damage, range, cooldown):
+        super().__init__(window, "SniperEnemy", "assets/images/placeholder_dark_red.png", x, y, width, height, health, speed, damage)
+        self.range = range
+        self.cooldown = cooldown
+
+    def update(self, data): pass

@@ -69,7 +69,7 @@ data = {
     "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
     "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # instance supertypes.
     "ui": UIList("ScreenEffect", "ui"), # element supertypes.
-    "objects": ObjectList(True, False), # static objects.
+    "objects": ObjectList(True, False), # object static status.
     "score": 0,
     "tick_pause": 0
 }
@@ -91,13 +91,14 @@ if os.path.exists(save_path):
                 elif row["instance"] == "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
                 elif row["instance"] == "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
                 elif row["instance"] == "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
+                else: print("Warning: Untracked entity in save file (Entity type: " + row["instance"] + ")")
 
     except: print("\nSave file data is corrupted! Creating a new save file...\n")
 # if there is a save file, load the instances with their positions from there.
 
 else:
     print("\nSave file not found. Creating a new save file...\n")
-    open(save_path, mode="w", newline="")
+    #open(save_path, mode="w", newline="")
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
@@ -137,17 +138,16 @@ while running: # main loop.
     # TODO temporary. implement ACTUAL room changing later
 
     window.fill((255, 255, 255)) # fills the window with white color to clear previous frames.
-    data["mouse_x"], data["mouse_y"] = pygame.mouse.get_pos() # gets the current position of the mouse cursor.
-    data["camera"].shake_decay() # multiplies camera shake attributes by its decay.
-    data["instances"].append_queued() # adds queued instances from the add_instances list to the all_instances list, then clears the add_instances list.
+    data["camera"].shake_decay()
+    data["instances"].append_queued() # move instances from add_instances to all_instances dict.
     data["objects"].append_objects()
-    data["instances"].remove_instances() # if an instance needs to be removed, it will be filtered out here.
+    data["instances"].remove_instances()
     data["objects"].remove_objects()
 
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
             if instance.can_pre_update: instance.pre_update(data)
-        # runs pre-update for instances that have that priority.
+    # runs pre-update for instances that have that priority.
 
     data["instances"].create_grid()
     for supertype in data["instances"].all_instances.keys():
@@ -168,13 +168,12 @@ while running: # main loop.
         for instance in data["instances"].all_instances[supertype]:
             instance.tick(data) # performs instances next action after updating.
             if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"): instance.render(data["camera"])
-        # renders instances in view with camera attributes after ticking.
-    # TODO Reduce iteration. Added items should be sorted on the spot, not for each game tick.
+            # renders instances in view with camera attributes after ticking.
    
-    data["camera"].random_shake() # assign camera shake to dedicated random integer attributes for instance rendering.
+    data["camera"].random_shake() # assign USED camera shake attributes to a random integer.
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
-    data["ui"].ui_render() # removes ui elements that need to be removed; else render the ui element.
+    data["ui"].ui_render() # also removes ui elements.
     pygame.display.flip() # updates the display after rendering all instances.
     clock.tick(tickrate) # updates main loop at set tickrate.
 
@@ -183,8 +182,7 @@ while running: # main loop.
         data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
 
-    if config.DEBUG:
-        if (pygame.time.get_ticks() - debug_ticks) > 5000: # type: ignore
+    if config.DEBUG and (pygame.time.get_ticks() - debug_ticks) > 5000: # type: ignore
             debug_ticks = pygame.time.get_ticks()
             print(f"\nUI: {data["ui"]}\n\nINSTANCES: {data["instances"]}")
 # end of main loop.
