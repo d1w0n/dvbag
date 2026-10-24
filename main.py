@@ -7,17 +7,11 @@ import csv
 import sys
 import os
 try: import pygame
-except ModuleNotFoundError:
-    print("\nPygame is not installed. Please install Pygame! Instructions below.\n \
-          1. Open the terminal\n \
-          2. Enter this command: \'pip install pygame\'\n \
-          3. Retry this program!" + "\n" * 2 + "Program Successfully Ended\n")
-    sys.exit()
-
+except ModuleNotFoundError: raise ModuleNotFoundError("Pygame is not installed. Please install Pygame using your package manager!")
 import config
 from scripts.room import Room
 from scripts.camera import Camera
-from scripts.instance_managers import InstanceLists, UIList, ObjectList
+from scripts.instance_managers import *
 
 pygame.init()
 width, height = 800, 600
@@ -26,14 +20,14 @@ window = pygame.display.set_mode([width, height])
 
 running = True
 clock = pygame.time.Clock()
-tickrate = 60
 removals = 0
 tick_pause = 0
 if config.DEBUG: debug_ticks = 0
 # variable initialization.
 
 data = {
-    "ui": UIList("ScreenEffect", "ui")
+    "ui": UIList("ScreenEffect", "ui"),
+    "delta_time": 60
 }
 # initializes menu data.
 
@@ -50,7 +44,7 @@ while not config.MENU_SKIP and running:
     if pygame.key.get_pressed()[pygame.K_RETURN] or pygame.key.get_pressed()[pygame.K_SPACE]: break
     data["ui"].ui_render()
     pygame.display.flip()
-    clock.tick(tickrate)
+    data["delta_time"] = (clock.tick() / 1000) * 60
 # menu loop.
 
 _start_time = time.perf_counter()
@@ -63,10 +57,11 @@ tick_pause = 0
 # main gameplay loop variables.
 
 data = {
+    "delta_time": 60,
     "width": width,
     "height": height,
     "room": Room(width * 1.5, width * 1.5),
-    "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1, 0.8),
+    "camera": Camera(window, -width / 2, -height / 2, width, height, 0.1),
     "instances": InstanceLists("Particle", "Projectile", "Enemy", "Player"), # instance supertypes.
     "ui": UIList("ScreenEffect", "ui"), # element supertypes.
     "objects": ObjectList(True, False), # object static status.
@@ -116,6 +111,8 @@ for instance in data["instances"].add_instances:
 if config.IMMORTAL:
     for element in data["ui"].ui["ui"]:
         if element.name == "HealthText": data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
+
+if config.SHOW_FPS: data["ui"].add_Text("FPSText", window, 10, height / 2, 24, "FPS: " + str(math.floor(clock.get_fps())), (0, 0, 0))
 
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
@@ -169,22 +166,27 @@ while running: # main loop.
             instance.tick(data) # performs instances next action after updating.
             if not instance.get_out_of_view(data["camera"]) or hasattr(instance, "always_render"): instance.render(data["camera"])
             # renders instances in view with camera attributes after ticking.
-   
+
+    if config.SHOW_FPS:
+        for element in data["ui"].ui["ui"]:
+            if element.name == "FPSText": element.set_text("FPS: " + str(math.floor(clock.get_fps())))
+            
     data["camera"].random_shake() # assign USED camera shake attributes to a random integer.
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
     data["ui"].ui_render() # also removes ui elements.
     pygame.display.flip() # updates the display after rendering all instances.
-    clock.tick(tickrate) # updates main loop at set tickrate.
+    data["delta_time"] = (clock.tick(60) / 1000) * 60 # updates main loop at set tickrate. 
+    # TODO unlimit ticks, implement delta time
 
     while data["tick_pause"] > 0:
-        clock.tick(tickrate)
+        data["delta_time"] = (clock.tick(60) / 1000) * 60 # TODO here too
         data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
 
     if config.DEBUG and (pygame.time.get_ticks() - debug_ticks) > 5000: # type: ignore
-            debug_ticks = pygame.time.get_ticks()
-            print(f"\nUI: {data["ui"]}\n\nINSTANCES: {data["instances"]}")
+        debug_ticks = pygame.time.get_ticks()
+        print(f"\nUI: {data["ui"]}\n\nINSTANCES: {data["instances"]}")
 # end of main loop.
 
 _start_time = time.perf_counter()

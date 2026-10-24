@@ -85,6 +85,7 @@ class Parry(Melee):
             if not (target.type == "EnemyProjectile" or (target.type == "ChargerEnemy" and target.phase == 3)): continue
             if not self.get_collision(target): continue
             if target.type == self.target_instance: target.parry_ticks = target.parry_cooldown
+            data["tick_pause"] += 500
             self.remove = True
 
 class EnemyProjectile(Projectile):
@@ -104,7 +105,7 @@ class EnemyProjectile(Projectile):
             data["instances"].add_Projectile(self._window, "Projectile", "assets/images/enemyprojectile.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 20, 1, 100, True)
             data["instances"].add_TextDisplay(self._window, projectile.x, projectile.y, "+PARRY!", 24, (0, 0, 0), None, random.randint(60, 120), 10, 0.9, 1000)
             for _ in range(5): data["instances"].add_ProjectileParticle(self._window, "assets/images/enemyprojectile.png", projectile.x, projectile.y, 12, 12, random.randint(0, 360), 15, 1, 250)
-            data["camera"].add_shake(20)
+            data["camera"].add_shake(0.8, 20)
             # visual effects.
             
             data["score"] += 20
@@ -225,4 +226,4 @@ class BombProjectile(Projectile):
         super().tick(data)
         if self.remove:
             data["instances"].add_Explosion(self._window, self.x, self.y, self._explosion_radius, self._explosion_damage)
-            data["camera"].add_shake(50)
+            data["camera"].add_shake(0.9, 50)
