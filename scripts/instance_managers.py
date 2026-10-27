@@ -96,25 +96,25 @@ class InstanceLists:
 
 class UIList:
     def __init__(self, *args):
-        self.ui = {}
-        for supertype in args: self.ui[supertype] = []
+        self.ui_lists = {}
+        for supertype in args: self.ui_lists[supertype] = []
 
     def ui_render(self):
-        for supertype in self.ui.keys():
+        for supertype in self.ui_lists.keys():
             _remove_list = []
-            for i in range(len(self.ui[supertype])): _remove_list.append(i) if self.ui[supertype][i].remove else self.ui[supertype][i].render()
+            for i in range(len(self.ui_lists[supertype])): _remove_list.append(i) if self.ui_lists[supertype][i].remove else self.ui_lists[supertype][i].render()
             _remove_count = 0
             for index in _remove_list:
-                self.ui[supertype].pop(index - _remove_count)
+                self.ui_lists[supertype].pop(index - _remove_count)
                 _remove_count += 1
                 
     # removes ui elements that need to be removed; else render the ui element.
 
-    def add_element(self, element): self.ui[element.supertype].append(element)
+    def add_element(self, element): self.ui_lists[element.supertype].append(element)
     def __str__(self):
         _list = []
-        for supertype in self.ui.keys():
-            for element in self.ui[supertype]: _list.append(str(element))
+        for supertype in self.ui_lists.keys():
+            for element in self.ui_lists[supertype]: _list.append(str(element))
 
         return str(_list).replace("[", "").replace("]", "").replace("\'", "")
     # prints simplified list of ui elements.

@@ -109,7 +109,7 @@ for instance in data["instances"].add_instances:
     data["ui"].add_Text("WeaponText", window, width - 250, height - 50, 36, "weapon: " + instance.weapon, (255, 0, 0))
 
 if config.IMMORTAL:
-    for element in data["ui"].ui["ui"]:
+    for element in data["ui"].ui_lists["ui"]:
         if element.name == "HealthText": data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
 
 if config.SHOW_FPS: data["ui"].add_Text("FPSText", window, 10, height / 2, 24, "FPS: " + str(math.floor(clock.get_fps())), (0, 0, 0))
@@ -168,9 +168,9 @@ while running: # main loop.
             # renders instances in view with camera attributes after ticking.
 
     if config.SHOW_FPS:
-        for element in data["ui"].ui["ui"]:
+        for element in data["ui"].ui_lists["ui"]:
             if element.name == "FPSText": element.set_text("FPS: " + str(math.floor(clock.get_fps())))
-            
+
     data["camera"].random_shake() # assign USED camera shake attributes to a random integer.
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
