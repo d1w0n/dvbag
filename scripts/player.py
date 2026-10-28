@@ -7,7 +7,6 @@ import config
 pygame.init()
 
 class Player(Instance):
-
     def __init__(self, window, sprite, x, y, width, height, health, speed):
         super().__init__("Player", "Player", sprite, window, x, y, width, height)
         self.health = health
@@ -106,7 +105,7 @@ class Player(Instance):
         if self.health <= 0 and not config.IMMORTAL: self.remove = True
 
     def tick(self, data):
-        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed, data["delta_time"])
         self.x += self.velocity_x
         self.y += self.velocity_y
         # adds x and y by velocities.

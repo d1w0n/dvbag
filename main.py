@@ -177,10 +177,9 @@ while running: # main loop.
     data["ui"].ui_render() # also removes ui elements.
     pygame.display.flip() # updates the display after rendering all instances.
     data["delta_time"] = (clock.tick(60) / 1000) * 60 # updates main loop at set tickrate. 
-    # TODO unlimit ticks, implement delta time
 
     while data["tick_pause"] > 0:
-        data["delta_time"] = (clock.tick(60) / 1000) * 60 # TODO here too
+        data["delta_time"] = (clock.tick(60) / 1000) * 60
         data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
 

@@ -1,6 +1,6 @@
 import random
 
-class Camera:
+class Camera: # TODO maybe add camera zoom?
     def __init__(self, window, x, y, width, height, smoothing):
         self._window = window
         self.x = x

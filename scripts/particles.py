@@ -1,4 +1,4 @@
-import pygame
+import pygame # TODO delta time
 import math
 from scripts.instance import Instance
 
@@ -18,8 +18,7 @@ class Particle(Instance):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
 
     def tick(self, data):
-        self.velocity_x = self.speed * math.cos(math.radians(self.direction))
-        self.velocity_y = self.speed * math.sin(math.radians(self.direction))
+        self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
         self.x += self.velocity_x
         self.y += self.velocity_y
         self.speed *= self.drag
@@ -73,8 +72,8 @@ class AfterImage(Particle):
         super().update(data)
 
     def tick(self, data):
-        self.width += self.size_change
-        self.height += self.size_change
+        self.width += self.size_change * data["delta_time"]
+        self.height += self.size_change * data["delta_time"]
         self.set_sprite(self.spritepath)
 
     def render(self, camera):

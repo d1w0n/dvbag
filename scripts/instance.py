@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import os
 import pygame
+import math
 from config import BASE_DIR
 
 pygame.init()
@@ -36,7 +37,9 @@ class Instance(ABC):
 
     def get_distance(self, dx, dy): return (dx ** 2 + dy ** 2) ** 0.5
     
-    def get_velocity(self, dx, dy, speed): return (dx / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0, dy / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0)
+    def get_velocity(self, dx, dy, speed, delta_time): return ((dx / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0) * delta_time, (dy / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0) * delta_time)
+
+    def get_velocity_direction(self, direction, speed, delta_time): return (speed * math.cos(math.radians(direction)) * delta_time, speed * math.sin(math.radians(direction)) * delta_time)
     
     def get_collision(self, other):
         _distance = self.get_distance(self.x - other.x, self.y - other.y)
@@ -67,7 +70,7 @@ class Instance(ABC):
     def set_sprite(self, file):
         self.spritepath = file
         self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha()
-        self._sprite = pygame.transform.scale(self._sprite, (round(self.width), round(self.height)))
+        self._sprite = pygame.transform.scale(self._sprite, (round(self.width) if self.width >= 0 else 0, round(self.height) if self.height >= 0 else 0)) # TODO remove these failsafes after deltat time implementation.
     """
     def tint_surface(surface, color):
         tinted = surface.copy()

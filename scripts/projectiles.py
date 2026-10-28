@@ -21,8 +21,7 @@ class Projectile(Instance):
             # if colliding with an enemy, remove itself.
 
     def tick(self, data):
-        self.velocity_x = self.speed * math.cos(math.radians(self.direction))
-        self.velocity_y = self.speed * math.sin(math.radians(self.direction))
+        self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
         self.x += self.velocity_x
         self.y += self.velocity_y
         self.speed *= self.drag
