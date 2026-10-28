@@ -135,7 +135,7 @@ while running: # main loop.
     # TODO temporary. implement ACTUAL room changing later
 
     window.fill((255, 255, 255)) # fills the window with white color to clear previous frames.
-    data["camera"].shake_decay()
+    data["camera"].shake_decay(data["delta_time"])
     data["instances"].append_queued() # move instances from add_instances to all_instances dict.
     data["objects"].append_objects()
     data["instances"].remove_instances()
@@ -171,15 +171,15 @@ while running: # main loop.
         for element in data["ui"].ui_lists["ui"]:
             if element.name == "FPSText": element.set_text("FPS: " + str(math.floor(clock.get_fps())))
 
-    data["camera"].random_shake() # assign USED camera shake attributes to a random integer.
+    data["camera"].random_shake(data["delta_time"]) # assign USED camera shake attributes to a random integer.
     data["room"].render(window, (200, 200, 200), data["camera"])
     data["objects"].render_objects(data["camera"])
     data["ui"].ui_render() # also removes ui elements.
     pygame.display.flip() # updates the display after rendering all instances.
-    data["delta_time"] = (clock.tick(60) / 1000) * 60 # updates main loop at set tickrate. 
+    data["delta_time"] = (clock.tick() / 1000) * 60 # updates main loop at set tickrate. 
 
     while data["tick_pause"] > 0:
-        data["delta_time"] = (clock.tick(60) / 1000) * 60
+        data["delta_time"] = (clock.tick() / 1000) * 60
         data["tick_pause"] -= 1
     # pauses main loop for tick pause duration.
 

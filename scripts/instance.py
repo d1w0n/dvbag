@@ -70,7 +70,7 @@ class Instance(ABC):
     def set_sprite(self, file):
         self.spritepath = file
         self._sprite = pygame.image.load(os.path.join(BASE_DIR, *file.replace("\\", "/").split("/"))).convert_alpha()
-        self._sprite = pygame.transform.scale(self._sprite, (round(self.width) if self.width >= 0 else 0, round(self.height) if self.height >= 0 else 0)) # TODO remove these failsafes after deltat time implementation.
+        self._sprite = pygame.transform.scale(self._sprite, (round(self.width), round(self.height)))
     """
     def tint_surface(surface, color):
         tinted = surface.copy()

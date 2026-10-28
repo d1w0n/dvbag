@@ -126,6 +126,7 @@ class ChargerEnemy(Enemy):
         self.range = range
         self._phase_ticks = pygame.time.get_ticks()
         self.spawn_particle = False
+        self.trail_timer = 0
         self.phase_info = {
             0: "Idle",
             1: "Roaming",
@@ -182,7 +183,11 @@ class ChargerEnemy(Enemy):
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves and looks towards the target position.
 
-        if self.phase == 3: data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
+        if self.phase == 3: self.trail_timer += data["delta_time"]
+        if self.trail_timer >= 1: 
+            self.trail_timer = 0
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
+            
         if self.spawn_particle:
             for _ in range(3): data["instances"].add_ParryFlash(self._window, self.x, self.y, 12, 48, random.randint(1, 360), 500, random.randint(-10, 10))
             self.spawn_particle = False

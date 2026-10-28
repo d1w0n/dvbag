@@ -13,6 +13,7 @@ class Projectile(Instance):
         self.drag = drag
         self.damage = damage
         self.trail = trail
+        self.trail_timer = 0
 
     def update(self, data):
         self.nearby = data["instances"].get_nearby(self.x, self.y)
@@ -24,10 +25,14 @@ class Projectile(Instance):
         self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
         self.x += self.velocity_x
         self.y += self.velocity_y
-        self.speed *= self.drag
+        self.speed *= self.drag ** data["delta_time"]
         # change x and y by velocities.
         
-        if self.trail: data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
+        if self.trail: self.trail_timer += data["delta_time"]
+        if self.trail_timer >= 1:
+            self.trail_timer = 0
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
+            
         if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): 
             self.remove = True
             self.x -= self.velocity_x
@@ -112,9 +117,6 @@ class EnemyProjectile(Projectile):
             for element in data["ui"].ui_lists["ui"]:
                 if element.name == "ScoreText": element.set_text("Score: " + str(data["score"]))
             # score effects.
-    
-    def tick(self, data):
-        super().tick(data)
 
 class Beam(Projectile):
     def __init__(self, window, x, y, width, height, direction, damage):

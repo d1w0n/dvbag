@@ -28,6 +28,7 @@ class Player(Instance):
         self.dash_ticks = 0
         self.dash_cooldown = 500
         self.dash_duration = 250
+        self.trail_timer = 0
         self._angle = 0
 
     def update_health_ui(self, ui_list):
@@ -162,10 +163,13 @@ class Player(Instance):
                     self.primary_ticks = pygame.time.get_ticks()
                     data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 50)
 
-        data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4)
+        data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4, data["delta_time"])
         # smooths camera position to mouse and player position.
 
-        if self.dashing: data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
+        if self.dashing: self.trail_timer += data["delta_time"]
+        if self.trail_timer >= 1:
+            self.trail_timer = 0
+            data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, self._angle, 250, 125, -1)
         
     def render(self, camera):
         _rotated = pygame.transform.rotate(self._sprite, self._angle)

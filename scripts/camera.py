@@ -14,23 +14,26 @@ class Camera: # TODO maybe add camera zoom?
         self.shake_amp = 0
         self.shake_x = 0
         self.shake_y = 0
+        self.shake_interval = 0
 
     def add_shake(self, decay, amplitude): 
         if not decay in self.shake.keys(): self.shake[decay] = 0
         self.shake[decay] += amplitude
 
-    def shake_decay(self): 
-        for decay_entry in self.shake.keys(): self.shake[decay_entry] *= decay_entry
+    def shake_decay(self, delta_time): 
+        for decay_entry in self.shake.keys(): self.shake[decay_entry] *= decay_entry ** delta_time
 
-    def target(self, x, y):
+    def target(self, x, y, delta_time):
         self.target_x = x
         self.target_y = y
-        self.x += (self.target_x - self.x) * self.smoothing
-        self.y += (self.target_y - self.y) * self.smoothing
+        self.x += (self.target_x - self.x) * self.smoothing * delta_time
+        self.y += (self.target_y - self.y) * self.smoothing * delta_time
 
-    def random_shake(self):
-        self.shake_x = 0
-        self.shake_y = 0
-        for decay_entry in self.shake.keys():
-            self.shake_x += random.randint(-round(self.shake[decay_entry]), round(self.shake[decay_entry]))
-            self.shake_y += random.randint(-round(self.shake[decay_entry]), round(self.shake[decay_entry]))
+    def random_shake(self, delta_time):
+        self.shake_interval += delta_time
+        if self.shake_interval >= 1:
+            self.shake_x = 0
+            self.shake_y = 0
+            for decay_entry in self.shake.keys():
+                self.shake_x += random.randint(-round(self.shake[decay_entry]), round(self.shake[decay_entry]))
+                self.shake_y += random.randint(-round(self.shake[decay_entry]), round(self.shake[decay_entry]))

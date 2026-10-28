@@ -1,5 +1,4 @@
-import pygame # TODO delta time
-import math
+import pygame
 from scripts.instance import Instance
 
 pygame.init()
@@ -21,7 +20,7 @@ class Particle(Instance):
         self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
         self.x += self.velocity_x
         self.y += self.velocity_y
-        self.speed *= self.drag
+        self.speed *= self.drag ** data["delta_time"]
 
         if self.get_room_collision_x(data["room"]): self.x -= self.velocity_x
         if self.get_room_collision_y(data["room"]): self.y -= self.velocity_y
@@ -51,8 +50,8 @@ class ParryFlash(Particle):
         self._rotation_speed = rotation_speed
 
     def tick(self, data):
-        self.direction += self._rotation_speed
-        self.height += 5
+        self.direction += self._rotation_speed * data["delta_time"]
+        self.height += 5  * data["delta_time"]
         self.set_sprite(self.spritepath)
 
     def render(self, camera):
@@ -120,7 +119,7 @@ class ExplosionFade(Particle):
 
     def update(self, data):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
-        self._new_size += self._init_radius * 0.05
+        self._new_size += self._init_radius * 0.05 * data["delta_time"]
 
     def tick(self, data):
         self.radius = self._new_size
