@@ -44,7 +44,9 @@ class InstanceLists:
                 if cell not in self.grid: self.grid[cell] = []
                 self.grid[cell].append(instance)
 
-    def get_cell(self, x, y) -> list: return self.grid[(math.floor(x / 64), math.floor(y / 64))]
+    def get_cell(self, x, y) -> list: 
+        _cell = (math.floor(x / 64), math.floor(y / 64))
+        return self.grid[_cell] if _cell in self.grid else []
 
     def get_nearby(self, x, y) -> dict:
         cell_x = math.floor(x / 64)

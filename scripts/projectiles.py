@@ -143,10 +143,13 @@ class Beam(Projectile):
 
         # checks for spawn collision.
 
+        self.cell = data["instances"].get_cell(self.x, self.y)
         while not self._collision:
             self.x += self.velocity_x
             self.y += self.velocity_y
-            self.nearby = data["instances"].get_nearby(self.x, self.y)
+            self._new_cell = data["instances"].get_cell(self.x, self.y)
+            if self.cell != self._new_cell: self.nearby = data["instances"].get_nearby(self.x, self.y)
+            self.cell = self._new_cell
             for enemy in self.nearby["Enemy"]:
                 if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
                 if not self.get_collision(enemy): continue
@@ -166,7 +169,9 @@ class Beam(Projectile):
         while not self._collision:
             self.x += self.velocity_x
             self.y += self.velocity_y
-            self.nearby = data["instances"].get_nearby(self.x, self.y)
+            self._new_cell = data["instances"].get_cell(self.x, self.y)
+            if self.cell != self._new_cell: self.nearby = data["instances"].get_nearby(self.x, self.y)
+            self.cell = self._new_cell
             for enemy in self.nearby["Enemy"]:
                 if not enemy.type in ("Enemy", "ProjectileEnemy", "ChargerEnemy"): continue
                 if not self.get_collision(enemy): continue
