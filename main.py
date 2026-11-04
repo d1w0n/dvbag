@@ -134,7 +134,7 @@ while running: # main loop.
             instance.y = (data["room"].height / 2) - instance.height
     # TODO temporary. implement ACTUAL room changing later
 
-    window.fill((255, 255, 255)) # fills the window with white color to clear previous frames.
+    window.fill((255, 255, 255)) # fills the window with white to clear previous frames.
     data["camera"].shake_decay(data["delta_time"])
     data["instances"].append_queued() # move instances from add_instances to all_instances dict.
     data["objects"].append_objects()

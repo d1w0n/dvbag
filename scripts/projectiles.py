@@ -225,6 +225,7 @@ class BombProjectile(Projectile):
             self.speed = self._init_speed * 2
             mouse_x, mouse_y = pygame.mouse.get_pos()
             self.direction = math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x))
+            #for _ in range(5): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, random.randint(1, 360), 15, 1, 250)              
 
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
 
