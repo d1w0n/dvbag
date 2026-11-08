@@ -57,7 +57,6 @@ class Instance(ABC):
             (self.y + self.height / 2 > object.y - object.height / 2): return True
             
         return False
-    # TODO this causes movement on all axes to become limited. find a fix.
 
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \

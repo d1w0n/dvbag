@@ -76,17 +76,18 @@ if os.path.exists(save_path):
         with open(save_path, "r") as save:
             csv_reader = csv.DictReader(save)
             for row in csv_reader:
-                if row["instance"] == "Player":
-                    _save_has_player = True
-                    data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 8)
-                    data["camera"].x = float(row["x"]) - width / 2
-                    data["camera"].y = float(row["y"]) - height / 2
-                # sets player position to saved position.
+                match row["instance"]:
+                    case "Player":
+                        _save_has_player = True
+                        data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 8)
+                        data["camera"].x = float(row["x"]) - width / 2
+                        data["camera"].y = float(row["y"]) - height / 2
+                    # sets player position to saved position.
 
-                elif row["instance"] == "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
-                elif row["instance"] == "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
-                elif row["instance"] == "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
-                else: print("Warning: Untracked entity in save file (Entity type: " + row["instance"] + ")")
+                    case "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                    case "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
+                    case "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
+                    case _: print("Warning: Untracked entity in save file (Entity type: " + row["instance"] + ")")
 
     except: print("\nSave file data is corrupted! Creating a new save file...\n")
 # if there is a save file, load the instances with their positions from there.

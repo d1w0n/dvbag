@@ -42,6 +42,13 @@ class Player(Instance):
         data["camera"].add_shake(0.9, 50)
         data["ui"].add_ScreenEffect("DamageEffect", self._window, "assets/images/red.png", data["width"], data["height"], 1000, 100)
         self.update_health_ui(data["ui"].ui_lists["ui"])
+
+    def change_weapon(self, data, name, primary_cooldown, secondary_cooldown):
+        self.weapon = name
+        self.primary_cooldown = primary_cooldown
+        self.secondary_cooldown = secondary_cooldown
+        for element in data["ui"].ui_lists["ui"]:
+            if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
         
     def update(self, data): 
         self.nearby = data["instances"].get_nearby(self.x, self.y)
@@ -61,7 +68,7 @@ class Player(Instance):
                 self.health += 5
                 if self.health > 100: self.health = 100
                 self.update_health_ui(data["ui"].ui_lists["ui"])
-                    
+
         key = pygame.key.get_pressed()
         if key[pygame.K_LSHIFT] and not self.dashing and (pygame.time.get_ticks() - self.dash_ticks) > self.dash_cooldown:
             self.dash_ticks = pygame.time.get_ticks()
@@ -75,26 +82,9 @@ class Player(Instance):
             self.invulnerable = False
             self.speed = self.default_speed
 
-        if key[pygame.K_1]:
-            self.weapon = "Projectile"
-            self.primary_cooldown = 100
-            self.secondary_cooldown = 50
-            for element in data["ui"].ui_lists["ui"]:
-                if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
-
-        elif key[pygame.K_2]:
-            self.weapon = "Shotgun"
-            self.primary_cooldown = 200
-            self.secondary_cooldown = 1000
-            for element in data["ui"].ui_lists["ui"]:
-                if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
-
-        elif key[pygame.K_3]:
-            self.weapon = "Melee"
-            self.primary_cooldown = 200
-            self.secondary_cooldown = 500
-            for element in data["ui"].ui_lists["ui"]:
-                if element.name == "WeaponText": element.set_text("weapon: " + self.weapon)
+        if key[pygame.K_1]: self.change_weapon(data, "Projectile", 100, 50)
+        elif key[pygame.K_2]: self.change_weapon(data, "Shotgun", 200, 1000)
+        elif key[pygame.K_3]: self.change_weapon(data, "Melee", 200, 500)
 
         self._dx, self._dy = 0, 0
         if key[pygame.K_w]: self._dy = -self.speed
@@ -126,37 +116,32 @@ class Player(Instance):
                 data["camera"].add_shake(0.8, 10)
             # if f is down, create a parry instance that reflects enemy projectiles and indicated attacks.
 
-            if self.weapon == "Projectile":
-                if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
-                    self.primary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Projectile(self._window, "Projectile", "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
-                    for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
-                    data["camera"].add_shake(0.8, 7)
-                # if mouse is down, create a projectile instance at player position going towards mouse position, then shake the camera by 5.
-                
-                if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
-                    self.secondary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 15)
-                    for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
-                    data["camera"].add_shake(0.8, 5)
-                # creates a beam instead.
+            if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
+                self.primary_ticks = pygame.time.get_ticks()
+                match self.weapon:
+                    case "Projectile":
+                        data["instances"].add_Projectile(self._window, "Projectile", "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 24, 1, 25)
+                        for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/dot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 15, 1, 250)
+                        data["camera"].add_shake(0.8, 7)
 
-            elif self.weapon == "Shotgun":
-                if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
-                    self.primary_ticks = pygame.time.get_ticks()
-                    for _ in range(5): data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-30, 30), 15)
-                    for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
-                    data["camera"].add_shake(0.9, 10)
-                
-                if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
-                    self.secondary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_BombProjectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 10, 0.9, 1000, 192, 100)
-                    data["camera"].add_shake(0.9, 25)
+                    case "Shotgun":
+                        for _ in range(5): data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-30, 30), 15)
+                        for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
+                        data["camera"].add_shake(0.9, 10)
 
-            elif self.weapon == "Melee":
-                if pygame.mouse.get_pressed()[0] and (pygame.time.get_ticks() - self.primary_ticks) > self.primary_cooldown:
-                    self.primary_ticks = pygame.time.get_ticks()
-                    data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 50)
+                    case "Melee": data["instances"].add_Melee(self._window, self.x, self.y, 144, 144, "Player", 100, 50)
+
+            if pygame.mouse.get_pressed()[2] and (pygame.time.get_ticks() - self.secondary_ticks) > self.secondary_cooldown:
+                self.secondary_ticks = pygame.time.get_ticks()
+                match self.weapon:
+                    case "Projectile":
+                        data["instances"].add_Beam(self._window, self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 15)
+                        for _ in range(3): data["instances"].add_ProjectileParticle(self._window, "assets/images/magentadot.png", self.x, self.y, 12, 12, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)) + random.randint(-45, 45), 20, 1, 150)
+                        data["camera"].add_shake(0.8, 5)
+
+                    case "Shotgun":
+                        data["instances"].add_BombProjectile(self._window, "assets/images/placeholder.png", self.x, self.y, 24, 24, math.degrees(math.atan2(mouse_y + data["camera"].y - self.y, mouse_x + data["camera"].x - self.x)), 10, 0.9, 1000, 192, 100)
+                        data["camera"].add_shake(0.9, 25)
 
         data["camera"].target(self.x - data["width"] / 2 + (mouse_x - data["width"] / 2) / 4, self.y - data["height"] / 2 + (mouse_y - data["height"] / 2) / 4, data["delta_time"])
         # smooths camera position to mouse and player position.

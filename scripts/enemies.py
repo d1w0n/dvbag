@@ -166,9 +166,12 @@ class ChargerEnemy(Enemy):
             # checks for collision with projectiles. if collision is true, subtract health by the projectile damage.
         # check for interactions with other instances.
 
-        if self.phase == 2 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 3
-        elif self.phase == 3 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 4
-        elif self.phase == 4 and (pygame.time.get_ticks() - self._phase_ticks) >= 500: self.phase = 1
+        if (pygame.time.get_ticks() - self._phase_ticks) >= 500:
+            match self.phase:
+                case 2: self.phase = 3
+                case 3: self.phase = 4
+                case 4: self.phase = 1
+                
         if self.health <= 0: 
             self.remove = True
             self.add_score(data, 50)
