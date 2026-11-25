@@ -98,7 +98,7 @@ else: print("\nSave file not found. Creating a new save file...\n")
 
 if not _save_has_player:
     data["instances"] = InstanceLists("Particle", "Projectile", "Enemy", "Player")
-    data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 8)
+    data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 96, 48, 48, 100, 8)
     if config.NO_ENEMIES: data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
 
