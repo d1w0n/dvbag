@@ -7,4 +7,3 @@ save.csv
 dist/
 build/
 *.spec
-config.py
