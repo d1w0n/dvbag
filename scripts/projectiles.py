@@ -33,7 +33,7 @@ class Projectile(Instance):
             self.trail_timer = 0
             data["instances"].add_AfterImage(self._window, self.spritepath, self.x, self.y, self.width, self.height, 0, 250, 125, -1)
             
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): 
+        if self.get_wall_collision(data): 
             self.remove = True
             self.x -= self.velocity_x
             self.y -= self.velocity_y
@@ -137,7 +137,7 @@ class Beam(Projectile):
             self.remove = True
             pass
 
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]):
+        if self.get_wall_collision(data):
             self.remove = True
             pass
 
@@ -156,7 +156,7 @@ class Beam(Projectile):
                 self._collision = True
                 break
 
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): self._collision = True
+            if self.get_wall_collision(data): self._collision = True
         # if it didnt spawn on a hitbox, it will move forward until it hits one.
 
         self.x -= self.velocity_x
@@ -178,7 +178,7 @@ class Beam(Projectile):
                 self._collision = True
                 break
 
-            if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): self._collision = True
+            if self.get_wall_collision(data): self._collision = True
 
         self.remove = True
 

@@ -18,12 +18,12 @@ class Particle(Instance):
 
     def tick(self, data):
         self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
-        self.x += self.velocity_x
-        self.y += self.velocity_y
         self.speed *= self.drag ** data["delta_time"]
 
-        if self.get_room_collision_x(data["room"]): self.x -= self.velocity_x
-        if self.get_room_collision_y(data["room"]): self.y -= self.velocity_y
+        self.x += self.velocity_x
+        if self.get_wall_collision(data): self.x -= self.velocity_x
+        self.y += self.velocity_y
+        if self.get_wall_collision(data): self.y -= self.velocity_y
 
     def render(self, camera):
         self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))
@@ -41,7 +41,7 @@ class EnemyParticle(Particle):
 class ProjectileParticle(Particle):
     def __init__(self, window, sprite, x, y, width, height, direction, speed, drag, duration): super().__init__(window, "ProjectileParticle", sprite, x, y, width, height, direction, speed, drag, duration)
     def update(self, data):
-        if self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]): self.remove = True
+        if self.get_wall_collision(data): self.remove = True
         super().update(data)
 
 class ParryFlash(Particle):
