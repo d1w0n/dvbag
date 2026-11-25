@@ -58,6 +58,8 @@ class Instance(ABC):
             
         return False
 
+    def get_wall_collision(self, data): return self.get_room_collision_x(data["room"]) or self.get_room_collision_y(data["room"]) or self.get_object_collision(data["objects"].object_list[True])
+
     def get_out_of_view(self, camera):
         return self.x - self.width / 2 - camera.x + camera.shake_x > camera.width or \
         self.x + self.width / 2 - camera.x + camera.shake_x < 0 or \

@@ -98,9 +98,9 @@ class Player(Instance):
     def tick(self, data):
         self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed, data["delta_time"])
         self.x += self.velocity_x
-        if self.get_room_collision_x(data["room"]) or self.get_object_collision(data["objects"].object_list[True]): self.x -= self.velocity_x
+        if self.get_wall_collision(data): self.x -= self.velocity_x
         self.y += self.velocity_y
-        if self.get_room_collision_y(data["room"]) or self.get_object_collision(data["objects"].object_list[True]): self.y -= self.velocity_y
+        if self.get_wall_collision(data): self.y -= self.velocity_y
         # adds x and y by velocities, if colliding with an object, revert x or y velocity change.
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
