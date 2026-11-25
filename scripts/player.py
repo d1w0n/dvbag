@@ -96,7 +96,9 @@ class Player(Instance):
         if self.health <= 0 and not config.IMMORTAL: self.remove = True
 
     def tick(self, data):
-        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed, data["delta_time"])
+        self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+        self.velocity_x *= data["delta_time"]
+        self.velocity_y *= data["delta_time"]
         self.x += self.velocity_x
         if self.get_wall_collision(data): self.x -= self.velocity_x
         self.y += self.velocity_y

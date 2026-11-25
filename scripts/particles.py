@@ -6,24 +6,29 @@ pygame.init()
 class Particle(Instance):
     def __init__(self, window, type, sprite, x, y, width, height, direction, speed, drag, duration):
         super().__init__("Particle", type, sprite, window, x, y, width, height)
-        self.speed = speed
         self.direction = direction
         self.drag = drag
         self.duration = duration
         self._init_ticks = pygame.time.get_ticks()
         self._alpha = 255
+        self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, speed)
 
     def update(self, data):
         if (pygame.time.get_ticks() - self._init_ticks) > self.duration: self.remove = True
 
     def tick(self, data):
-        self.velocity_x, self.velocity_y = self.get_velocity_direction(self.direction, self.speed, data["delta_time"])
-        self.speed *= self.drag ** data["delta_time"]
+        self.velocity_x *= self.drag ** data["delta_time"]
+        self.velocity_y *= self.drag ** data["delta_time"]
 
-        self.x += self.velocity_x
-        if self.get_wall_collision(data): self.x -= self.velocity_x
-        self.y += self.velocity_y
-        if self.get_wall_collision(data): self.y -= self.velocity_y
+        self.x += self.velocity_x * data["delta_time"]
+        if self.get_wall_collision(data): 
+            self.x -= self.velocity_x * data["delta_time"]
+            self.velocity_x = 0
+            
+        self.y += self.velocity_y * data["delta_time"]
+        if self.get_wall_collision(data): 
+            self.y -= self.velocity_y * data["delta_time"]
+            self.velocity_y = 0
 
     def render(self, camera):
         self._sprite.set_alpha(255 - round(255 * ((pygame.time.get_ticks() - self._init_ticks) / self.duration)))

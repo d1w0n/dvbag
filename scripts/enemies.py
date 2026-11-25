@@ -54,9 +54,9 @@ class Enemy(Instance):
     def tick(self, data):
         if not self._phase == 0:
             self._dx, self._dy = self.target_x - self.x, self.target_y - self.y
-            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed, data["delta_time"])
-            self.x += self.velocity_x
-            self.y += self.velocity_y
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+            self.x += self.velocity_x * data["delta_time"]
+            self.y += self.velocity_y * data["delta_time"]
             self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves towards the target position and angle.
 
@@ -105,9 +105,9 @@ class ProjectileEnemy(Enemy):
         if not self._phase == 0:
             self._dx, self._dy = self.target_x - self.x, self.target_y - self.y
             if not self.spawn_projectile:
-                self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed, data["delta_time"])
-                self.x += self.velocity_x
-                self.y += self.velocity_y
+                self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed)
+                self.x += self.velocity_x * data["delta_time"]
+                self.y += self.velocity_y * data["delta_time"]
 
             self._angle = -math.degrees(math.atan2(self._dy, self._dx))
             if self.spawn_projectile and (pygame.time.get_ticks() - self.cooldown_ticks) > self.projectile_cooldown:
@@ -179,9 +179,9 @@ class ChargerEnemy(Enemy):
     def tick(self, data):
         self._dx, self._dy = self.target_x - self.x, self.target_y - self.y
         if not self.phase == 2 and not self.phase == 4: 
-            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 1 else self.speed * 2, data["delta_time"])
-            self.x += self.velocity_x
-            self.y += self.velocity_y
+            self.velocity_x, self.velocity_y = self.get_velocity(self._dx, self._dy, self.speed if self.phase == 1 else self.speed * 2)
+            self.x += self.velocity_x * data["delta_time"]
+            self.y += self.velocity_y * data["delta_time"]
         
         self._angle = -math.degrees(math.atan2(self._dy, self._dx))
         # moves and looks towards the target position.

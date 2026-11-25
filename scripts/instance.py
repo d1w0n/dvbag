@@ -37,9 +37,9 @@ class Instance(ABC):
 
     def get_distance(self, dx, dy): return (dx ** 2 + dy ** 2) ** 0.5
     
-    def get_velocity(self, dx, dy, speed, delta_time): return ((dx / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0) * delta_time, (dy / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0) * delta_time)
+    def get_velocity(self, dx, dy, speed): return ((dx / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0), (dy / self.get_distance(dx, dy) * speed if dx != 0 or dy != 0 else 0))
 
-    def get_velocity_direction(self, direction, speed, delta_time): return (speed * math.cos(math.radians(direction)) * delta_time, speed * math.sin(math.radians(direction)) * delta_time)
+    def get_velocity_direction(self, direction, speed): return (speed * math.cos(math.radians(direction)), speed * math.sin(math.radians(direction)))
     
     def get_collision(self, other):
         _distance = self.get_distance(self.x - other.x, self.y - other.y)
