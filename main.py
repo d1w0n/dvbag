@@ -76,32 +76,33 @@ if os.path.exists(save_path):
         with open(save_path, "r") as save:
             csv_reader = csv.DictReader(save)
             for row in csv_reader:
-                match row["instance"]:
-                    case "Player":
-                        _save_has_player = True
-                        data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 8)
-                        data["camera"].x = float(row["x"]) - width / 2
-                        data["camera"].y = float(row["y"]) - height / 2
-                    # sets player position to saved position.
-
-                    case "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
-                    case "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
-                    case "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
-                    case _: print("Warning: Untracked entity in save file (Entity type: " + row["instance"] + ")")
+                if row["instance"] == "Player":
+                    _save_has_player = True
+                    data["instances"].add_Player(window, "assets/images/placeholder.png", float(row["x"]), float(row["y"]), 48, 48, 100, 8)
+                    data["camera"].x = float(row["x"]) - width / 2
+                    data["camera"].y = float(row["y"]) - height / 2
+                # sets player position to saved position.
+                    
+                if not config.NO_ENEMIES:
+                    match row["instance"]:
+                        case "Enemy": data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", float(row["x"]), float(row["y"]), 48, 48, 100, 3, 10)
+                        case "ProjectileEnemy": data["instances"].add_ProjectileEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
+                        case "ChargerEnemy": data["instances"].add_ChargerEnemy(window, float(row["x"]), float(row["y"]), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
+                        case _: print("Warning: Untracked entity in save file (Entity type: " + row["instance"] + ")")
 
     except: print("\nSave file data is corrupted! Creating a new save file...\n")
 # if there is a save file, load the instances with their positions from there.
 
-else:
-    print("\nSave file not found. Creating a new save file...\n")
-    #open(save_path, mode="w", newline="")
+else: print("\nSave file not found. Creating a new save file...\n")
 # creates a new save file if the file is not found (happens when cloning the github repository.)
 
 if not _save_has_player:
     data["instances"] = InstanceLists("Particle", "Projectile", "Enemy", "Player")
     data["instances"].add_Player(window, "assets/images/placeholder.png", 0, 0, 48, 48, 100, 8)
-    data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
+    if config.NO_ENEMIES: data["instances"].add_Enemy(window, "Enemy", "assets/images/placeholder_red.png", data["room"].width / 4, 0, 48, 48, 100, 3, 10)
 # if the player was removed in the save, start from a clean slate.
+
+data["objects"].add_Wall(window, 0, 0, 48, 48)
 
 for instance in data["instances"].add_instances:
     if not instance.type == "Player": continue
@@ -114,7 +115,6 @@ if config.IMMORTAL:
         if element.name == "HealthText": data["ui"].add_Text("ImmortalText", window, 10, element.y + 30, 36, "(IMMORTAL)", (0, 255, 0))
 
 if config.SHOW_FPS: data["ui"].add_Text("FPSText", window, 10, height / 2, 24, "FPS: " + str(math.floor(clock.get_fps())), (0, 0, 0))
-
 data["ui"].add_Text("ScoreText", window, 10, height - 50, 48, "Score: " + str(data["score"]), (0, 0, 0))
 # initialize main loop ui elements.
 
@@ -128,7 +128,6 @@ while running: # main loop.
 
     if pygame.key.get_pressed()[pygame.K_p]:
         data["room"] = Room(width * 2, height) 
-        data["objects"].add_Wall(window, 0, 0, 48, 48)
         for instance in data["instances"].all_instances["Player"]:
             if not instance.type == "Player": continue
             instance.x = 0
@@ -152,15 +151,16 @@ while running: # main loop.
         for instance in data["instances"].all_instances[supertype]: instance.update(data)
     # updates each instance before doing anything.
 
-    if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
-        enemy_ticks = pygame.time.get_ticks()
-        data["instances"].add_ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
-    # every second, create an enemy instance at a random position in the room with random health and speed.
+    if not config.NO_ENEMIES:
+        if (pygame.time.get_ticks() - enemy_ticks) > 3000: 
+            enemy_ticks = pygame.time.get_ticks()
+            data["instances"].add_ChargerEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(5, 7), 10, 200)
+        # every second, create an enemy instance at a random position in the room with random health and speed.
 
-    if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
-        projectile_enemy_ticks = pygame.time.get_ticks()
-        data["instances"].add_ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
-    # every second, create a projectile enemy instance at a random position in the room with random health and speed.
+        if (pygame.time.get_ticks() - projectile_enemy_ticks) > 3000: 
+            projectile_enemy_ticks = pygame.time.get_ticks()
+            data["instances"].add_ProjectileEnemy(window, random.randint(round(-data["room"].width / 2), round(data["room"].width / 2)), random.randint(round(-data["room"].height / 2), round(data["room"].height / 2)), 48, 48, random.randint(70, 100), random.randint(3, 5), 10, 300, 1000)
+        # every second, create a projectile enemy instance at a random position in the room with random health and speed.
 
     for supertype in data["instances"].all_instances.keys():
         for instance in data["instances"].all_instances[supertype]:
@@ -178,10 +178,8 @@ while running: # main loop.
     data["ui"].ui_render() # also removes ui elements.
     pygame.display.flip() # updates the display after rendering all instances.
     data["delta_time"] = (clock.tick() / 1000) * 60 # updates main loop at set tickrate. 
-
-    while data["tick_pause"] > 0:
-        data["delta_time"] = (clock.tick() / 1000) * 60
-        data["tick_pause"] -= 1
+    if data["tick_pause"] > 0: data["tick_pause"] -= data["delta_time"]
+    if data["tick_pause"] < 0: data["tick_pause"] = 0
     # pauses main loop for tick pause duration.
 
     if config.DEBUG and (pygame.time.get_ticks() - debug_ticks) > 5000: # type: ignore

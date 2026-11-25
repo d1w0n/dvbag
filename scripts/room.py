@@ -1,4 +1,4 @@
-import pygame # TODO move to objects.py
+import pygame
 
 pygame.init()
 
